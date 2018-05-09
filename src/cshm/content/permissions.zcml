@@ -7,6 +7,12 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
+        id="cshm.content.AddEchelon"
+        title="cshm.content: Add Echelon"
+    />
+
+        
+    <permission
         id="cshm.content.AddCourse"
         title="cshm.content: Add Course"
     />
