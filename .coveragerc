@@ -1,0 +1,6 @@
+[report]
+include =
+    src/cshm/*
+omit =
+    */test*
+    */upgrades/*
