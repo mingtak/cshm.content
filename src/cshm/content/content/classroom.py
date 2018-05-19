@@ -15,6 +15,11 @@ class IClassroom(model.Schema):
     """ Marker interface and Dexterity Python Schema for Classroom
     """
 
+    seat = schema.Int(
+        title=_(u"Seat"),
+        description=_(u"Number of seats."),
+        required=True
+    )
     # directives.widget(level=RadioFieldWidget)
     # level = schema.Choice(
     #     title=_(u'Sponsoring Level'),
