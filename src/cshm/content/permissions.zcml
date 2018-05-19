@@ -7,6 +7,12 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
+        id="cshm.content.AddTeacher"
+        title="cshm.content: Add Teacher"
+    />
+
+        
+    <permission
         id="cshm.content.AddTrainingcenter"
         title="cshm.content: Add Trainingcenter"
     />
