@@ -7,6 +7,12 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
+        id="cshm.content.AddSubject"
+        title="cshm.content: Add Subject"
+    />
+
+        
+    <permission
         id="cshm.content.AddTeacher"
         title="cshm.content: Add Teacher"
     />
