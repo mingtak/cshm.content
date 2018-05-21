@@ -25,9 +25,9 @@ class ClassTime(object):
         # Just an example list of content for our vocabulary,
         # this can be any static or dynamic data, a catalog result for example.
         items = [
-            VocabItem(u'inDay', _(u'In day')),
-            VocabItem(u'inEvening', _(u'In evening')),
-            VocabItem(u'inWeekend', _(u'In weekend')),
+            VocabItem(u'inDay', _(u'inDay')),
+            VocabItem(u'inEvening', _(u'inEvening')),
+            VocabItem(u'inWeekend', _(u'inWeekend')),
         ]
 
         # Fix context if you are using the vocabulary in DataGridField.

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 06:25+0000\n"
+"POT-Creation-Date: 2018-05-21 06:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -13,6 +13,10 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
+
+#: ./browser/template/course_listing.pt:19
+msgid "${obj/duringTime}"
+msgstr ""
 
 #: ./content/trainingcenter.py:19
 msgid "Address"
@@ -120,18 +124,6 @@ msgstr "若不輸入或設為 0 ，表示為電洽"
 msgid "If 0, no need retraining."
 msgstr "若不輸入或設為 0 ，表示不需回訓"
 
-#: ./vocabularies/class_time.py:28
-msgid "In day"
-msgstr "日間"
-
-#: ./vocabularies/class_time.py:29
-msgid "In evening"
-msgstr "夜間"
-
-#: ./vocabularies/class_time.py:30
-msgid "In weekend"
-msgstr "假日"
-
 #: ./configure.zcml:29
 msgid "Installs the cshm.content add-on."
 msgstr ""
@@ -222,3 +214,15 @@ msgstr ""
 #: ./configure.zcml:38
 msgid "cshm.content (uninstall)"
 msgstr ""
+
+#: ./vocabularies/class_time.py:28
+msgid "inDay"
+msgstr "日間"
+
+#: ./vocabularies/class_time.py:29
+msgid "inEvening"
+msgstr "夜間"
+
+#: ./vocabularies/class_time.py:30
+msgid "inWeekend"
+msgstr "假日"
