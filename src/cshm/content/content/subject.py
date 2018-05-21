@@ -8,12 +8,20 @@ from plone.supermodel.directives import fieldset
 from z3c.form.browser.radio import RadioFieldWidget
 from zope import schema
 from zope.interface import implementer
+from z3c.relationfield.schema import RelationList, RelationChoice
+from plone.app.vocabularies.catalog import CatalogSource
 from cshm.content import _
 
 
 class ISubject(model.Schema):
     """ Marker interface and Dexterity Python Schema for Subject
     """
+
+    teacher = RelationChoice(
+        title=_(u"Teacher"),
+        required=True,
+        source=CatalogSource(Type='Teacher')
+    )
 
     # directives.widget(level=RadioFieldWidget)
     # level = schema.Choice(
