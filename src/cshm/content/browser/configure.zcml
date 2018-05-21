@@ -18,4 +18,15 @@
       directory="static"
       />
 
+  <!-- Browser -->
+  
+  <browser:page
+      name="course_listing"
+      for="plone.app.contenttypes.interfaces.IDocument"
+      class=".views.CourseListing"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+
 </configure>
