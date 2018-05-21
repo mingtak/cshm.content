@@ -28,5 +28,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="reg_course"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.RegCourse"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 
 </configure>

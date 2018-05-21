@@ -12,12 +12,7 @@
 <metal:content-core define-macro="content-core"
                     tal:define="toc context/table_of_contents|nothing;">
 
-<ul>
-    <li tal:repeat="item view/echelonBrain">
-        ${python:item.getObject().getParentNode().title} / ${item/Title} (<a href="${item/getURL}/@@reg_course">報名</a>)
-    </li>
-</ul>
-
+報名課程
 
 </metal:content-core>
 </metal:content-core>
