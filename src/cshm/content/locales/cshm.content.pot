@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 05:23+0000\n"
+"POT-Creation-Date: 2018-05-21 06:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,14 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: cshm.content\n"
+
+#: ./content/trainingcenter.py:19
+msgid "Address"
+msgstr ""
+
+#: ./content/subject.py:31
+msgid "Attach File"
+msgstr ""
 
 #: ./content/course.py:82
 msgid "Certificate Code"
@@ -99,6 +107,10 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: ./content/trainingcenter.py:29
+msgid "Fax Number."
+msgstr ""
+
 #: ./content/course.py:33
 msgid "Handbook Title"
 msgstr ""
@@ -135,12 +147,20 @@ msgstr ""
 msgid "License Type"
 msgstr ""
 
+#: ./content/subject.py:26
+msgid "Notes"
+msgstr ""
+
 #: ./content/classroom.py:20
 msgid "Number of seats."
 msgstr ""
 
 #: ./content/course.py:77
 msgid "Other Note"
+msgstr ""
+
+#: ./content/trainingcenter.py:24
+msgid "Phone Number."
 msgstr ""
 
 #: ./content/course.py:27
@@ -168,6 +188,10 @@ msgid "Subject"
 msgstr ""
 
 #: ./content/subject.py:21
+msgid "Subject Hours"
+msgstr ""
+
+#: ./content/subject.py:36
 #: ./profiles/default/types/Teacher.xml
 msgid "Teacher"
 msgstr ""

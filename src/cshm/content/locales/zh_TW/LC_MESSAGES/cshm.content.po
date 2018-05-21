@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 05:23+0000\n"
+"POT-Creation-Date: 2018-05-21 06:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -13,6 +13,14 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
+
+#: ./content/trainingcenter.py:19
+msgid "Address"
+msgstr "地址"
+
+#: ./content/subject.py:31
+msgid "Attach File"
+msgstr "電子檔"
 
 #: ./content/course.py:82
 msgid "Certificate Code"
@@ -96,6 +104,10 @@ msgstr "期別資料型態"
 msgid "Edit"
 msgstr "編輯"
 
+#: ./content/trainingcenter.py:29
+msgid "Fax Number."
+msgstr "傳真號碼"
+
 #: ./content/course.py:33
 msgid "Handbook Title"
 msgstr "簡章標題"
@@ -132,6 +144,10 @@ msgstr "課程簡介"
 msgid "License Type"
 msgstr "證書類型"
 
+#: ./content/subject.py:26
+msgid "Notes"
+msgstr "備註說明"
+
 #: ./content/classroom.py:20
 msgid "Number of seats."
 msgstr "座位數"
@@ -139,6 +155,10 @@ msgstr "座位數"
 #: ./content/course.py:77
 msgid "Other Note"
 msgstr "其他說明"
+
+#: ./content/trainingcenter.py:24
+msgid "Phone Number."
+msgstr "電話號碼"
 
 #: ./content/course.py:27
 msgid "Retrainging Course"
@@ -165,6 +185,10 @@ msgid "Subject"
 msgstr "科目"
 
 #: ./content/subject.py:21
+msgid "Subject Hours"
+msgstr "上課時數"
+
+#: ./content/subject.py:36
 #: ./profiles/default/types/Teacher.xml
 msgid "Teacher"
 msgstr "教師"
