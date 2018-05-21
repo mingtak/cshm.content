@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="cshm.content">
+
+    <!-- -*- extra stuff goes here -*- -->
+
+    <utility
+        component=".class_time.ClassTimeFactory"
+        name="cshm.content.ClassTime"
+    />
+
+        
+</configure>

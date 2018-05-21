@@ -17,6 +17,21 @@ class ISubject(model.Schema):
     """ Marker interface and Dexterity Python Schema for Subject
     """
 
+    hours = schema.Int(
+        title=_(u"Subject Hours"),
+        required=True,
+    )
+
+    notes = schema.Text(
+        title=_(u"Notes"),
+        required=False,
+    )
+
+    attachFile = namedfile.NamedBlobFile(
+        title=_(u'Attach File'),
+        required=False,
+    )
+
     teacher = RelationChoice(
         title=_(u"Teacher"),
         required=True,

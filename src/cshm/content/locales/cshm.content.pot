@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 04:22+0000\n"
+"POT-Creation-Date: 2018-05-21 05:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,10 @@ msgstr ""
 
 #: ./content/course.py:82
 msgid "Certificate Code"
+msgstr ""
+
+#: ./content/echelon.py:37
+msgid "Class Time, ex. 0900-1800"
 msgstr ""
 
 #: ./profiles/default/types/Classroom.xml
@@ -49,6 +53,10 @@ msgstr ""
 msgid "Course Effective"
 msgstr ""
 
+#: ./content/echelon.py:32
+msgid "Course End Date"
+msgstr ""
+
 #: ./content/course.py:45
 msgid "Course Fee"
 msgstr ""
@@ -65,8 +73,16 @@ msgstr ""
 msgid "Course Scope"
 msgstr ""
 
+#: ./content/echelon.py:27
+msgid "Course Start Date"
+msgstr ""
+
 #: ./profiles/default/types/Subject.xml
 msgid "Course subject details."
+msgstr ""
+
+#: ./content/echelon.py:21
+msgid "During Time"
 msgstr ""
 
 #: ./profiles/default/types/Echelon.xml
@@ -93,6 +109,18 @@ msgstr ""
 
 #: ./content/course.py:94
 msgid "If 0, no need retraining."
+msgstr ""
+
+#: ./vocabularies/class_time.py:28
+msgid "In day"
+msgstr ""
+
+#: ./vocabularies/class_time.py:29
+msgid "In evening"
+msgstr ""
+
+#: ./vocabularies/class_time.py:30
+msgid "In weekend"
 msgstr ""
 
 #: ./configure.zcml:29
@@ -146,6 +174,10 @@ msgstr ""
 
 #: ./content/course.py:57
 msgid "Trainee"
+msgstr ""
+
+#: ./content/echelon.py:42
+msgid "Training Center"
 msgstr ""
 
 #: ./profiles/default/types/TrainingCenter.xml

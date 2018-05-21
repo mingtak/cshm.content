@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 04:22+0000\n"
+"POT-Creation-Date: 2018-05-21 05:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -17,6 +17,10 @@ msgstr ""
 #: ./content/course.py:82
 msgid "Certificate Code"
 msgstr "證書編碼"
+
+#: ./content/echelon.py:37
+msgid "Class Time, ex. 0900-1800"
+msgstr "上課時間，例: 0900-1800"
 
 #: ./profiles/default/types/Classroom.xml
 msgid "Classroom"
@@ -46,6 +50,10 @@ msgstr "課程資料基別"
 msgid "Course Effective"
 msgstr "課程效力"
 
+#: ./content/echelon.py:32
+msgid "Course End Date"
+msgstr "課程結束日期"
+
 #: ./content/course.py:45
 msgid "Course Fee"
 msgstr "課程費用"
@@ -62,9 +70,17 @@ msgstr "上課資格"
 msgid "Course Scope"
 msgstr "適用範圍"
 
+#: ./content/echelon.py:27
+msgid "Course Start Date"
+msgstr "課程開始日期"
+
 #: ./profiles/default/types/Subject.xml
 msgid "Course subject details."
 msgstr "課程科目"
+
+#: ./content/echelon.py:21
+msgid "During Time"
+msgstr "時段"
 
 #: ./profiles/default/types/Echelon.xml
 msgid "Echelon"
@@ -91,6 +107,18 @@ msgstr "若不輸入或設為 0 ，表示為電洽"
 #: ./content/course.py:94
 msgid "If 0, no need retraining."
 msgstr "若不輸入或設為 0 ，表示不需回訓"
+
+#: ./vocabularies/class_time.py:28
+msgid "In day"
+msgstr "日間"
+
+#: ./vocabularies/class_time.py:29
+msgid "In evening"
+msgstr "夜間"
+
+#: ./vocabularies/class_time.py:30
+msgid "In weekend"
+msgstr "假日"
 
 #: ./configure.zcml:29
 msgid "Installs the cshm.content add-on."
@@ -144,6 +172,10 @@ msgstr "教師"
 #: ./content/course.py:57
 msgid "Trainee"
 msgstr "訓練對象"
+
+#: ./content/echelon.py:42
+msgid "Training Center"
+msgstr "訓練中心"
 
 #: ./profiles/default/types/TrainingCenter.xml
 msgid "TrainingCenter"
