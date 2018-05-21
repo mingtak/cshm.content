@@ -1,0 +1,171 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-05-21 04:07+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: cshm.content\n"
+
+#: ./content/course.py:82
+msgid "Certificate Code"
+msgstr ""
+
+#: ./profiles/default/types/Classroom.xml
+msgid "Classroom"
+msgstr ""
+
+#: ./profiles/default/types/Classroom.xml
+msgid "Configure Classroom Information"
+msgstr ""
+
+#: ./profiles/default/types/Teacher.xml
+msgid "Configure Teacher Information"
+msgstr ""
+
+#: ./profiles/default/types/TrainingCenter.xml
+msgid "Configure Training Center Information"
+msgstr ""
+
+#: ./profiles/default/types/Course.xml
+msgid "Course"
+msgstr ""
+
+#: ./profiles/default/types/Course.xml
+msgid "Course Content type for CSHM"
+msgstr ""
+
+#: ./content/course.py:67
+msgid "Course Effective"
+msgstr ""
+
+#: ./content/course.py:45
+msgid "Course Fee"
+msgstr ""
+
+#: ./content/course.py:38
+msgid "Course Hours"
+msgstr ""
+
+#: ./content/course.py:52
+msgid "Course Required"
+msgstr ""
+
+#: ./content/course.py:62
+msgid "Course Scope"
+msgstr ""
+
+#: ./profiles/default/types/Subject.xml
+msgid "Course subject details."
+msgstr ""
+
+#: ./profiles/default/types/Echelon.xml
+msgid "Echelon"
+msgstr ""
+
+#: ./profiles/default/types/Echelon.xml
+msgid "Echelon content type"
+msgstr ""
+
+#: ./profiles/default/types/Classroom.xml
+#: ./profiles/default/types/Course.xml
+#: ./profiles/default/types/Echelon.xml
+msgid "Edit"
+msgstr ""
+
+#: ./content/course.py:33
+msgid "Handbook Title"
+msgstr ""
+
+#: ./content/course.py:40
+msgid "If 0, asking for phone"
+msgstr ""
+
+#: ./configure.zcml:29
+msgid "Installs the cshm.content add-on."
+msgstr ""
+
+#: ./content/course.py:72
+msgid "Introduction"
+msgstr ""
+
+#: ./content/course.py:99
+msgid "License Type"
+msgstr ""
+
+#: ./content/classroom.py:20
+msgid "Number of seats."
+msgstr ""
+
+#: ./content/course.py:77
+msgid "Other Note"
+msgstr ""
+
+#: ./content/course.py:27
+msgid "Retrainging Course"
+msgstr ""
+
+#: ./content/course.py:22
+msgid "Retraining Base On"
+msgstr ""
+
+#: ./content/course.py:92
+msgid "Retraining Years"
+msgstr ""
+
+#: ./content/course.py:87
+msgid "Sample Title"
+msgstr ""
+
+#: ./content/classroom.py:19
+msgid "Seat"
+msgstr ""
+
+#: ./profiles/default/types/Subject.xml
+msgid "Subject"
+msgstr ""
+
+#: ./content/subject.py:21
+#: ./profiles/default/types/Teacher.xml
+msgid "Teacher"
+msgstr ""
+
+#: ./content/course.py:57
+msgid "Trainee"
+msgstr ""
+
+#: ./profiles/default/types/TrainingCenter.xml
+msgid "TrainingCenter"
+msgstr ""
+
+#: ./configure.zcml:38
+msgid "Uninstalls the cshm.content add-on."
+msgstr ""
+
+#: ./profiles/default/types/Classroom.xml
+#: ./profiles/default/types/Course.xml
+#: ./profiles/default/types/Echelon.xml
+msgid "View"
+msgstr ""
+
+#: ./configure.zcml:29
+msgid "cshm.content"
+msgstr ""
+
+#: ./configure.zcml:38
+msgid "cshm.content (uninstall)"
+msgstr ""
+
+#: ./content/course.py:94
+msgid "if 0, no need retraining."
+msgstr ""
