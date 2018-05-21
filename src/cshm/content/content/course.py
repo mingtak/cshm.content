@@ -91,7 +91,7 @@ class ICourse(model.Schema):
     reTrainingYears = schema.Int(
         title=_(u"Retraining Years"),
         default=0,
-        description=_(u"if 0, no need retraining."),
+        description=_(u"If 0, no need retraining."),
         required=True,
     )
 
