@@ -15,6 +15,21 @@ class ITrainingcenter(model.Schema):
     """ Marker interface and Dexterity Python Schema for Trainingcenter
     """
 
+    address = schema.TextLine(
+        title=_(u"Address"),
+        required=True,
+    )
+
+    phone = schema.TextLine(
+        title=_(u"Phone Number."),
+        required=True,
+    )
+
+    fax = schema.TextLine(
+        title=_(u"Fax Number."),
+        required=True,
+    )
+
     # directives.widget(level=RadioFieldWidget)
     # level = schema.Choice(
     #     title=_(u'Sponsoring Level'),

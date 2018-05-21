@@ -40,6 +40,7 @@
     <element value="plone.app.content.interfaces.INameFromTitle"/>
     <element value="plone.app.dexterity.behaviors.id.IShortName"/>
     <element value="plone.app.dexterity.behaviors.metadata.IBasic"/>
+    <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
   </property>
 
   <!-- View information -->
