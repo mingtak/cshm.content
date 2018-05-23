@@ -48,7 +48,7 @@
 </ul>
 <hr>
 <h4>個人資料</h4>
-    <form action="${context/absolute_url}/@@reg_course" method="get">
+    <form action="${context/absolute_url}/@@reg_course" method="post">
       <input type="text" name="studId" id="studId" value="" placeholder="身份證字號" required><br>
       <input type="text" name="name" id="name" value="" placeholder="姓名" required><br>
       <label for="birthday">出生日期</label>
