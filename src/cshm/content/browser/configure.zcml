@@ -36,5 +36,21 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="teacher_basic_info"
+      for="*"
+      class=".views.TeacherBasicInfo"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="create_teacher"
+      for="*"
+      class=".views.CreateTeacher"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 
 </configure>
