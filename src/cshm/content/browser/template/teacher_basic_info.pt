@@ -1,0 +1,230 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="cshm.content">
+<body>
+<metal:content-core fill-slot="content-core">
+<metal:content-core define-macro="content-core" tal:define="toc context/table_of_contents|nothing;">
+    <form action="teacher_basic_info" method="post">
+        <table class="table">
+            <tr>
+                <td>講師號碼</td>
+                <td><input type="text" name="teacher_id"></td>
+            </tr>
+            <tr>
+                <td>講師編號</td>
+                <td><input type="text" name="teacher_num"></td>
+            </tr>
+            <tr>
+                <td>帳號</td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td>密碼</td>
+                <td><input type="text" name="password"></td>
+            </tr>
+            <tr>
+                <td>身份證字號</td>
+                <td><input type="text" name="ID_number" pattern="[A-Za-z](1|2)\d{8}" required></td>
+            </tr>
+            <tr>
+                <td>姓名</td>
+                <td><input type="text" name="name" pattern="[^' ']+" title="請勿輸入空白" required></td>
+            </tr>
+            <tr>
+                <td>性別</td>
+                <td>
+                    <label><input type="radio" name="gender" value="1">男</label>
+                    <label><input type="radio" name="gender" value="0">女</label>
+                </td>
+            </tr>
+            <tr>
+                <td>生日</td>
+                <td><input type="date" name="birthday"></td>
+            </tr>
+            <tr>
+                <td>住家電話</td>
+                <td><input type="tel" name="telephone" pattern="[0-9+]{1}[0-9-* ]{0,}"></td>
+            </tr>
+            <tr>
+                <td>手機</td>
+                <td><input type="tel" name="cellphone" pattern="[0][9][0-9]{8}" title="09********"></td>
+            </tr>
+            <tr>
+                <td>傳真</td>
+                <td><input type="tel" name="fax" pattern="[0-9+]{1}[0-9-* ]{0,}"></td>
+            </tr>
+            <tr>
+                <td>E-Mail</td>
+                <td><input type="email" name="email"></td>
+            </tr>
+            <tr>
+                <td>戶籍地址</td>
+                <td><input type="text" name="residence_addr"></td>
+            </tr>
+            <tr>
+                <td>聯絡地址</td>
+                <td><input type="text" name="mailing_addr"></td>
+            </tr>
+            <tr>
+                <td>學歷1</td>
+                <td><input type="text" name="education"></td>
+            </tr>
+            <tr>
+                <td>科系</td>
+                <td><input type="text" name="department"></td>
+            </tr>
+            <tr>
+                <td>學位</td>
+                <td><input type="text" name="degree"></td>
+            </tr>
+            <tr>
+                <td>畢業日期</td>
+                <td><input type="month" name="graduation"></td>
+            </tr>
+            <tr>
+                <td>學歷2</td>
+                <td><input type="text" name="education2"></td>
+            </tr>
+            <tr>
+                <td>科系</td>
+                <td><input type="text" name="department2"></td>
+            </tr>
+            <tr>
+                <td>學位</td>
+                <td><input type="text" name="degree2"></td>
+            </tr>
+            <tr>
+                <td>畢業日期</td>
+                <td><input type="month" name="graduation2"></td>
+            </tr>
+            <tr>
+                <td>學歷3</td>
+                <td><input type="text" name="education3"></td>
+            </tr>
+            <tr>
+                <td>科系</td>
+                <td><input type="text" name="department3"></td>
+            </tr>
+            <tr>
+                <td>學位</td>
+                <td><input type="text" name="degree3"></td>
+            </tr>
+            <tr>
+                <td>畢業日期</td>
+                <td><input type="month" name="graduation3"></td>
+            </tr>
+            <tr>
+                <td>服務單位</td>
+                <td><input type="text" name="service_units"></td>
+            </tr>
+            <tr>
+                <td>服務部門</td>
+                <td><input type="text" name="service_department"></td>
+            </tr>
+            <tr>
+                <td>現職</td>
+                <td><input type="text" name="present_job"></td>
+            </tr>
+            <tr>
+                <td>到職日</td>
+                <td><input type="date" name="working_day"></td>
+            </tr>
+            <tr>
+                <td>單位電話</td>
+                <td><input type="tel" name="units_phone" pattern="[0-9+]{1}[0-9-* ]{0,}"></td>
+            </tr>
+            <tr>
+                <td>單位地址</td>
+                <td><input type="text" name="units_addr"></td>
+            </tr>
+            <tr>
+                <td>經歷</td>
+                <td><textarea name="experience" ></textarea></td>
+            </tr>
+            <tr>
+                <td>證照</td>
+                <td><textarea name="license" ></textarea></td>
+            </tr>
+            <tr>
+                <td>授課區域</td>
+                <td>
+                    <tal:repeat repeat="item python: view.teachingAreaList.keys()">
+                    <label><input type="checkbox" name="teaching_area"  value=${item} >${python: view.teachingAreaList[item]}</label>
+                    </tal:repeat>
+                </td>
+            </tr>
+            <tr>
+                <td>優先授課區域</td>
+                <td>
+                    <select name="priority_area">
+                        <option value="">請選擇</option>
+                        <tal:repeat repeat="item python: view.teachingAreaList.keys()">
+                            <option value=${item}>${python: view.teachingAreaList[item]}</option>
+                        </tal:repeat>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>推薦人</td>
+                <td><input type="text" name="recommender"></td>
+            </tr>
+            <tr>
+                <td>推薦方式</td>
+                <td><input type="text" name="recommended_way"></td>
+            </tr>
+            <tr>
+                <td>講師修改</td>
+                <td><input type="text" name="teacher_modify"></td>
+            </tr>
+            <tr>
+                <td>本會修改</td>
+                <td><input type="text" name="union_modify"></td>
+            </tr>
+            <tr>
+                <td>isEnabled</td>
+                <td>
+                    <label><input type="radio" name="isEnabled" value="1">是</label>
+                    <label><input type="radio" name="isEnabled" value="0">否</label>
+                </td>
+            </tr>
+            <tr>
+                <td>idBaseEditLock</td>
+                <td>
+                    <label><input type="radio" name="isBaseEditLock" value="1">是</label>
+                    <label><input type="radio" name="isBaseEditLock" value="0">否</label>
+                </td>
+            </tr>
+            <tr>
+                <td>isCourseEditLock</td>
+                <td>
+                    <label><input type="radio" name="isCourseEdieLock" value="1">是</label>
+                    <label><input type="radio" name="isCourseEdieLock" value="0">否</label>
+                </td>
+            </tr>
+            <tr>
+                <td>審核狀態</td>
+                <td><input type="text" name=""></td>
+            </tr>
+            <tr>
+                <td>審核備註</td>
+                <td><input type="text" name=""></td>
+            </tr>
+            <tr>
+                <td>建檔人</td>
+                <td><input type="text" name=""></td>
+            </tr>
+        </table>
+        <input type="submit" value="送出">
+    </form>
+
+    <script>
+        
+    </script>
+</metal:content-core>
+</metal:content-core>
+</body>
+</html>

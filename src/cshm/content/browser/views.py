@@ -130,7 +130,6 @@ class CreateTeacher(BrowserView):
             for row in reader:
                 teacherList.append(row)
             teacherList.pop(0)
-            import pdb;pdb.set_trace()
             for teacher in teacherList:
                 try:
                     checkExist = False
