@@ -64,47 +64,60 @@ class TeacherBasicInfo(BrowserView):
         self.teachingAreaList = teachingAreaList
 
         formdata = self.request.form
-        import pdb;pdb.set_trace()
         try:
             if formdata.has_key('name'):
-                mana_teacher = api.content.get(path='/cshm/resource/mana_teacher')
-                obj = api.content.create(type = 'Teacher', title = formdata['name'], container = mana_teacher)
-                
+
                 sqlInstance = SqlObj()
-                sqlStr = "SELECT * FROM `teacher_basic_info`"
-                sqlresult = sqlInstance.execSql(sqlStr)
-                teacherTbColumn = sqlResult[0].keys()
-                columnStr = ''
-                for i, item in enumerate(teacherTbColumn):
-                    if i != 0 : 
-                        columnStr += ', '
-                    columnStr += '`{}`'.format(item.encode('utf-8'))
-                
-                teacherTbColumn.remove('uid')
-                teacherTbColumn.remove('path')
-                dataStr = ''
-                for i, item in enumerate(teacherTbColumn):
-                    if i != 0:
-                        columnStr += ', '
-                    if item in [gender, birthday, working_day, isEnabled, isBaseEditLock, isCourseEdieLock]:
-                        dataStr += "'{}'".format(formdata.get(item, '')) if formdata.get(item, '') != '' else 'NULL'
-                    else:
-                        dataStr += "'{}'".format(formdata.get(item, ''))
-                dataStr += ", '{}', '{}'".format(obj.UID(), obj.absolute_url_path())
-                        
-                sqlinstance = sqlobj()
-                sqlstr = """insert into `teacher_basic_info`({}) values ({})""".format(columnStr, dataStr)
-    #            sqlInstance.execSql(sqlStr)
-                import pdb;pdb.set_trace()
+                sqlStr = "SELECT `name`,`ID_number` FROM `teacher_basic_info`"
+                sqlResult = sqlInstance.execSql(sqlStr)
+                checkExist = False
+                for item in sqlResult:
+                    if [ formdata['name'].decode('utf8'), formdata['ID_number'] ] == item.values():
+                        checkExist =  True
+                if not checkExist:
+                    mana_teacher = api.content.get(path='/cshm/resource/mana_teacher')
+                    obj = api.content.create(type = 'Teacher', title = formdata['name'], container = mana_teacher)
+                    
+                    sqlInstance = SqlObj()
+                    sqlStr = "SELECT * FROM `teacher_basic_info`"
+                    sqlResult = sqlInstance.execSql(sqlStr)
+                    teacherTbColumn = sqlResult[0].keys()
+                    columnStr = ''
+                    for i, item in enumerate(teacherTbColumn):
+                        if i != 0 : 
+                            columnStr += ', '
+                        columnStr += '`{}`'.format(item.encode('utf-8'))
+                    
+                    teacherTbColumn.remove('uid')
+                    teacherTbColumn.remove('path')
+                    dataStr = ''
+                    for i, item in enumerate(teacherTbColumn):
+                        if i != 0:
+                            dataStr += ', '
+                        if item in ['gender', 'birthday', 'working_day', 'isEnabled', 'isBaseEditLock', 'isCourseEdieLock']:
+                            dataStr += "{}".format(formdata.get(item, '')) if formdata.get(item, '') != '' else 'NULL'
+                        elif item == 'teaching_area':
+                            dataStr += "'"
+                            for area in formdata.get(item, ''):
+                                dataStr += "{},".format(area) if area != '' else ''
+                            dataStr += "'"
+                        else:
+                            dataStr += "'{}'".format(formdata.get(item, ''))
+                    dataStr += ", '{}', '{}'".format(obj.UID(), obj.absolute_url_path())
+                            
+                    sqlinstance = SqlObj()
+                    sqlStr = """insert into `teacher_basic_info`({}) values ({})""".format(columnStr, dataStr)
+                    sqlInstance.execSql(sqlStr)
+                else:
+                    api.portal.show_message(message='此姓名及身份證字號已存在'.decode('utf8'), request=self.request, type='error')
         except Exception as e:
             import pdb;pdb.set_trace()
-
         return self.template()
 
 
 class CreateTeacher(BrowserView):
 
-    template = ViewPageTemplateFile("template/teacher_basic_info.pt")
+    template = ViewPageTemplateFile("template/empty_view.pt")
 
     def __call__(self):
         import pdb;pdb.set_trace()
@@ -117,31 +130,18 @@ class CreateTeacher(BrowserView):
             for row in reader:
                 teacherList.append(row)
             teacherList.pop(0)
-            index = 0
+            import pdb;pdb.set_trace()
             for teacher in teacherList:
                 try:
-                    print str(index) + teacher[4]
-                    index+=1
-                    mana_teacher = api.content.get(path='/cshm/resource/mana_teacher')
-                    teachers = api.content.find(context=mana_teacher, portal_type='Teacher')
-                    checkExist = True
-                    for item in teachers:
-                        if item.getObject().title.encode('utf8').find(teacher[4]) != -1:
-                            checkExist = False
-                            obj = item.getObject()
-                            break
-                    if checkExist:
-                        obj = api.content.create(type = 'Teacher', title = teacher[4], container = mana_teacher)
-                    else:
-                        print teacher[4] + 'content already created ...........................................................'
-                    checkExist = True
+                    checkExist = False
                     sqlInstance = SqlObj()
-                    sqlStr = """SELECT name FROM `teacher_basic_info` WHERE name LIKE '{}'""".format(teacher[4])
-                    sqlresult = sqlInstance.execSql(sqlStr)
-                    
-                    if sqlresult != []:
-                        checkExist = False
-                    if checkExist:
+                    name = teacher[4] if teacher[4]!='-' and teacher[4]!='*' and teacher[4]!='無' else ''
+                    id_num = teacher[3] if teacher[3]!='-' and teacher[3]!='*' and teacher[3]!='無' else ''
+                    sqlStr = """SELECT name FROM `teacher_basic_info` WHERE name LIKE '{}' AND `ID_number` LIKE '{}' """.format(name, id_num)
+                    sqlResult = sqlInstance.execSql(sqlStr)
+                    if sqlResult != []:
+                        checkExist = True
+                    if not checkExist:
                         teacher[7] = teacher[7].replace('-', '').replace('**', '')
                         teacher[8] = teacher[8].replace('-', '').replace('**', '')
                         teacher[9] = teacher[9].replace('-', '').replace('**', '')
@@ -151,17 +151,16 @@ class CreateTeacher(BrowserView):
                         graduation3 = str(int(teacher[29])+1911) + '-' + teacher[30] if teacher[29]!='' and int(teacher[29])!=0 else''
                         birthday ='"'+str(datetime.date(int(teacher[7])+1911, int(teacher[8]), int(teacher[9])))+'"' if teacher[8]!='' and int(teacher[8])!=0 else 'NULL'
                         working_day = '"'+str(datetime.datetime.strptime(teacher[34], "%Y年%m月%d日 %H時%M分%S秒").date()) +'"'if teacher[34]!='' else 'NULL'
-                        import pdb;pdb.set_trace()
                         sqlInstance = SqlObj()
                         sqlStr = "SELECT * FROM `teaching_area`"
-                        sqlresult = sqlInstance.execSql(sqlStr)
+                        sqlResult = sqlInstance.execSql(sqlStr)
                         areaStr = ''
                         areaNum = ''
                         priority_areaNum = ''
                         for i in range(40,54):
                             areaStr += teacher[i]
                         areaStr += teacher[65]
-                        for k, v in sqlresult:
+                        for k, v in sqlResult:
                             if areaStr.find(v.encode('utf-8')) != -1:
                                 areaNum += str(k) + ','
                             if teacher[64].find(v.encode('utf-8')) != -1:
@@ -175,8 +174,12 @@ class CreateTeacher(BrowserView):
                             teacher[i] = teacher[i].replace("'", '')
                             if item == '無' or item == '' or item == '-' or item == '**':
                                 teacher[i] = ''
-                        sqlinstance = sqlobj()
-                        sqlstr = """insert into `teacher_basic_info`(
+                        sqlinstance = SqlObj()
+                        
+                        mana_teacher = api.content.get(path='/cshm/resource/mana_teacher')
+                        obj = api.content.create(type = 'Teacher', title = teacher[4], container = mana_teacher)
+                    
+                        sqlStr = """insert into `teacher_basic_info`(
                         `teacher_id`, `teacher_num`, `username`, `password`, `id_number`, `name`, `gender`, `birthday`, `telephone`, `cellphone`, `fax`, `email`, `residence_addr`, `mailing_addr`, `education`, `department`, `degree`, `graduation`, `education2`, `department2`, `degree2`, `graduation2`, `education3`, `department3`, `degree3`, `graduation3`, `service_units`, `service_department`, `present_job`, `working_day`, `units_phone`, `units_addr`, `experience`, `license`, `teaching_area`, `priority_area`, `recommender`, `recommended_way`, `teacher_modify`, `union_modify`, `isenabled`, `isbaseeditlock`, `iscourseedielock`, `disable_reason`, `review_status`, `review_note`, `filer`, `uid`, `path`) values 
                         ('{}','{}','{}','{}','{}','{}', {} , {}, '{}','{}',  '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
                          '{}','{}','{}','{}','{}','{}','{}','{}','{}', {},   '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
@@ -189,14 +192,15 @@ class CreateTeacher(BrowserView):
                         teacher[56], teacher[57], teacher[61], teacher[58], teacher[59], teacher[60],  teacher[39], 
                         obj.UID(),     obj.absolute_url_path() )
                         sqlInstance.execSql(sqlStr)
-                            
-                        print teacher[4]
                     else:
                         print teacher[4] + 'already creade in database~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
                 except Exception as e:
-                    import pdb;pdb.set_trace()
                     errorItem.update({teacher[4]: e})
         import pdb;pdb.set_trace()
+        errorMessage = ''
         for k, v in errorItem.iteritems():
-            print '{}:  {}'.format(k,v)
+            errorMessage += '{}:  {}\n'.format(k,v)
+        if errorItem == {}:
+            errorMessage = '已成功新增所有資料'
+        self.errorMessage = errorMessage
         return self.template()
