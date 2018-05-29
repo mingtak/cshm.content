@@ -14,8 +14,6 @@
         title="Category"
         description="use on Link"
         provides=".category.ICategory"
-        factory=".category.Category"
-        marker=".category.ICategory"
         />
 
         
