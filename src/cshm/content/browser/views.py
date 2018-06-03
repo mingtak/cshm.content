@@ -23,7 +23,6 @@ class CoverListing(BrowserView):
         query.update(kw)
 
         # 限定範圍: ['News Item', 'Link']
-#        import pdb; pdb.set_trace()
         query['portal_type'] = ['News Item', 'Link']
         query['path'] = {
             'query': '/'.join(self.context.getPhysicalPath()),
