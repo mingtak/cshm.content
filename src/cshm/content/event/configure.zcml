@@ -1,0 +1,32 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="cshm.content">
+
+    <subscriber
+        for="plone.app.contenttypes.interfaces.IDocument zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+    <subscriber
+        for="plone.app.contenttypes.interfaces.ICollection zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+    <subscriber
+        for="plone.app.contenttypes.interfaces.IFolder zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+    <subscriber
+        for="plone.app.contenttypes.interfaces.ILink zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+    <subscriber
+        for="plone.app.contenttypes.interfaces.IEvent zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+    <subscriber
+        for="plone.app.contenttypes.interfaces.INewsItem zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+
+</configure>
+

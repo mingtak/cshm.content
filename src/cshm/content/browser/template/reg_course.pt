@@ -13,7 +13,42 @@
                     tal:define="toc context/table_of_contents|nothing;">
 
 <div class="row">
-  <div class="col-md-4">
+
+
+  <div class="col-md-12">
+    <h3>網路線上報名系統</h3>
+<h4>課程資訊</h4>
+<ul>
+  <li>課程名稱: ${python:context.getParentNode().title} / ${context/title}</li>
+  <li>時段: <span i18n:translate="">${context/duringTime}</span></li>
+  <li>上課地點: ${context/trainingCenter/to_object/title}</li>
+</ul>
+<hr>
+<h4>個人資料</h4>
+    <form action="${context/absolute_url}/@@reg_course" method="post">
+<p>      <input type="text" name="studId" id="studId" value="" placeholder="身份證字號" required></p>
+<p>      <input type="text" name="name" id="name" value="" placeholder="姓名" required></p>
+<p>      <label for="birthday">出生日期</label>
+<p>      <input type="date" name="birthday" id="birthday" value="" required></p>
+<p>      <input type="text" name="phone" id="phone" value="" placeholder="聯絡電話" required></p>
+<p>      <input type="text" name="cellphone" id="cellphone" value="" placeholder="行動電話" required></p>
+<p>      <input type="text" name="fax" id="fax" value="" placeholder="傳真電話"></p>
+<p>      <input type="text" name="address" id="address" value="" placeholder="聯絡地址" required></p>
+<p>      <input type="email" name="priv-email" id="priv-email" value="" placeholder="電子郵件(私人)" required></p>
+<p>      <input type="email" name="com-email" id="com-email" value="" placeholder="電子郵件(公司)"></p>
+<hr>
+
+
+<h4>公司資料</h4>
+<p>      <input type="text" name="company-name" id="company-name" value="" placeholder="服務單位"></p>
+<p>      <input type="text" name="job-title" id="job-title" value="" placeholder="職稱"></p>
+<p>      <input type="text" name="company-address" id="company-address" value="" placeholder="公司地址"></p>
+<hr>
+<h4>收據資料</h4>
+<p>      <input type="text" name="tax-title" id="tax-title" value="" placeholder="收據抬頭"></p>
+<p>      <input type="text" name="tax-no" id="tax-no" value="" placeholder="統一編號"></p>
+
+<hr>
     <h3>個人資料使用同意書</h3>
     <ol>
 <li>
@@ -35,41 +70,6 @@
 台端得自由選擇是否提供個人資料或行使個人資料保護法第三條所定之權利，但報名學員提供資料不足或有其他冒用、盜用、不實之情形，台端將無法進行必要之審核及處理作業，致無法提供台端相關服務。
 </li>
     </ol>
-  </div>
-
-
-  <div class="col-md-8">
-    <h3>網路線上報名系統</h3>
-<h4>課程資訊</h4>
-<ul>
-  <li>課程名稱: ${python:context.getParentNode().title} / ${context/title}</li>
-  <li>時段: <span i18n:translate="">${context/duringTime}</span></li>
-  <li>上課地點: ${context/trainingCenter/to_object/title}</li>
-</ul>
-<hr>
-<h4>個人資料</h4>
-    <form action="${context/absolute_url}/@@reg_course" method="post">
-      <input type="text" name="studId" id="studId" value="" placeholder="身份證字號" required><br>
-      <input type="text" name="name" id="name" value="" placeholder="姓名" required><br>
-      <label for="birthday">出生日期</label>
-      <input type="date" name="birthday" id="birthday" value="" required><br>
-      <input type="text" name="phone" id="phone" value="" placeholder="聯絡電話" required><br>
-      <input type="text" name="cellphone" id="cellphone" value="" placeholder="行動電話" required><br>
-      <input type="text" name="fax" id="fax" value="" placeholder="傳真電話"><br>
-      <input type="text" name="address" id="address" value="" placeholder="聯絡地址" required><br>
-      <input type="email" name="priv-email" id="priv-email" value="" placeholder="電子郵件(私人)" required><br>
-      <input type="email" name="com-email" id="com-email" value="" placeholder="電子郵件(公司)"><br>
-<hr>
-
-
-<h4>公司資料</h4>
-      <input type="text" name="company-name" id="company-name" value="" placeholder="服務單位"><br>
-      <input type="text" name="job-title" id="job-title" value="" placeholder="職稱"><br>
-      <input type="text" name="company-address" id="company-address" value="" placeholder="公司地址"><br>
-<hr>
-<h4>收據資料</h4>
-      <input type="text" name="tax-title" id="tax-title" value="" placeholder="收據抬頭"><br>
-      <input type="text" name="tax-no" id="tax-no" value="" placeholder="統一編號"><br>
 
 <input type="submit" name="submit" value="確認送出" class="btn btn-info">
     </form>

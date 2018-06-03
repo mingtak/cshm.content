@@ -4,8 +4,69 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone import api
 from Products.CMFPlone.utils import safe_unicode
+from Products.CMFPlone.PloneBatch import Batch
+from Acquisition import aq_inner
+from plone.app.contenttypes.browser.folder import FolderView
+
+from plone.app.contentlisting.interfaces import IContentListing
+from Products.CMFCore.utils import getToolByName
+
 from mingtak.ECBase.browser.views import SqlObj
 import logging
+
+
+# 仿寫自 folderListing,
+class CoverListing(BrowserView):
+
+    def __call__(self, batch=False, b_size=20, b_start=0, orphan=0, **kw):
+        query = {}
+        query.update(kw)
+
+        # 限定範圍: ['News Item', 'Link']
+#        import pdb; pdb.set_trace()
+        query['portal_type'] = ['News Item', 'Link']
+        query['path'] = {
+            'query': '/'.join(self.context.getPhysicalPath()),
+            'depth': 1,
+        }
+
+        # if we don't have asked explicitly for other sorting, we'll want
+        # it by position in parent
+        if 'sort_on' not in query:
+            query['sort_on'] = 'getObjPositionInParent'
+
+        # Provide batching hints to the catalog
+        if batch:
+            query['b_start'] = b_start
+            query['b_size'] = b_size + orphan
+
+        catalog = getToolByName(self.context, 'portal_catalog')
+        results = catalog(query)
+        return IContentListing(results)
+
+
+class CoverView(FolderView):
+
+    def results(self, **kwargs):
+        # Extra filter
+        portal = api.portal.get()
+
+        kwargs.update(self.request.get('contentFilter', {}))
+        if 'object_provides' not in kwargs:  # object_provides is more specific
+            kwargs.setdefault('portal_type', self.friendly_types)
+        kwargs.setdefault('batch', True)
+        kwargs.setdefault('b_size', self.b_size)
+        kwargs.setdefault('b_start', self.b_start)
+
+        #
+        listing = aq_inner(portal['news']).restrictedTraverse(
+            '@@coverListing', None)
+
+        if listing is None:
+            return []
+        results = listing(**kwargs)
+
+        return results
 
 
 class RegCourse(BrowserView):

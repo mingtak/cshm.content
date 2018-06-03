@@ -19,6 +19,24 @@
       />
 
   <!-- Browser -->
+
+  <browser:page
+      name="coverListing"
+      class=".views.CoverListing"
+      permission="zope2.View"
+      for="Products.CMFCore.interfaces.IFolderish"
+      />
+
+  <browser:page
+      name="cover_view"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".views.CoverView"
+      permission="zope2.View"
+      template="template/cover_view.pt"
+      menu="plone_displayviews"
+      title="Cover view"
+      />
+
   
   <browser:page
       name="course_listing"
