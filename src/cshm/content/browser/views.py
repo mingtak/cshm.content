@@ -93,12 +93,21 @@ class RegCourse(BrowserView):
         return
 
 
+class CourseInfo(BrowserView):
+
+    template = ViewPageTemplateFile('template/course_info.pt')
+
+    def __call__(self):
+        return self.template()
+
+
 class CourseListing(BrowserView):
 
     template = ViewPageTemplateFile("template/course_listing.pt")
 
     def __call__(self):
         self.portal = api.portal.get()
+        #TODO 條件尚未明確 
         self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
 
         return self.template()

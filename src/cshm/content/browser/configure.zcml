@@ -54,5 +54,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="course_info"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.CourseInfo"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 
 </configure>
