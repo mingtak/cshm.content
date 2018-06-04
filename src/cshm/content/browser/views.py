@@ -127,3 +127,14 @@ class EchelonListing(BrowserView):
 
         return self.template()
 
+
+class TeacherAppointment(BrowserView):
+
+    """ 教師聘書 套表作業(docx) """
+
+    template = ViewPageTemplateFile("template/teacher_appointment.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        return self.template()
+
