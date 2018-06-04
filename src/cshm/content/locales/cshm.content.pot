@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 06:49+0000\n"
+"POT-Creation-Date: 2018-06-04 03:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: cshm.content\n"
+
+#: ./browser/template/reg_course.pt:23
+msgid "${context/duringTime}"
+msgstr ""
 
 #: ./browser/template/course_listing.pt:19
 msgid "${obj/duringTime}"
@@ -29,7 +33,7 @@ msgstr ""
 msgid "Attach File"
 msgstr ""
 
-#: ./content/course.py:82
+#: ./content/course.py:84
 msgid "Certificate Code"
 msgstr ""
 
@@ -53,6 +57,10 @@ msgstr ""
 msgid "Configure Training Center Information"
 msgstr ""
 
+#: ./content/echelon.py:78
+msgid "Contact"
+msgstr ""
+
 #: ./profiles/default/types/Course.xml
 msgid "Course"
 msgstr ""
@@ -61,7 +69,7 @@ msgstr ""
 msgid "Course Content type for CSHM"
 msgstr ""
 
-#: ./content/course.py:67
+#: ./content/course.py:69
 msgid "Course Effective"
 msgstr ""
 
@@ -69,19 +77,19 @@ msgstr ""
 msgid "Course End Date"
 msgstr ""
 
-#: ./content/course.py:45
+#: ./content/echelon.py:63
 msgid "Course Fee"
 msgstr ""
 
-#: ./content/course.py:38
+#: ./content/echelon.py:103
 msgid "Course Hours"
 msgstr ""
 
-#: ./content/course.py:52
+#: ./content/course.py:54
 msgid "Course Required"
 msgstr ""
 
-#: ./content/course.py:62
+#: ./content/course.py:64
 msgid "Course Scope"
 msgstr ""
 
@@ -89,8 +97,32 @@ msgstr ""
 msgid "Course Start Date"
 msgstr ""
 
+#: ./content/echelon.py:68
+msgid "Course Status"
+msgstr ""
+
 #: ./profiles/default/types/Subject.xml
 msgid "Course subject details."
+msgstr ""
+
+#: ./browser/configure.zcml:38
+msgid "Cover view"
+msgstr ""
+
+#: ./content/echelon.py:120
+msgid "Crane Type"
+msgstr ""
+
+#: ./content/echelon.py:110
+msgid "Detail Class Time"
+msgstr ""
+
+#: ./content/echelon.py:93
+msgid "Discount Information, No Open"
+msgstr ""
+
+#: ./content/echelon.py:88
+msgid "Discount Program"
 msgstr ""
 
 #: ./content/echelon.py:21
@@ -119,24 +151,28 @@ msgstr ""
 msgid "Handbook Title"
 msgstr ""
 
-#: ./content/course.py:40
+#: ./content/echelon.py:105
 msgid "If 0, asking for phone"
 msgstr ""
 
-#: ./content/course.py:94
+#: ./content/course.py:96
 msgid "If 0, no need retraining."
 msgstr ""
 
-#: ./configure.zcml:29
+#: ./configure.zcml:31
 msgid "Installs the cshm.content add-on."
 msgstr ""
 
-#: ./content/course.py:72
+#: ./content/course.py:74
 msgid "Introduction"
 msgstr ""
 
-#: ./content/course.py:99
+#: ./content/course.py:101
 msgid "License Type"
+msgstr ""
+
+#: ./content/echelon.py:73
+msgid "Memo"
 msgstr ""
 
 #: ./content/subject.py:26
@@ -147,12 +183,24 @@ msgstr ""
 msgid "Number of seats."
 msgstr ""
 
-#: ./content/course.py:77
+#: ./content/course.py:79
 msgid "Other Note"
 msgstr ""
 
 #: ./content/trainingcenter.py:24
 msgid "Phone Number."
+msgstr ""
+
+#: ./content/echelon.py:98
+msgid "Prepare Information"
+msgstr ""
+
+#: ./content/echelon.py:83
+msgid "Registration Deadline"
+msgstr ""
+
+#: ./browser/views.py:91
+msgid "Registry success."
 msgstr ""
 
 #: ./content/course.py:27
@@ -163,11 +211,11 @@ msgstr ""
 msgid "Retraining Base On"
 msgstr ""
 
-#: ./content/course.py:92
+#: ./content/course.py:94
 msgid "Retraining Years"
 msgstr ""
 
-#: ./content/course.py:87
+#: ./content/course.py:89
 msgid "Sample Title"
 msgstr ""
 
@@ -183,12 +231,16 @@ msgstr ""
 msgid "Subject Hours"
 msgstr ""
 
+#: ./content/echelon.py:115
+msgid "Submit Class Date"
+msgstr ""
+
 #: ./content/subject.py:36
 #: ./profiles/default/types/Teacher.xml
 msgid "Teacher"
 msgstr ""
 
-#: ./content/course.py:57
+#: ./content/course.py:59
 msgid "Trainee"
 msgstr ""
 
@@ -200,7 +252,7 @@ msgstr ""
 msgid "TrainingCenter"
 msgstr ""
 
-#: ./configure.zcml:38
+#: ./configure.zcml:40
 msgid "Uninstalls the cshm.content add-on."
 msgstr ""
 
@@ -210,11 +262,11 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: ./configure.zcml:29
+#: ./configure.zcml:31
 msgid "cshm.content"
 msgstr ""
 
-#: ./configure.zcml:38
+#: ./configure.zcml:40
 msgid "cshm.content (uninstall)"
 msgstr ""
 

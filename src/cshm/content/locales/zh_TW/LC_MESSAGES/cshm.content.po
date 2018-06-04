@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-05-21 06:49+0000\n"
+"POT-Creation-Date: 2018-06-04 03:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -13,6 +13,10 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
+
+#: ./browser/template/reg_course.pt:23
+msgid "${context/duringTime}"
+msgstr ""
 
 #: ./browser/template/course_listing.pt:19
 msgid "${obj/duringTime}"
@@ -26,7 +30,7 @@ msgstr "地址"
 msgid "Attach File"
 msgstr "電子檔"
 
-#: ./content/course.py:82
+#: ./content/course.py:84
 msgid "Certificate Code"
 msgstr "證書編碼"
 
@@ -50,6 +54,10 @@ msgstr "教師基本資料"
 msgid "Configure Training Center Information"
 msgstr "各區練訓中心基本資料"
 
+#: ./content/echelon.py:78
+msgid "Contact"
+msgstr "聯絡資訊"
+
 #: ./profiles/default/types/Course.xml
 msgid "Course"
 msgstr "課程"
@@ -58,7 +66,7 @@ msgstr "課程"
 msgid "Course Content type for CSHM"
 msgstr "課程資料基別"
 
-#: ./content/course.py:67
+#: ./content/course.py:69
 msgid "Course Effective"
 msgstr "課程效力"
 
@@ -66,19 +74,19 @@ msgstr "課程效力"
 msgid "Course End Date"
 msgstr "課程結束日期"
 
-#: ./content/course.py:45
+#: ./content/echelon.py:63
 msgid "Course Fee"
 msgstr "課程費用"
 
-#: ./content/course.py:38
+#: ./content/echelon.py:103
 msgid "Course Hours"
 msgstr "課程時數"
 
-#: ./content/course.py:52
+#: ./content/course.py:54
 msgid "Course Required"
 msgstr "上課資格"
 
-#: ./content/course.py:62
+#: ./content/course.py:64
 msgid "Course Scope"
 msgstr "適用範圍"
 
@@ -86,9 +94,33 @@ msgstr "適用範圍"
 msgid "Course Start Date"
 msgstr "課程開始日期"
 
+#: ./content/echelon.py:68
+msgid "Course Status"
+msgstr "課程狀態"
+
 #: ./profiles/default/types/Subject.xml
 msgid "Course subject details."
 msgstr "課程科目"
+
+#: ./browser/configure.zcml:38
+msgid "Cover view"
+msgstr "首頁"
+
+#: ./content/echelon.py:120
+msgid "Crane Type"
+msgstr "起重機具機型"
+
+#: ./content/echelon.py:110
+msgid "Detail Class Time"
+msgstr "上課詳細時間"
+
+#: ./content/echelon.py:93
+msgid "Discount Information, No Open"
+msgstr "優惠辦法(不公開)"
+
+#: ./content/echelon.py:88
+msgid "Discount Program"
+msgstr "優惠方案"
 
 #: ./content/echelon.py:21
 msgid "During Time"
@@ -116,25 +148,29 @@ msgstr "傳真號碼"
 msgid "Handbook Title"
 msgstr "簡章標題"
 
-#: ./content/course.py:40
+#: ./content/echelon.py:105
 msgid "If 0, asking for phone"
 msgstr "若不輸入或設為 0 ，表示為電洽"
 
-#: ./content/course.py:94
+#: ./content/course.py:96
 msgid "If 0, no need retraining."
 msgstr "若不輸入或設為 0 ，表示不需回訓"
 
-#: ./configure.zcml:29
+#: ./configure.zcml:31
 msgid "Installs the cshm.content add-on."
 msgstr ""
 
-#: ./content/course.py:72
+#: ./content/course.py:74
 msgid "Introduction"
 msgstr "課程簡介"
 
-#: ./content/course.py:99
+#: ./content/course.py:101
 msgid "License Type"
 msgstr "證書類型"
+
+#: ./content/echelon.py:73
+msgid "Memo"
+msgstr "備註"
 
 #: ./content/subject.py:26
 msgid "Notes"
@@ -144,13 +180,25 @@ msgstr "備註說明"
 msgid "Number of seats."
 msgstr "座位數"
 
-#: ./content/course.py:77
+#: ./content/course.py:79
 msgid "Other Note"
 msgstr "其他說明"
 
 #: ./content/trainingcenter.py:24
 msgid "Phone Number."
 msgstr "電話號碼"
+
+#: ./content/echelon.py:98
+msgid "Prepare Information"
+msgstr "繳交資料"
+
+#: ./content/echelon.py:83
+msgid "Registration Deadline"
+msgstr "報名截止日期"
+
+#: ./browser/views.py:91
+msgid "Registry success."
+msgstr "報名成功"
 
 #: ./content/course.py:27
 msgid "Retrainging Course"
@@ -160,11 +208,11 @@ msgstr "回訓課程"
 msgid "Retraining Base On"
 msgstr "回訓說明"
 
-#: ./content/course.py:92
+#: ./content/course.py:94
 msgid "Retraining Years"
 msgstr "回訓年限"
 
-#: ./content/course.py:87
+#: ./content/course.py:89
 msgid "Sample Title"
 msgstr "簡稱"
 
@@ -180,12 +228,16 @@ msgstr "科目"
 msgid "Subject Hours"
 msgstr "上課時數"
 
+#: ./content/echelon.py:115
+msgid "Submit Class Date"
+msgstr "報班日期"
+
 #: ./content/subject.py:36
 #: ./profiles/default/types/Teacher.xml
 msgid "Teacher"
 msgstr "教師"
 
-#: ./content/course.py:57
+#: ./content/course.py:59
 msgid "Trainee"
 msgstr "訓練對象"
 
@@ -197,7 +249,7 @@ msgstr "訓練中心"
 msgid "TrainingCenter"
 msgstr "訓練中心"
 
-#: ./configure.zcml:38
+#: ./configure.zcml:40
 msgid "Uninstalls the cshm.content add-on."
 msgstr ""
 
@@ -207,11 +259,11 @@ msgstr ""
 msgid "View"
 msgstr "檢視"
 
-#: ./configure.zcml:29
+#: ./configure.zcml:31
 msgid "cshm.content"
 msgstr ""
 
-#: ./configure.zcml:38
+#: ./configure.zcml:40
 msgid "cshm.content (uninstall)"
 msgstr ""
 
