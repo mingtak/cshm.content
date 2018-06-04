@@ -5,6 +5,16 @@
     i18n_domain="cshm.content">
 
     <browser:viewlet
+        name="page_banner"
+        for="*"
+        manager="plone.app.layout.viewlets.interfaces.IAboveContent"
+        template="page_banner.pt"
+        class=".viewlet.PageBanner"
+        layer="cshm.content.interfaces.ICshmContentLayer"
+        permission="zope2.View"
+    />
+
+    <browser:viewlet
         name="cover_slider"
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         manager="plone.app.layout.viewlets.interfaces.IAboveContent"

@@ -6,6 +6,15 @@ from zope.component import queryUtility
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 
+class PageBanner(base.ViewletBase):
+    """  """
+    def update(self):
+        self.portal = api.portal.get()
+
+        isFrontendView = api.content.get_view(name='is_frontend', context=self.portal, request=self.request)
+        self.isFrontend = isFrontendView(self.view)
+
+
 class CoverSlider(base.ViewletBase):
     """  """
     def update(self):
