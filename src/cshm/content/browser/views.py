@@ -112,3 +112,18 @@ class CourseListing(BrowserView):
         self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
 
         return self.template()
+
+
+class EchelonListing(BrowserView):
+
+    """ 班別列表 / 辦班作業管理頁面 """
+
+    template = ViewPageTemplateFile("template/echelon_listing.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        #TODO 條件尚未明確 
+        self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
+
+        return self.template()
+
