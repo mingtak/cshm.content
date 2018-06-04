@@ -3,17 +3,16 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="cshm.content">
-<!--
+
     <browser:viewlet
         name="cover_slider"
-        for="plone.app.contenttypes.interfaces.IDocument"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         manager="plone.app.layout.viewlets.interfaces.IAboveContent"
         template="cover_slider.pt"
         class=".viewlet.CoverSlider"
-        layer="taiwananthro.content.interfaces.ITaiwananthroContentLayer"
+        layer="cshm.content.interfaces.ICshmContentLayer"
         permission="zope2.View"
     />
--->
 
     <browser:viewlet
         name="header_tools"
