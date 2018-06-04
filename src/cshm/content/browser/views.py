@@ -12,6 +12,7 @@ from plone.app.contentlisting.interfaces import IContentListing
 from Products.CMFCore.utils import getToolByName
 
 from mingtak.ECBase.browser.views import SqlObj
+from docxtpl import DocxTemplate, Listing
 import logging
 
 
@@ -136,5 +137,30 @@ class TeacherAppointment(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
-        return self.template()
+        context = self.context
+        request = self.request
+        # TODO template file path, use configlet
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/teacher_appointment.docx'
 
+        # if no parameter, return template
+        if not request.form.get('appointment_no', None):
+            return self.template()
+
+        doc = DocxTemplate(filePath)
+
+        parameter = {}
+        for key in request.form:
+            parameter[key] = safe_unicode(request.form.get(key))
+
+        parameter['memo'] = Listing(parameter['memo'])
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
+
+        self.request.response.setHeader('Content-Type', 'application/docx')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            'attachment; filename="%s-%s.docx"' % ("教師聘書", parameter.get("teacher_name").encode('utf-8'))
+        )
+        with open('/tmp/temp.docx', 'rb') as file:
+            docs = file.read()
+            return docs
