@@ -98,6 +98,7 @@ class CourseInfo(BrowserView):
     template = ViewPageTemplateFile('template/course_info.pt')
 
     def __call__(self):
+        self.portal = api.portal.get()
         return self.template()
 
 
