@@ -34,6 +34,7 @@ class ICourse(model.Schema):
         required=True,
     )
 
+    """
     courseHours = schema.Int(
         title=_(u"Course Hours"),
         default=0,
@@ -41,12 +42,13 @@ class ICourse(model.Schema):
         required=True,
     )
 
+    # 考量學費可能調整，這個欄位可能要放到期別
     courseFee = schema.Int(
         title=_(u"Course Fee"),
         default=0,
         description=_(u"If 0, asking for phone"),
         required=True,
-    )
+    ) """
 
     courseRequired = RichText(
         title=_(u"Course Required"),

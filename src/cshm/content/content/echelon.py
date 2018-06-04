@@ -44,40 +44,82 @@ class IEchelon(model.Schema):
         source=CatalogSource(Type='TrainingCenter')
     )
 
-    # directives.widget(level=RadioFieldWidget)
-    # level = schema.Choice(
-    #     title=_(u'Sponsoring Level'),
-    #     vocabulary=LevelVocabulary,
-    #     required=True
-    # )
+    fieldset('Handbook', fields=[
+        'courseFee',
+        'courseStatus',
+        'memo',
+        'contact',
+        'regDeadline',
+        'discountProgram',
+        'discountInfo_no_open',
+        'prepareInfo',
+        'courseHours',
+        'detailClassTime',
+        'submitClassDate',
+        'craneType',
+    ])
 
-    # text = RichText(
-    #     title=_(u'Text'),
-    #     required=False
-    # )
+    courseFee = schema.Int(
+        title=_(u'Course Fee'),
+        required=True,
+    )
 
-    # url = schema.URI(
-    #     title=_(u'Link'),
-    #     required=False
-    # )
+    courseStatus = schema.TextLine(
+        title=_(u'Course Status'),
+        required=False,
+    )
 
-    # fieldset('Images', fields=['logo', 'advertisement'])
-    # logo = namedfile.NamedBlobImage(
-    #     title=_(u'Logo'),
-    #     required=False,
-    # )
+    memo = RichText(
+        title=_(u'Memo'),
+        required=False,
+    )
 
-    # advertisement = namedfile.NamedBlobImage(
-    #     title=_(u'Advertisement (Gold-sponsors and above)'),
-    #     required=False,
-    # )
+    contact = schema.TextLine(
+        title=_(u'Contact'),
+        required=False,
+    )
 
-    # directives.read_permission(notes='cmf.ManagePortal')
-    # directives.write_permission(notes='cmf.ManagePortal')
-    # notes = RichText(
-    #     title=_(u'Secret Notes (only for site-admins)'),
-    #     required=False
-    # )
+    regDeadline = schema.Date(
+        title=_(u'Registration Deadline'),
+        required=False,
+    )
+
+    discountProgram = schema.TextLine(
+        title=_(u'Discount Program'),
+        required=False,
+    )
+
+    discountInfo_no_open = schema.TextLine(
+        title=_(u'Discount Information, No Open'),
+        required=False,
+    )
+
+    prepareInfo = schema.Text(
+        title=_(u'Prepare Information'),
+        required=False,
+    )
+
+    courseHours = schema.Int(
+        title=_(u"Course Hours"),
+        default=0,
+        description=_(u"If 0, asking for phone"),
+        required=True,
+    )
+
+    detailClassTime = schema.Text(
+        title=_(u'Detail Class Time'),
+        required=False,
+    )
+
+    submitClassDate = schema.Date(
+        title=_(u'Submit Class Date'),
+        required=False,
+    )
+
+    craneType = schema.TextLine(
+        title=_(u'Crane Type'),
+        required=False,
+    )
 
 
 @implementer(IEchelon)
