@@ -20,13 +20,13 @@
 
   <!-- Browser -->
 
+<!-- bindding coverListing and cover_view -->
   <browser:page
       name="coverListing"
       class=".views.CoverListing"
       permission="zope2.View"
       for="Products.CMFCore.interfaces.IFolderish"
       />
-
   <browser:page
       name="cover_view"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
@@ -37,7 +37,16 @@
       title="Cover view"
       />
 
-  
+  <browser:page
+      name="related_link_listing"
+      for="plone.dexterity.interfaces.IDexterityContainer"
+      class="plone.app.contenttypes.browser.folder.FolderView"
+      permission="zope2.View"
+      template="template/related_link_listing.pt"
+      menu="plone_displayviews"
+      title="Related link view"
+      />
+ 
   <browser:page
       name="course_listing"
       for="plone.app.contenttypes.interfaces.IDocument"

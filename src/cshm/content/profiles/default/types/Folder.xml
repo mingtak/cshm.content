@@ -54,6 +54,7 @@
     <element value="listing_view"/>
     <element value="summary_view"/>
     <element value="tabular_view"/>
+    <element value="related_link_listing"/>
   </property>
 
   <!-- Method aliases -->
