@@ -90,7 +90,7 @@ class RegCourse(BrowserView):
             form.get('birthday'), form.get('address'), form.get('job-title'), form.get('studId'), self.context.UID())
         sqlInstance.execSql(sqlStr)
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
-        request.response.redirect(self.portal['courselist'].absolute_url())
+        request.response.redirect(self.portal['training']['courselist'].absolute_url())
         return
 
 
