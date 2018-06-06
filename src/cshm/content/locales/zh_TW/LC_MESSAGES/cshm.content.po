@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-06-04 03:50+0000\n"
+"POT-Creation-Date: 2018-06-06 06:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -30,6 +30,14 @@ msgstr "地址"
 msgid "Attach File"
 msgstr "電子檔"
 
+#: ./content/teacher.py:29
+msgid "Birthday"
+msgstr "生日"
+
+#: ./content/teacher.py:39
+msgid "Cell Phone Number."
+msgstr "手機號碼"
+
 #: ./content/course.py:84
 msgid "Certificate Code"
 msgstr "證書編碼"
@@ -57,6 +65,10 @@ msgstr "各區練訓中心基本資料"
 #: ./content/echelon.py:78
 msgid "Contact"
 msgstr "聯絡資訊"
+
+#: ./content/teacher.py:59
+msgid "Contact Address."
+msgstr "聯絡地址"
 
 #: ./profiles/default/types/Course.xml
 msgid "Course"
@@ -110,6 +122,38 @@ msgstr "首頁"
 msgid "Crane Type"
 msgstr "起重機具機型"
 
+#: ./content/teacher.py:191
+msgid "Created User"
+msgstr "建立者"
+
+#: ./content/teacher.py:161
+msgid "Current Job"
+msgstr "現職"
+
+#: ./content/teacher.py:74
+msgid "Degree 1."
+msgstr "學位1"
+
+#: ./content/teacher.py:103
+msgid "Degree 2."
+msgstr "學位2"
+
+#: ./content/teacher.py:132
+msgid "Degree 3."
+msgstr "學位3"
+
+#: ./content/teacher.py:69
+msgid "Department 1."
+msgstr "科系1"
+
+#: ./content/teacher.py:98
+msgid "Department 2."
+msgstr "科系2"
+
+#: ./content/teacher.py:127
+msgid "Department 3."
+msgstr "科系3"
+
 #: ./content/echelon.py:110
 msgid "Detail Class Time"
 msgstr "上課詳細時間"
@@ -140,13 +184,66 @@ msgstr "期別資料型態"
 msgid "Edit"
 msgstr "編輯"
 
+#: ./content/teacher.py:64
+msgid "Education 1."
+msgstr "學歷1"
+
+#: ./content/teacher.py:93
+msgid "Education 2."
+msgstr "學歷2"
+
+#: ./content/teacher.py:122
+msgid "Education 3."
+msgstr "學歷3"
+
+#: ./content/teacher.py:49
+msgid "Email."
+msgstr "Email"
+
+#: ./content/teacher.py:44
 #: ./content/trainingcenter.py:29
 msgid "Fax Number."
 msgstr "傳真號碼"
 
+#: ./content/teacher.py:86
+msgid "Graduation Month 1."
+msgstr "畢業月1"
+
+#: ./content/teacher.py:115
+msgid "Graduation Month 2."
+msgstr "畢業月2"
+
+#: ./content/teacher.py:144
+msgid "Graduation Month 3."
+msgstr "畢業月3"
+
+#: ./content/teacher.py:79
+msgid "Graduation Year 1."
+msgstr "畢業年1"
+
+#: ./content/teacher.py:108
+msgid "Graduation Year 2."
+msgstr "畢業年2"
+
+#: ./content/teacher.py:137
+msgid "Graduation Year 3."
+msgstr "畢業年3"
+
 #: ./content/course.py:33
 msgid "Handbook Title"
 msgstr "簡章標題"
+
+#: ./content/teacher.py:34
+msgid "Home Phone Number."
+msgstr "住家電話"
+
+#: ./content/teacher.py:54
+msgid "ID Card Address."
+msgstr "戶籍地址"
+
+#: ./content/teacher.py:19
+msgid "Id Card Number."
+msgstr "身份證字號"
 
 #: ./content/echelon.py:105
 msgid "If 0, asking for phone"
@@ -163,6 +260,18 @@ msgstr ""
 #: ./content/course.py:74
 msgid "Introduction"
 msgstr "課程簡介"
+
+#: ./profiles/default/userschema.xml
+msgid "Is Organization"
+msgstr "公司帳號"
+
+#: ./profiles/default/userschema.xml
+msgid "Is Student"
+msgstr "個人學生帳號"
+
+#: ./profiles/default/userschema.xml
+msgid "Is Teacher"
+msgstr "教師帳號"
 
 #: ./content/course.py:101
 msgid "License Type"
@@ -184,6 +293,14 @@ msgstr "座位數"
 msgid "Other Note"
 msgstr "其他說明"
 
+#: ./content/teacher.py:176
+msgid "Person Experience"
+msgstr "經歷"
+
+#: ./content/teacher.py:181
+msgid "Person License"
+msgstr "證照"
+
 #: ./content/trainingcenter.py:24
 msgid "Phone Number."
 msgstr "電話號碼"
@@ -196,9 +313,13 @@ msgstr "繳交資料"
 msgid "Registration Deadline"
 msgstr "報名截止日期"
 
-#: ./browser/views.py:91
+#: ./browser/views.py:92
 msgid "Registry success."
 msgstr "報名成功"
+
+#: ./browser/configure.zcml:48
+msgid "Related link view"
+msgstr ""
 
 #: ./content/course.py:27
 msgid "Retrainging Course"
@@ -220,6 +341,22 @@ msgstr "簡稱"
 msgid "Seat"
 msgstr "座位"
 
+#: ./content/teacher.py:156
+msgid "Service Department"
+msgstr "服務部門"
+
+#: ./content/teacher.py:151
+msgid "Service Unit"
+msgstr "服務單位"
+
+#: ./content/teacher.py:186
+msgid "Service Unit Address"
+msgstr "服務單位地址"
+
+#: ./content/teacher.py:166
+msgid "Start Work Date"
+msgstr "到職日"
+
 #: ./profiles/default/types/Subject.xml
 msgid "Subject"
 msgstr "科目"
@@ -237,6 +374,10 @@ msgstr "報班日期"
 msgid "Teacher"
 msgstr "教師"
 
+#: ./content/teacher.py:24
+msgid "Teacher Serial Number."
+msgstr "教師編號"
+
 #: ./content/course.py:59
 msgid "Trainee"
 msgstr "訓練對象"
@@ -252,6 +393,10 @@ msgstr "訓練中心"
 #: ./configure.zcml:40
 msgid "Uninstalls the cshm.content add-on."
 msgstr ""
+
+#: ./content/teacher.py:171
+msgid "Unit Phone"
+msgstr "單位電話"
 
 #: ./profiles/default/types/Classroom.xml
 #: ./profiles/default/types/Course.xml

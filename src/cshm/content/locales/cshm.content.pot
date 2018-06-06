@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-06-04 03:50+0000\n"
+"POT-Creation-Date: 2018-06-06 06:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,6 +33,14 @@ msgstr ""
 msgid "Attach File"
 msgstr ""
 
+#: ./content/teacher.py:29
+msgid "Birthday"
+msgstr ""
+
+#: ./content/teacher.py:39
+msgid "Cell Phone Number."
+msgstr ""
+
 #: ./content/course.py:84
 msgid "Certificate Code"
 msgstr ""
@@ -59,6 +67,10 @@ msgstr ""
 
 #: ./content/echelon.py:78
 msgid "Contact"
+msgstr ""
+
+#: ./content/teacher.py:59
+msgid "Contact Address."
 msgstr ""
 
 #: ./profiles/default/types/Course.xml
@@ -113,6 +125,38 @@ msgstr ""
 msgid "Crane Type"
 msgstr ""
 
+#: ./content/teacher.py:191
+msgid "Created User"
+msgstr ""
+
+#: ./content/teacher.py:161
+msgid "Current Job"
+msgstr ""
+
+#: ./content/teacher.py:74
+msgid "Degree 1."
+msgstr ""
+
+#: ./content/teacher.py:103
+msgid "Degree 2."
+msgstr ""
+
+#: ./content/teacher.py:132
+msgid "Degree 3."
+msgstr ""
+
+#: ./content/teacher.py:69
+msgid "Department 1."
+msgstr ""
+
+#: ./content/teacher.py:98
+msgid "Department 2."
+msgstr ""
+
+#: ./content/teacher.py:127
+msgid "Department 3."
+msgstr ""
+
 #: ./content/echelon.py:110
 msgid "Detail Class Time"
 msgstr ""
@@ -143,12 +187,65 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: ./content/teacher.py:64
+msgid "Education 1."
+msgstr ""
+
+#: ./content/teacher.py:93
+msgid "Education 2."
+msgstr ""
+
+#: ./content/teacher.py:122
+msgid "Education 3."
+msgstr ""
+
+#: ./content/teacher.py:49
+msgid "Email."
+msgstr ""
+
+#: ./content/teacher.py:44
 #: ./content/trainingcenter.py:29
 msgid "Fax Number."
 msgstr ""
 
+#: ./content/teacher.py:86
+msgid "Graduation Month 1."
+msgstr ""
+
+#: ./content/teacher.py:115
+msgid "Graduation Month 2."
+msgstr ""
+
+#: ./content/teacher.py:144
+msgid "Graduation Month 3."
+msgstr ""
+
+#: ./content/teacher.py:79
+msgid "Graduation Year 1."
+msgstr ""
+
+#: ./content/teacher.py:108
+msgid "Graduation Year 2."
+msgstr ""
+
+#: ./content/teacher.py:137
+msgid "Graduation Year 3."
+msgstr ""
+
 #: ./content/course.py:33
 msgid "Handbook Title"
+msgstr ""
+
+#: ./content/teacher.py:34
+msgid "Home Phone Number."
+msgstr ""
+
+#: ./content/teacher.py:54
+msgid "ID Card Address."
+msgstr ""
+
+#: ./content/teacher.py:19
+msgid "Id Card Number."
 msgstr ""
 
 #: ./content/echelon.py:105
@@ -165,6 +262,18 @@ msgstr ""
 
 #: ./content/course.py:74
 msgid "Introduction"
+msgstr ""
+
+#: ./profiles/default/userschema.xml
+msgid "Is Organization"
+msgstr ""
+
+#: ./profiles/default/userschema.xml
+msgid "Is Student"
+msgstr ""
+
+#: ./profiles/default/userschema.xml
+msgid "Is Teacher"
 msgstr ""
 
 #: ./content/course.py:101
@@ -187,6 +296,14 @@ msgstr ""
 msgid "Other Note"
 msgstr ""
 
+#: ./content/teacher.py:176
+msgid "Person Experience"
+msgstr ""
+
+#: ./content/teacher.py:181
+msgid "Person License"
+msgstr ""
+
 #: ./content/trainingcenter.py:24
 msgid "Phone Number."
 msgstr ""
@@ -199,8 +316,12 @@ msgstr ""
 msgid "Registration Deadline"
 msgstr ""
 
-#: ./browser/views.py:91
+#: ./browser/views.py:92
 msgid "Registry success."
+msgstr ""
+
+#: ./browser/configure.zcml:48
+msgid "Related link view"
 msgstr ""
 
 #: ./content/course.py:27
@@ -223,6 +344,22 @@ msgstr ""
 msgid "Seat"
 msgstr ""
 
+#: ./content/teacher.py:156
+msgid "Service Department"
+msgstr ""
+
+#: ./content/teacher.py:151
+msgid "Service Unit"
+msgstr ""
+
+#: ./content/teacher.py:186
+msgid "Service Unit Address"
+msgstr ""
+
+#: ./content/teacher.py:166
+msgid "Start Work Date"
+msgstr ""
+
 #: ./profiles/default/types/Subject.xml
 msgid "Subject"
 msgstr ""
@@ -240,6 +377,10 @@ msgstr ""
 msgid "Teacher"
 msgstr ""
 
+#: ./content/teacher.py:24
+msgid "Teacher Serial Number."
+msgstr ""
+
 #: ./content/course.py:59
 msgid "Trainee"
 msgstr ""
@@ -254,6 +395,10 @@ msgstr ""
 
 #: ./configure.zcml:40
 msgid "Uninstalls the cshm.content add-on."
+msgstr ""
+
+#: ./content/teacher.py:171
+msgid "Unit Phone"
 msgstr ""
 
 #: ./profiles/default/types/Classroom.xml

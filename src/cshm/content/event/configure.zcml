@@ -3,6 +3,12 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="cshm.content">
 
+
+
+<!-- for="Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent -->
+
+
+
     <subscriber
         for="plone.app.contenttypes.interfaces.IDocument zope.lifecycleevent.interfaces.IObjectAddedEvent"
         handler=".event.moveObjectsToTop"
