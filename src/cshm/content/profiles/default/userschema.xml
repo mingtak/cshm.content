@@ -14,7 +14,7 @@
       <title i18n:translate="">Is Teacher</title>
     </field>
 
-    <field name="isStudnet" type="zope.schema.Bool" users:forms="In User Profile">
+    <field name="isStudent" type="zope.schema.Bool" users:forms="In User Profile">
       <required>True</required>
       <title i18n:translate="">Is Student</title>
     </field>

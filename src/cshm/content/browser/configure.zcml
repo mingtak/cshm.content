@@ -87,4 +87,13 @@
       permission="cmf.ManagePortal"
       />
 
+  <browser:page
+      name="debugview"
+      for="*"
+      class=".views.DebugView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 </configure>
+

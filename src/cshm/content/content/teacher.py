@@ -15,6 +15,11 @@ class ITeacher(model.Schema):
     """ Marker interface and Dexterity Python Schema for Teacher
     """
 
+    title = schema.TextLine(
+        title=_(u"Teacher Name."),
+        required=True,
+    )
+
     idCardNo = schema.TextLine(
         title=_(u"Id Card Number."),
         required=True,

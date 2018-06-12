@@ -13,6 +13,9 @@ from Products.CMFCore.utils import getToolByName
 
 from mingtak.ECBase.browser.views import SqlObj
 from docxtpl import DocxTemplate, Listing
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
+
 import logging
 
 
@@ -164,3 +167,14 @@ class TeacherAppointment(BrowserView):
         with open('/tmp/temp.docx', 'rb') as file:
             docs = file.read()
             return docs
+
+
+class DebugView(BrowserView):
+
+    def __call__(self):
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        alsoProvides(request, IDisableCSRFProtection)
+        import pdb; pdb.set_trace()

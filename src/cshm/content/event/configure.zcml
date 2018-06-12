@@ -6,8 +6,11 @@
 
 
 <!-- for="Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent -->
-
-
+<!-- for="Products.PluggableAuthService.interfaces.events.IPropertiesUpdatedEvent" -->
+    <subscriber
+        for="Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent"
+        handler=".event.addRoleObj"
+    />
 
     <subscriber
         for="plone.app.contenttypes.interfaces.IDocument zope.lifecycleevent.interfaces.IObjectAddedEvent"
