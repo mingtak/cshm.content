@@ -20,27 +20,28 @@ class IEchelon(model.Schema):
     duringTime = schema.Choice(
         title=_(u'During Time'),
         vocabulary='cshm.content.ClassTime',
+        default=u'notYat',
         required=True
     )
 
     courseStart = schema.Date(
         title=_(u"Course Start Date"),
-        required=True,
+        required=False,
     )
 
     courseEnd = schema.Date(
         title=_(u"Course End Date"),
-        required=True,
+        required=False,
     )
 
     classTime = schema.TextLine(
         title=_(u"Class Time, ex. 0900-1800"),
-        required=True,
+        required=False,
     )
 
     trainingCenter = RelationChoice(
         title=_(u"Training Center"),
-        required=True,
+        required=False,
         source=CatalogSource(Type='TrainingCenter')
     )
 
@@ -61,11 +62,13 @@ class IEchelon(model.Schema):
 
     courseFee = schema.Int(
         title=_(u'Course Fee'),
-        required=True,
+        required=False,
     )
 
-    courseStatus = schema.TextLine(
+    courseStatus = schema.Choice(
         title=_(u'Course Status'),
+        vocabulary='cshm.content.ClassState',
+        default=u'registerFirst',
         required=False,
     )
 

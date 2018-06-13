@@ -17,7 +17,7 @@ class VocabItem(object):
 
 
 @implementer(IVocabularyFactory)
-class ClassTime(object):
+class ClassState(object):
     """
     """
 
@@ -25,10 +25,10 @@ class ClassTime(object):
         # Just an example list of content for our vocabulary,
         # this can be any static or dynamic data, a catalog result for example.
         items = [
-            VocabItem(u'notYat', _(u'notYat')),
-            VocabItem(u'inDay', _(u'inDay')),
-            VocabItem(u'inEvening', _(u'inEvening')),
-            VocabItem(u'inWeekend', _(u'inWeekend')),
+            VocabItem(u'willStart', _(u'willStart')),
+            VocabItem(u'fullCanAlt', _(u'fullCanAlt')),
+            VocabItem(u'planed', _(u'planed')),
+            VocabItem(u'registerFirst', _(u'registerFirst')),
         ]
 
         # Fix context if you are using the vocabulary in DataGridField.
@@ -51,4 +51,4 @@ class ClassTime(object):
         return SimpleVocabulary(terms)
 
 
-ClassTimeFactory = ClassTime()
+ClassStateFactory = ClassState()

@@ -9,5 +9,10 @@
         name="cshm.content.ClassTime"
     />
 
+    <utility
+        component=".class_state.ClassStateFactory"
+        name="cshm.content.ClassState"
+    />
+
         
 </configure>
