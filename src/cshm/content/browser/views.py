@@ -103,10 +103,31 @@ class RegCourse(BrowserView):
         result = sqlInstance.execSql(sqlStr)
         nowCount = result[0]['COUNT(id)']
         max_isAlt = result[0]['MAX(isAlt)']
+        if max_isAlt is None:
+            max_isAlt = 0
+
         if quota > nowCount:
             return 0
         else:
             return max_isAlt + 1
+
+
+    def checkFull(self):
+        context = self.context
+        quota = context.quota
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT COUNT(id) FROM reg_course WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+
+        studentCount = result[0]['COUNT(id)']
+        totalQuota = context.quota + context.altCount
+
+        if studentCount >= context.quota:
+            context.classStatus = u'fullCanAlt'
+        if studentCount >= totalQuota:
+            context.classStatus = u'altFull'
 
 
     def __call__(self):
@@ -120,12 +141,22 @@ class RegCourse(BrowserView):
         if not form.get('studId', False):
             return self.template()
 
+        if context.classStatus == 'altFull':
+            api.portal.show_message(message=_(u"Quota Full include Alternate."), request=request, type='info')
+            request.response.redirect(self.portal['training']['courselist'].absolute_url())
+            return
+
+
+        # 報名寫入 DB
         sqlInstance = SqlObj()
         sqlStr = self.makeSqlStr()
         sqlInstance.execSql(sqlStr)
 
+        # 檢查額滿(含正備取)
+        self.checkFull()
+
         # reindex
-        context.reindexObject(idxs=['studentCount'])
+        context.reindexObject(idxs=['studentCount', 'classStatus'])
 
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
         request.response.redirect(self.portal['training']['courselist'].absolute_url())
@@ -147,7 +178,7 @@ class CourseListing(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
-        #TODO 條件尚未明確 
+
         self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst']
         self.echelonBrain = {}
         for status in self.statusList:

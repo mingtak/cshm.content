@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-06-13 02:20+0000\n"
+"POT-Creation-Date: 2018-06-13 06:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -26,6 +26,10 @@ msgstr ""
 msgid "Address"
 msgstr "地址"
 
+#: ./content/echelon.py:56
+msgid "Alternate Count"
+msgstr "候補名額"
+
 #: ./content/subject.py:31
 msgid "Attach File"
 msgstr "電子檔"
@@ -41,6 +45,10 @@ msgstr "手機號碼"
 #: ./content/course.py:84
 msgid "Certificate Code"
 msgstr "證書編碼"
+
+#: ./content/echelon.py:49
+msgid "Class Quota"
+msgstr "班級名額"
 
 #: ./content/echelon.py:38
 msgid "Class Time, ex. 0900-1800"
@@ -62,7 +70,7 @@ msgstr "教師基本資料"
 msgid "Configure Training Center Information"
 msgstr "各區練訓中心基本資料"
 
-#: ./content/echelon.py:81
+#: ./content/echelon.py:95
 msgid "Contact"
 msgstr "聯絡資訊"
 
@@ -86,11 +94,11 @@ msgstr "課程效力"
 msgid "Course End Date"
 msgstr "課程結束日期"
 
-#: ./content/echelon.py:64
+#: ./content/echelon.py:78
 msgid "Course Fee"
 msgstr "課程費用"
 
-#: ./content/echelon.py:106
+#: ./content/echelon.py:120
 msgid "Course Hours"
 msgstr "課程時數"
 
@@ -106,7 +114,7 @@ msgstr "適用範圍"
 msgid "Course Start Date"
 msgstr "課程開始日期"
 
-#: ./content/echelon.py:69
+#: ./content/echelon.py:83
 msgid "Course Status"
 msgstr "課程狀態"
 
@@ -118,7 +126,7 @@ msgstr "課程科目"
 msgid "Cover view"
 msgstr "首頁"
 
-#: ./content/echelon.py:123
+#: ./content/echelon.py:137
 msgid "Crane Type"
 msgstr "起重機具機型"
 
@@ -154,15 +162,15 @@ msgstr "科系2"
 msgid "Department 3."
 msgstr "科系3"
 
-#: ./content/echelon.py:113
+#: ./content/echelon.py:127
 msgid "Detail Class Time"
 msgstr "上課詳細時間"
 
-#: ./content/echelon.py:96
+#: ./content/echelon.py:110
 msgid "Discount Information, No Open"
 msgstr "優惠辦法(不公開)"
 
-#: ./content/echelon.py:91
+#: ./content/echelon.py:105
 msgid "Discount Program"
 msgstr "優惠方案"
 
@@ -245,7 +253,7 @@ msgstr "戶籍地址"
 msgid "Id Card Number."
 msgstr "身份證字號"
 
-#: ./content/echelon.py:108
+#: ./content/echelon.py:122
 msgid "If 0, asking for phone"
 msgstr "若不輸入或設為 0 ，表示為電洽"
 
@@ -277,7 +285,7 @@ msgstr "教師帳號"
 msgid "License Type"
 msgstr "證書類型"
 
-#: ./content/echelon.py:76
+#: ./content/echelon.py:90
 msgid "Memo"
 msgstr "備註"
 
@@ -305,15 +313,19 @@ msgstr "證照"
 msgid "Phone Number."
 msgstr "電話號碼"
 
-#: ./content/echelon.py:101
+#: ./content/echelon.py:115
 msgid "Prepare Information"
 msgstr "繳交資料"
 
-#: ./content/echelon.py:86
+#: ./browser/views.py:145
+msgid "Quota Full include Alternate."
+msgstr "很抱歉，報名額滿(候補也已額滿)，無法再接受報名"
+
+#: ./content/echelon.py:100
 msgid "Registration Deadline"
 msgstr "報名截止日期"
 
-#: ./browser/views.py:95
+#: ./browser/views.py:161
 msgid "Registry success."
 msgstr "報名成功"
 
@@ -365,7 +377,7 @@ msgstr "科目"
 msgid "Subject Hours"
 msgstr "上課時數"
 
-#: ./content/echelon.py:118
+#: ./content/echelon.py:132
 msgid "Submit Class Date"
 msgstr "報班日期"
 
@@ -408,6 +420,10 @@ msgstr "單位電話"
 msgid "View"
 msgstr "檢視"
 
+#: ./vocabularies/class_status.py:32
+msgid "altFull"
+msgstr "候補額滿"
+
 #: ./configure.zcml:32
 msgid "cshm.content"
 msgstr ""
@@ -419,6 +435,10 @@ msgstr ""
 #: ./vocabularies/class_status.py:29
 msgid "fullCanAlt"
 msgstr "額滿候補"
+
+#: ./content/echelon.py:50
+msgid "if 0, is not confirm"
+msgstr "若為 0 ，表示尚未確認"
 
 #: ./vocabularies/class_time.py:29
 msgid "inDay"
@@ -434,7 +454,7 @@ msgstr "假日"
 
 #: ./vocabularies/class_time.py:28
 msgid "notYat"
-msgstr "尚未確定"
+msgstr "時段未定"
 
 #: ./vocabularies/class_status.py:30
 msgid "planed"

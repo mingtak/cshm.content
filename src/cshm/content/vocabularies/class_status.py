@@ -29,6 +29,7 @@ class ClassStatus(object):
             VocabItem(u'fullCanAlt', _(u'fullCanAlt')),
             VocabItem(u'planed', _(u'planed')),
             VocabItem(u'registerFirst', _(u'registerFirst')),
+            VocabItem(u'altFull', _(u'altFull')),
         ]
 
         # Fix context if you are using the vocabulary in DataGridField.

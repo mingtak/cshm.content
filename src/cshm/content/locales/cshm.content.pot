@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-06-13 02:20+0000\n"
+"POT-Creation-Date: 2018-06-13 06:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,6 +29,10 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
+#: ./content/echelon.py:56
+msgid "Alternate Count"
+msgstr ""
+
 #: ./content/subject.py:31
 msgid "Attach File"
 msgstr ""
@@ -43,6 +47,10 @@ msgstr ""
 
 #: ./content/course.py:84
 msgid "Certificate Code"
+msgstr ""
+
+#: ./content/echelon.py:49
+msgid "Class Quota"
 msgstr ""
 
 #: ./content/echelon.py:38
@@ -65,7 +73,7 @@ msgstr ""
 msgid "Configure Training Center Information"
 msgstr ""
 
-#: ./content/echelon.py:81
+#: ./content/echelon.py:95
 msgid "Contact"
 msgstr ""
 
@@ -89,11 +97,11 @@ msgstr ""
 msgid "Course End Date"
 msgstr ""
 
-#: ./content/echelon.py:64
+#: ./content/echelon.py:78
 msgid "Course Fee"
 msgstr ""
 
-#: ./content/echelon.py:106
+#: ./content/echelon.py:120
 msgid "Course Hours"
 msgstr ""
 
@@ -109,7 +117,7 @@ msgstr ""
 msgid "Course Start Date"
 msgstr ""
 
-#: ./content/echelon.py:69
+#: ./content/echelon.py:83
 msgid "Course Status"
 msgstr ""
 
@@ -121,7 +129,7 @@ msgstr ""
 msgid "Cover view"
 msgstr ""
 
-#: ./content/echelon.py:123
+#: ./content/echelon.py:137
 msgid "Crane Type"
 msgstr ""
 
@@ -157,15 +165,15 @@ msgstr ""
 msgid "Department 3."
 msgstr ""
 
-#: ./content/echelon.py:113
+#: ./content/echelon.py:127
 msgid "Detail Class Time"
 msgstr ""
 
-#: ./content/echelon.py:96
+#: ./content/echelon.py:110
 msgid "Discount Information, No Open"
 msgstr ""
 
-#: ./content/echelon.py:91
+#: ./content/echelon.py:105
 msgid "Discount Program"
 msgstr ""
 
@@ -248,7 +256,7 @@ msgstr ""
 msgid "Id Card Number."
 msgstr ""
 
-#: ./content/echelon.py:108
+#: ./content/echelon.py:122
 msgid "If 0, asking for phone"
 msgstr ""
 
@@ -280,7 +288,7 @@ msgstr ""
 msgid "License Type"
 msgstr ""
 
-#: ./content/echelon.py:76
+#: ./content/echelon.py:90
 msgid "Memo"
 msgstr ""
 
@@ -308,15 +316,19 @@ msgstr ""
 msgid "Phone Number."
 msgstr ""
 
-#: ./content/echelon.py:101
+#: ./content/echelon.py:115
 msgid "Prepare Information"
 msgstr ""
 
-#: ./content/echelon.py:86
+#: ./browser/views.py:145
+msgid "Quota Full include Alternate."
+msgstr ""
+
+#: ./content/echelon.py:100
 msgid "Registration Deadline"
 msgstr ""
 
-#: ./browser/views.py:95
+#: ./browser/views.py:161
 msgid "Registry success."
 msgstr ""
 
@@ -368,7 +380,7 @@ msgstr ""
 msgid "Subject Hours"
 msgstr ""
 
-#: ./content/echelon.py:118
+#: ./content/echelon.py:132
 msgid "Submit Class Date"
 msgstr ""
 
@@ -411,6 +423,10 @@ msgstr ""
 msgid "View"
 msgstr ""
 
+#: ./vocabularies/class_status.py:32
+msgid "altFull"
+msgstr ""
+
 #: ./configure.zcml:32
 msgid "cshm.content"
 msgstr ""
@@ -421,6 +437,10 @@ msgstr ""
 
 #: ./vocabularies/class_status.py:29
 msgid "fullCanAlt"
+msgstr ""
+
+#: ./content/echelon.py:50
+msgid "if 0, is not confirm"
 msgstr ""
 
 #: ./vocabularies/class_time.py:29
