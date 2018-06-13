@@ -76,6 +76,39 @@ class RegCourse(BrowserView):
 
     template = ViewPageTemplateFile("template/reg_course.pt")
 
+    def makeSqlStr(self):
+        form = self.request.form
+
+        uid = self.context.UID()
+        path = self.context.virtual_url_path()
+        isAlt = self.isAlt()
+
+        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax-no`, `name`, `com-email`, `company-name`, \
+                    `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`, \
+                    `studId`, `uid`, `path`, `isAlt`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+        """.format(form.get('cellphone'), form.get('fax'), form.get('tax-no'), form.get('name'), form.get('com-email'),
+            form.get('company-name'), form.get('tax-title'), form.get('company-address'), form.get('priv-email'), form.get('phone'),
+            form.get('birthday'), form.get('address'), form.get('job-title'), form.get('studId'), uid, path, isAlt)
+        return sqlStr
+
+
+    def isAlt(self):
+        context = self.context
+        quota = context.quota
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT COUNT(id), MAX(isAlt) FROM reg_course WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        nowCount = result[0]['COUNT(id)']
+        max_isAlt = result[0]['MAX(isAlt)']
+        if quota > nowCount:
+            return 0
+        else:
+            return max_isAlt + 1
+
+
     def __call__(self):
         self.portal = api.portal.get()
         context = self.context
@@ -83,20 +116,12 @@ class RegCourse(BrowserView):
         alsoProvides(request, IDisableCSRFProtection)
         form = request.form
 
+        # 檢查是進入報名頁，或者為報名程序
         if not form.get('studId', False):
             return self.template()
 
-        uid = context.UID()
-        path = context.virtual_url_path()
-
         sqlInstance = SqlObj()
-        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax-no`, `name`, `com-email`, `company-name`, \
-                    `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`, \
-                    `studId`, `uid`, `path`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
-        """.format(form.get('cellphone'), form.get('fax'), form.get('tax-no'), form.get('name'), form.get('com-email'),
-            form.get('company-name'), form.get('tax-title'), form.get('company-address'), form.get('priv-email'), form.get('phone'),
-            form.get('birthday'), form.get('address'), form.get('job-title'), form.get('studId'), uid, path)
+        sqlStr = self.makeSqlStr()
         sqlInstance.execSql(sqlStr)
 
         # reindex
