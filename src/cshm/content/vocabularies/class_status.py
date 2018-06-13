@@ -17,7 +17,7 @@ class VocabItem(object):
 
 
 @implementer(IVocabularyFactory)
-class ClassState(object):
+class ClassStatus(object):
     """
     """
 
@@ -51,4 +51,4 @@ class ClassState(object):
         return SimpleVocabulary(terms)
 
 
-ClassStateFactory = ClassState()
+ClassStatusFactory = ClassStatus()

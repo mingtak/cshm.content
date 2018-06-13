@@ -10,7 +10,7 @@ from zope.schema.interfaces import IVocabularyTokenized
 import unittest
 
 
-class ClassStateIntegrationTest(unittest.TestCase):
+class ClassStatusIntegrationTest(unittest.TestCase):
 
     layer = CSHM_CONTENT_INTEGRATION_TESTING
 
@@ -19,8 +19,8 @@ class ClassStateIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
-    def test_vocab_class_state(self):
-        vocab_name = 'cshm.content.ClassState'
+    def test_vocab_class_status(self):
+        vocab_name = 'cshm.content.ClassStatus'
         factory = getUtility(IVocabularyFactory, vocab_name)
         self.assertTrue(IVocabularyFactory.providedBy(factory))
 

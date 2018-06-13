@@ -10,8 +10,8 @@
     />
 
     <utility
-        component=".class_state.ClassStateFactory"
-        name="cshm.content.ClassState"
+        component=".class_status.ClassStatusFactory"
+        name="cshm.content.ClassStatus"
     />
 
         

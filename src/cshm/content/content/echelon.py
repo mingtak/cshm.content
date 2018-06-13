@@ -67,7 +67,7 @@ class IEchelon(model.Schema):
 
     courseStatus = schema.Choice(
         title=_(u'Course Status'),
-        vocabulary='cshm.content.ClassState',
+        vocabulary='cshm.content.ClassStatus',
         default=u'registerFirst',
         required=False,
     )
