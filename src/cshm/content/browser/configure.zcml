@@ -89,6 +89,15 @@
       permission="cmf.ManagePortal"
       />
 
+  <!-- 報名作業: 開班程序 -->
+  <browser:page
+      name="register_detail"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.RegisterDetail"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <browser:page
       name="teacher_appointment"
       for="cshm.content.content.echelon.IEchelon"

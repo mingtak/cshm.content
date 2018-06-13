@@ -422,7 +422,7 @@ msgstr "檢視"
 
 #: ./vocabularies/class_status.py:32
 msgid "altFull"
-msgstr "候補額滿"
+msgstr "報名額滿"
 
 #: ./configure.zcml:32
 msgid "cshm.content"

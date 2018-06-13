@@ -196,7 +196,7 @@ class EchelonListingOperation(BrowserView):
     def __call__(self):
         self.portal = api.portal.get()
         #TODO 條件尚未明確 
-        self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
+        self.echelonBrain = api.content.find(context=self.portal['mana_course'], Type='Echelon')
 
         return self.template()
 
@@ -209,8 +209,23 @@ class EchelonListingRegister(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
-        #TODO 條件尚未明確 
-        self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
+
+        self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst', 'altFull']
+        self.echelonBrain = {}
+        for status in self.statusList:
+            self.echelonBrain[status] = api.content.find(context=self.portal['mana_course'], Type='Echelon', classStatus=status)
+
+        return self.template()
+
+
+class RegisterDetail(BrowserView):
+
+    """ 報名作業 / 開班程序 """
+
+    template = ViewPageTemplateFile("template/register_detail.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
 
         return self.template()
 
