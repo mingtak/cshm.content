@@ -189,9 +189,23 @@ class CourseListing(BrowserView):
 
 class EchelonListingOperation(BrowserView):
 
-    """ 班別列表 / 辦班作業管理頁面 """
+    """ 班別列表 / 辦班作業管理，辦班前/中/後"""
 
-    template = ViewPageTemplateFile("template/echelon_listing.pt")
+    template = ViewPageTemplateFile("template/echelon_listing_operation.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        #TODO 條件尚未明確 
+        self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
+
+        return self.template()
+
+
+class EchelonListingRegister(BrowserView):
+
+    """ 班別列表 / 報名作業管理 """
+
+    template = ViewPageTemplateFile("template/echelon_listing_register.pt")
 
     def __call__(self):
         self.portal = api.portal.get()

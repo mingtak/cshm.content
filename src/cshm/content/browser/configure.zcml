@@ -71,10 +71,20 @@
       permission="zope2.View"
       />
 
+  <!-- 班別列表: 辦班作業，辦班前/中/後 -->
   <browser:page
       name="echelon_listing_operation"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".views.EchelonListingOperation"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!-- 班別列表: 報名作業 -->
+  <browser:page
+      name="echelon_listing_register"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".views.EchelonListingRegister"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
