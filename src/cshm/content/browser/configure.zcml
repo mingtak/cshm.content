@@ -72,9 +72,9 @@
       />
 
   <browser:page
-      name="echelon_listing"
+      name="echelon_listing_operation"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".views.EchelonListing"
+      class=".views.EchelonListingOperation"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />

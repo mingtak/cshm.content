@@ -187,7 +187,7 @@ class CourseListing(BrowserView):
         return self.template()
 
 
-class EchelonListing(BrowserView):
+class EchelonListingOperation(BrowserView):
 
     """ 班別列表 / 辦班作業管理頁面 """
 
