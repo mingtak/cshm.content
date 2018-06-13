@@ -78,20 +78,30 @@ class RegCourse(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
+        context = self.context
         request = self.request
+        alsoProvides(request, IDisableCSRFProtection)
         form = request.form
 
         if not form.get('studId', False):
             return self.template()
 
+        uid = context.UID()
+        path = context.virtual_url_path()
+
         sqlInstance = SqlObj()
         sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax-no`, `name`, `com-email`, `company-name`, \
-                    `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`, `studId`, `uuid`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                    `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`, \
+                    `studId`, `uid`, `path`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
         """.format(form.get('cellphone'), form.get('fax'), form.get('tax-no'), form.get('name'), form.get('com-email'),
             form.get('company-name'), form.get('tax-title'), form.get('company-address'), form.get('priv-email'), form.get('phone'),
-            form.get('birthday'), form.get('address'), form.get('job-title'), form.get('studId'), self.context.UID())
+            form.get('birthday'), form.get('address'), form.get('job-title'), form.get('studId'), uid, path)
         sqlInstance.execSql(sqlStr)
+
+        # reindex
+        context.reindexObject(idxs=['studentCount'])
+
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
         request.response.redirect(self.portal['training']['courselist'].absolute_url())
         return
@@ -113,7 +123,10 @@ class CourseListing(BrowserView):
     def __call__(self):
         self.portal = api.portal.get()
         #TODO 條件尚未明確 
-        self.echelonBrain = api.content.find(context=self.portal, Type='Echelon')
+        self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst']
+        self.echelonBrain = {}
+        for status in self.statusList:
+            self.echelonBrain[status] = api.content.find(context=self.portal['mana_course'], Type='Echelon', classStatus=status)
 
         return self.template()
 

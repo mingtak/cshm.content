@@ -5,6 +5,9 @@
     i18n_domain="mingtak.products">
 
   <adapter name="classStatus" factory=".catalog.classStatus_indexer"/>
+  <adapter name="quota" factory=".catalog.quota_indexer"/> <!-- 名額 -->
+  <adapter name="altPercent" factory=".catalog.altPercent_indexer"/> <!-- 候補% -->
+  <adapter name="studentCount" factory=".catalog.studentCount_indexer"/>
 <!--  <adapter name="" factory=".catalog._indexer"/> -->
 
 </configure>

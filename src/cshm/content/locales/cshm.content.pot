@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-06-06 06:48+0000\n"
+"POT-Creation-Date: 2018-06-13 02:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,11 +33,11 @@ msgstr ""
 msgid "Attach File"
 msgstr ""
 
-#: ./content/teacher.py:29
+#: ./content/teacher.py:34
 msgid "Birthday"
 msgstr ""
 
-#: ./content/teacher.py:39
+#: ./content/teacher.py:44
 msgid "Cell Phone Number."
 msgstr ""
 
@@ -45,7 +45,7 @@ msgstr ""
 msgid "Certificate Code"
 msgstr ""
 
-#: ./content/echelon.py:37
+#: ./content/echelon.py:38
 msgid "Class Time, ex. 0900-1800"
 msgstr ""
 
@@ -65,11 +65,11 @@ msgstr ""
 msgid "Configure Training Center Information"
 msgstr ""
 
-#: ./content/echelon.py:78
+#: ./content/echelon.py:81
 msgid "Contact"
 msgstr ""
 
-#: ./content/teacher.py:59
+#: ./content/teacher.py:64
 msgid "Contact Address."
 msgstr ""
 
@@ -85,15 +85,15 @@ msgstr ""
 msgid "Course Effective"
 msgstr ""
 
-#: ./content/echelon.py:32
+#: ./content/echelon.py:33
 msgid "Course End Date"
 msgstr ""
 
-#: ./content/echelon.py:63
+#: ./content/echelon.py:64
 msgid "Course Fee"
 msgstr ""
 
-#: ./content/echelon.py:103
+#: ./content/echelon.py:106
 msgid "Course Hours"
 msgstr ""
 
@@ -105,11 +105,11 @@ msgstr ""
 msgid "Course Scope"
 msgstr ""
 
-#: ./content/echelon.py:27
+#: ./content/echelon.py:28
 msgid "Course Start Date"
 msgstr ""
 
-#: ./content/echelon.py:68
+#: ./content/echelon.py:69
 msgid "Course Status"
 msgstr ""
 
@@ -121,51 +121,51 @@ msgstr ""
 msgid "Cover view"
 msgstr ""
 
-#: ./content/echelon.py:120
+#: ./content/echelon.py:123
 msgid "Crane Type"
 msgstr ""
 
-#: ./content/teacher.py:191
+#: ./content/teacher.py:196
 msgid "Created User"
 msgstr ""
 
-#: ./content/teacher.py:161
+#: ./content/teacher.py:166
 msgid "Current Job"
 msgstr ""
 
-#: ./content/teacher.py:74
+#: ./content/teacher.py:79
 msgid "Degree 1."
 msgstr ""
 
-#: ./content/teacher.py:103
+#: ./content/teacher.py:108
 msgid "Degree 2."
 msgstr ""
 
-#: ./content/teacher.py:132
+#: ./content/teacher.py:137
 msgid "Degree 3."
 msgstr ""
 
-#: ./content/teacher.py:69
+#: ./content/teacher.py:74
 msgid "Department 1."
 msgstr ""
 
-#: ./content/teacher.py:98
+#: ./content/teacher.py:103
 msgid "Department 2."
 msgstr ""
 
-#: ./content/teacher.py:127
+#: ./content/teacher.py:132
 msgid "Department 3."
 msgstr ""
 
-#: ./content/echelon.py:110
+#: ./content/echelon.py:113
 msgid "Detail Class Time"
 msgstr ""
 
-#: ./content/echelon.py:93
+#: ./content/echelon.py:96
 msgid "Discount Information, No Open"
 msgstr ""
 
-#: ./content/echelon.py:88
+#: ./content/echelon.py:91
 msgid "Discount Program"
 msgstr ""
 
@@ -187,48 +187,48 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: ./content/teacher.py:64
+#: ./content/teacher.py:69
 msgid "Education 1."
 msgstr ""
 
-#: ./content/teacher.py:93
+#: ./content/teacher.py:98
 msgid "Education 2."
 msgstr ""
 
-#: ./content/teacher.py:122
+#: ./content/teacher.py:127
 msgid "Education 3."
 msgstr ""
 
-#: ./content/teacher.py:49
+#: ./content/teacher.py:54
 msgid "Email."
 msgstr ""
 
-#: ./content/teacher.py:44
+#: ./content/teacher.py:49
 #: ./content/trainingcenter.py:29
 msgid "Fax Number."
 msgstr ""
 
-#: ./content/teacher.py:86
+#: ./content/teacher.py:91
 msgid "Graduation Month 1."
 msgstr ""
 
-#: ./content/teacher.py:115
+#: ./content/teacher.py:120
 msgid "Graduation Month 2."
 msgstr ""
 
-#: ./content/teacher.py:144
+#: ./content/teacher.py:149
 msgid "Graduation Month 3."
 msgstr ""
 
-#: ./content/teacher.py:79
+#: ./content/teacher.py:84
 msgid "Graduation Year 1."
 msgstr ""
 
-#: ./content/teacher.py:108
+#: ./content/teacher.py:113
 msgid "Graduation Year 2."
 msgstr ""
 
-#: ./content/teacher.py:137
+#: ./content/teacher.py:142
 msgid "Graduation Year 3."
 msgstr ""
 
@@ -236,19 +236,19 @@ msgstr ""
 msgid "Handbook Title"
 msgstr ""
 
-#: ./content/teacher.py:34
+#: ./content/teacher.py:39
 msgid "Home Phone Number."
 msgstr ""
 
-#: ./content/teacher.py:54
+#: ./content/teacher.py:59
 msgid "ID Card Address."
 msgstr ""
 
-#: ./content/teacher.py:19
+#: ./content/teacher.py:24
 msgid "Id Card Number."
 msgstr ""
 
-#: ./content/echelon.py:105
+#: ./content/echelon.py:108
 msgid "If 0, asking for phone"
 msgstr ""
 
@@ -256,7 +256,7 @@ msgstr ""
 msgid "If 0, no need retraining."
 msgstr ""
 
-#: ./configure.zcml:31
+#: ./configure.zcml:32
 msgid "Installs the cshm.content add-on."
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 msgid "License Type"
 msgstr ""
 
-#: ./content/echelon.py:73
+#: ./content/echelon.py:76
 msgid "Memo"
 msgstr ""
 
@@ -296,11 +296,11 @@ msgstr ""
 msgid "Other Note"
 msgstr ""
 
-#: ./content/teacher.py:176
+#: ./content/teacher.py:181
 msgid "Person Experience"
 msgstr ""
 
-#: ./content/teacher.py:181
+#: ./content/teacher.py:186
 msgid "Person License"
 msgstr ""
 
@@ -308,15 +308,15 @@ msgstr ""
 msgid "Phone Number."
 msgstr ""
 
-#: ./content/echelon.py:98
+#: ./content/echelon.py:101
 msgid "Prepare Information"
 msgstr ""
 
-#: ./content/echelon.py:83
+#: ./content/echelon.py:86
 msgid "Registration Deadline"
 msgstr ""
 
-#: ./browser/views.py:92
+#: ./browser/views.py:95
 msgid "Registry success."
 msgstr ""
 
@@ -344,19 +344,19 @@ msgstr ""
 msgid "Seat"
 msgstr ""
 
-#: ./content/teacher.py:156
+#: ./content/teacher.py:161
 msgid "Service Department"
 msgstr ""
 
-#: ./content/teacher.py:151
+#: ./content/teacher.py:156
 msgid "Service Unit"
 msgstr ""
 
-#: ./content/teacher.py:186
+#: ./content/teacher.py:191
 msgid "Service Unit Address"
 msgstr ""
 
-#: ./content/teacher.py:166
+#: ./content/teacher.py:171
 msgid "Start Work Date"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgstr ""
 msgid "Subject Hours"
 msgstr ""
 
-#: ./content/echelon.py:115
+#: ./content/echelon.py:118
 msgid "Submit Class Date"
 msgstr ""
 
@@ -377,7 +377,11 @@ msgstr ""
 msgid "Teacher"
 msgstr ""
 
-#: ./content/teacher.py:24
+#: ./content/teacher.py:19
+msgid "Teacher Name."
+msgstr ""
+
+#: ./content/teacher.py:29
 msgid "Teacher Serial Number."
 msgstr ""
 
@@ -385,7 +389,7 @@ msgstr ""
 msgid "Trainee"
 msgstr ""
 
-#: ./content/echelon.py:42
+#: ./content/echelon.py:43
 msgid "Training Center"
 msgstr ""
 
@@ -393,11 +397,11 @@ msgstr ""
 msgid "TrainingCenter"
 msgstr ""
 
-#: ./configure.zcml:40
+#: ./configure.zcml:41
 msgid "Uninstalls the cshm.content add-on."
 msgstr ""
 
-#: ./content/teacher.py:171
+#: ./content/teacher.py:176
 msgid "Unit Phone"
 msgstr ""
 
@@ -407,22 +411,42 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: ./configure.zcml:31
+#: ./configure.zcml:32
 msgid "cshm.content"
 msgstr ""
 
-#: ./configure.zcml:40
+#: ./configure.zcml:41
 msgid "cshm.content (uninstall)"
 msgstr ""
 
-#: ./vocabularies/class_time.py:28
-msgid "inDay"
+#: ./vocabularies/class_status.py:29
+msgid "fullCanAlt"
 msgstr ""
 
 #: ./vocabularies/class_time.py:29
-msgid "inEvening"
+msgid "inDay"
 msgstr ""
 
 #: ./vocabularies/class_time.py:30
+msgid "inEvening"
+msgstr ""
+
+#: ./vocabularies/class_time.py:31
 msgid "inWeekend"
+msgstr ""
+
+#: ./vocabularies/class_time.py:28
+msgid "notYat"
+msgstr ""
+
+#: ./vocabularies/class_status.py:30
+msgid "planed"
+msgstr ""
+
+#: ./vocabularies/class_status.py:31
+msgid "registerFirst"
+msgstr ""
+
+#: ./vocabularies/class_status.py:28
+msgid "willStart"
 msgstr ""

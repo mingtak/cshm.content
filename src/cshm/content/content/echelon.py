@@ -45,9 +45,25 @@ class IEchelon(model.Schema):
         source=CatalogSource(Type='TrainingCenter')
     )
 
+    quota = schema.Int(
+        title=_(u'Class Quota'),
+        description=_(u'if 0, is not confirm'),
+        default=0,
+        required=True,
+    )
+
+    altPercent = schema.Float(
+        title=_(u'Alternate Percentag'),
+        description=_(u'0.1 = 10% Alternate'),
+        default=0.0,
+        min=0.0,
+        max=1.0,
+        required=True,
+    )
+
     fieldset('Handbook', fields=[
         'courseFee',
-        'courseStatus',
+        'classStatus',
         'memo',
         'contact',
         'regDeadline',
@@ -65,7 +81,7 @@ class IEchelon(model.Schema):
         required=False,
     )
 
-    courseStatus = schema.Choice(
+    classStatus = schema.Choice(
         title=_(u'Course Status'),
         vocabulary='cshm.content.ClassStatus',
         default=u'registerFirst',

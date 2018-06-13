@@ -6,6 +6,21 @@
   </index>
   <column value="classStatus"/>
 
+  <index name="quota" meta_type="FieldIndex">
+    <indexed_attr value="quota" />
+  </index>
+  <column value="quota"/>
+
+  <index name="altPercent" meta_type="FieldIndex">
+    <indexed_attr value="altPercent" />
+  </index>
+  <column value="altPercent"/>
+
+  <index name="studentCount" meta_type="FieldIndex">
+    <indexed_attr value="studentCount" />
+  </index>
+  <column value="studentCount"/>
+
 </object>
 
 
