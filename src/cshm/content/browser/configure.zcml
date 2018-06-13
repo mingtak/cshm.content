@@ -99,6 +99,14 @@
       />
 
   <browser:page
+      name="students_list"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.StudentsList"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <browser:page
       name="teacher_appointment"
       for="cshm.content.content.echelon.IEchelon"
       class=".views.TeacherAppointment"
