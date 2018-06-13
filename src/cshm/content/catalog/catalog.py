@@ -18,8 +18,8 @@ def quota_indexer(obj):
 
 
 @indexer(IEchelon)
-def altPercent_indexer(obj):
-    return obj.altPercent
+def altCount_indexer(obj):
+    return obj.altCount
 
 
 @indexer(IEchelon)

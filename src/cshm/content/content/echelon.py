@@ -52,12 +52,10 @@ class IEchelon(model.Schema):
         required=True,
     )
 
-    altPercent = schema.Float(
-        title=_(u'Alternate Percentag'),
-        description=_(u'0.1 = 10% Alternate'),
-        default=0.0,
-        min=0.0,
-        max=1.0,
+    altCount = schema.Int(
+        title=_(u'Alternate Count'),
+        default=100,
+        min=0,
         required=True,
     )
 

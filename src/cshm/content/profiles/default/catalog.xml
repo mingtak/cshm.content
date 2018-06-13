@@ -11,10 +11,10 @@
   </index>
   <column value="quota"/>
 
-  <index name="altPercent" meta_type="FieldIndex">
-    <indexed_attr value="altPercent" />
+  <index name="altCount" meta_type="FieldIndex">
+    <indexed_attr value="altCount" />
   </index>
-  <column value="altPercent"/>
+  <column value="altCount"/>
 
   <index name="studentCount" meta_type="FieldIndex">
     <indexed_attr value="studentCount" />
