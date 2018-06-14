@@ -142,6 +142,15 @@
    <!-- 權限未明 -->
 
   <browser:page
+      name="waiting_trans_to_admit"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.WaitingTransToAdmit"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
       name="debugview"
       for="*"
       class=".views.DebugView"

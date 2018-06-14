@@ -291,18 +291,17 @@ class AdmitBatchNumbering(BrowserView):
 
         uid = context.UID()
         sqlInstance = SqlObj()
-        sqlStr = """SELECT id FROM `reg_course` WHERE uid = '{}' and seatNo is not null""".format(uid)
+
+        sqlStr = """SELECT MAX(seatNo) FROM `reg_course` WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        seatNo = (int(result[0]['MAX(seatNo)']) + 1) if result[0]['MAX(seatNo)'] else 1
+
+        sqlStr = """SELECT id, seatNo FROM `reg_course` WHERE uid = '{}' and isAlt = 0""".format(uid)
         result = sqlInstance.execSql(sqlStr)
 
-        if len(result):
-            return 1 # 批次編碼只能做一次，若之前做過，則回傳1
-        else:
-            sqlStr = """SELECT id FROM `reg_course` WHERE uid = '{}' and isAlt = 0""".format(uid)
-            result = sqlInstance.execSql(sqlStr)
-
-            seatNo = 1
-            for item in result:
-                id = item['id']
+        for item in result:
+            id = item['id']
+            if not item['seatNo']:
                 sqlStr = """update `reg_course` set seatNo = {} where id = {}""".format(seatNo, id)
                 sqlInstance.execSql(sqlStr)
                 seatNo += 1
@@ -331,6 +330,22 @@ class AllTransToAdmit(BrowserView):
                 id = item['id']
                 sqlStr = """update `reg_course` set isAlt = 0 where id = {}""".format(id)
                 sqlInstance.execSql(sqlStr)
+
+
+
+class WaitingTransToAdmit(BrowserView):
+
+    """ 備取轉正取(單筆) """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        id = request.form.get('id')
+        sqlInstance = SqlObj()
+        sqlStr = """update `reg_course` set isAlt = 0 where id = {}""".format(id)
+        sqlInstance.execSql(sqlStr)
 
 
 class TeacherAppointment(BrowserView):
