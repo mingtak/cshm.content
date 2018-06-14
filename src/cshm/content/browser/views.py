@@ -248,6 +248,18 @@ class StudentsList(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
+        context = self.context
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+
+        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt = 0""".format(uid)
+        self.admit = sqlInstance.execSql(sqlStr) # 正取
+
+        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0""".format(uid)
+        self.waiting = sqlInstance.execSql(sqlStr) # 備取
+
+
 
         return self.template()
 
