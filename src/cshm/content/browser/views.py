@@ -16,6 +16,7 @@ from docxtpl import DocxTemplate, Listing
 from plone.protect.interfaces import IDisableCSRFProtection
 from zope.interface import alsoProvides
 
+import requests
 import logging
 
 
@@ -332,7 +333,6 @@ class AllTransToAdmit(BrowserView):
                 sqlInstance.execSql(sqlStr)
 
 
-
 class WaitingTransToAdmit(BrowserView):
 
     """ 備取轉正取(單筆) """
@@ -346,6 +346,46 @@ class WaitingTransToAdmit(BrowserView):
         sqlInstance = SqlObj()
         sqlStr = """update `reg_course` set isAlt = 0 where id = {}""".format(id)
         sqlInstance.execSql(sqlStr)
+
+
+class ExportToDownloadSite(BrowserView):
+
+    """ 匯出帳號到下載專區 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        url = request.form.get('url')
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """select studId, seatNo from `reg_course` where uid = '{}' and isAlt = 0""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        data = ''
+        for item in result:
+            data += '%s:%s\n' % (item['studId'], item['seatNo'])
+        data = data[:-1]
+
+        req = requests.patch(url,
+            headers={'Accept': 'application/json', 'Content-Type': 'application/json'},
+            json={'description': data},
+            auth=('editor', 'editor')
+        )
+        if req.ok:
+            return 1
+        else:
+            return 0
+
+
+class TeacherSelector(BrowserView):
+
+    """ 教師遴選作業 """
+
+    template = ViewPageTemplateFile("template/teacher_selector.pt")
+
+    def __call__(self):
+        return self.template()
 
 
 class TeacherAppointment(BrowserView):

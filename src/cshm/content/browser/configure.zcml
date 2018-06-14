@@ -151,6 +151,24 @@
    <!-- 權限未明 -->
 
   <browser:page
+      name="export_to_download_site"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.ExportToDownloadSite"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
+      name="teacher_selector"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.TeacherSelector"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
       name="debugview"
       for="*"
       class=".views.DebugView"
