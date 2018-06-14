@@ -115,6 +115,33 @@
       />
 
   <browser:page
+      name="update_contact_log"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.UpdateContactLog"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
+      name="admit_batch_numbering"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.AdmitBatchNumbering"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
+      name="all_trans_to_admit"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.AllTransToAdmit"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
       name="debugview"
       for="*"
       class=".views.DebugView"

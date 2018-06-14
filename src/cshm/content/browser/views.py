@@ -124,7 +124,7 @@ class RegCourse(BrowserView):
         studentCount = result[0]['COUNT(id)']
         totalQuota = context.quota + context.altCount
 
-        if studentCount >= context.quota:
+        if studentCount >= context.quota and context.quota > 0:
             context.classStatus = u'fullCanAlt'
         if studentCount >= totalQuota:
             context.classStatus = u'altFull'
@@ -259,9 +259,78 @@ class StudentsList(BrowserView):
         sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0""".format(uid)
         self.waiting = sqlInstance.execSql(sqlStr) # 備取
 
-
-
         return self.template()
+
+
+class UpdateContactLog(BrowserView):
+
+    """ 更新聯絡記錄 contactLog """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        id = request.form.get('id')
+        contactLog = request.form.get('contactLog')
+
+        sqlInstance = SqlObj()
+        sqlStr = """update reg_course set contactLog = '{}' where id = {}""".format(contactLog, id)
+        sqlInstance.execSql(sqlStr)
+        return
+
+
+class AdmitBatchNumbering(BrowserView):
+
+    """ 正取學員批次座位編碼 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id FROM `reg_course` WHERE uid = '{}' and seatNo is not null""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+
+        if len(result):
+            return 1 # 批次編碼只能做一次，若之前做過，則回傳1
+        else:
+            sqlStr = """SELECT id FROM `reg_course` WHERE uid = '{}' and isAlt = 0""".format(uid)
+            result = sqlInstance.execSql(sqlStr)
+
+            seatNo = 1
+            for item in result:
+                id = item['id']
+                sqlStr = """update `reg_course` set seatNo = {} where id = {}""".format(seatNo, id)
+                sqlInstance.execSql(sqlStr)
+                seatNo += 1
+
+
+class AllTransToAdmit(BrowserView):
+
+    """ 備取全部轉正取 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id FROM `reg_course` WHERE uid = '{}' and isAlt = 0""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        if len(result):
+            return 1 # 若正取名單有人，就不能全轉，回傳1
+        else:
+            sqlStr = """SELECT id FROM `reg_course` WHERE uid = '{}'""".format(uid)
+            result = sqlInstance.execSql(sqlStr)
+
+            for item in result:
+                id = item['id']
+                sqlStr = """update `reg_course` set isAlt = 0 where id = {}""".format(id)
+                sqlInstance.execSql(sqlStr)
 
 
 class TeacherAppointment(BrowserView):
