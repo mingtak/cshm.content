@@ -184,7 +184,7 @@ class CourseListing(BrowserView):
         self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst']
         date_range = {
             'query': DateTime(DateTime().strftime('%Y-%m-%d')),
-            'range': 'min'
+            'range': 'min',
         }
         self.echelonBrain = {}
         for status in self.statusList:
