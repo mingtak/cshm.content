@@ -15,6 +15,7 @@ from mingtak.ECBase.browser.views import SqlObj
 from docxtpl import DocxTemplate, Listing
 from plone.protect.interfaces import IDisableCSRFProtection
 from zope.interface import alsoProvides
+from DateTime import DateTime
 
 import requests
 import logging
@@ -181,9 +182,18 @@ class CourseListing(BrowserView):
         self.portal = api.portal.get()
 
         self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst']
+        date_range = {
+            'query': DateTime(DateTime().strftime('%Y-%m-%d')),
+            'range': 'min'
+        }
         self.echelonBrain = {}
         for status in self.statusList:
-            self.echelonBrain[status] = api.content.find(context=self.portal['mana_course'], Type='Echelon', classStatus=status)
+            self.echelonBrain[status] = api.content.find(
+                context=self.portal['mana_course'],
+                Type='Echelon',
+                regDeadline=date_range,
+                classStatus=status
+            )
 
         return self.template()
 

@@ -8,6 +8,11 @@ from mingtak.ECBase.browser.views import SqlObj
 
 
 @indexer(IEchelon)
+def regDeadline_indexer(obj):
+    return obj.regDeadline
+
+
+@indexer(IEchelon)
 def classStatus_indexer(obj):
     return obj.classStatus
 
