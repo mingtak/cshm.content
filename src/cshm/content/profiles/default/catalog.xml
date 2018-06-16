@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
-  <index name="regDeadline" meta_type="DateIndex">
-    <indexed_attr value="regDeadline" />
+  <index name="teacheSubjects" meta_type="KeywordIndex">
+    <indexed_attr value="teacheSubjects" />
   </index>
-  <column value="regDeadline"/>
+  <column value="teacheSubjects"/>
 
   <index name="classStatus" meta_type="FieldIndex">
     <indexed_attr value="classStatus" />

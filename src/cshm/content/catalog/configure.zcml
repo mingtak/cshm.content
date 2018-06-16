@@ -6,9 +6,10 @@
 
   <adapter name="classStatus" factory=".catalog.classStatus_indexer"/>
   <adapter name="quota" factory=".catalog.quota_indexer"/> <!-- 名額 -->
-  <adapter name="altCount" factory=".catalog.altCount_indexer"/> <!-- 候補% -->
+  <adapter name="altCount" factory=".catalog.altCount_indexer"/> <!-- 候補 -->
   <adapter name="studentCount" factory=".catalog.studentCount_indexer"/>
   <adapter name="regDeadline" factory=".catalog.regDeadline_indexer"/>
+  <adapter name="teacheSubjects" factory=".catalog.teacheSubjects_indexer"/> <!-- 講師教授課目 -->
 <!--  <adapter name="" factory=".catalog._indexer"/> -->
 
 </configure>

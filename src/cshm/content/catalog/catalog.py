@@ -3,8 +3,17 @@ from plone.indexer.decorator import indexer
 from zope.interface import Interface
 from Products.CMFPlone.utils import safe_unicode
 from cshm.content.content.echelon import IEchelon
-
+from cshm.content.content.teacher import ITeacher
 from mingtak.ECBase.browser.views import SqlObj
+
+
+@indexer(ITeacher)
+def teacheSubjects_indexer(obj):
+    ts = obj.teacheSubjects
+    tsList = []
+    for item in ts:
+        tsList.append(item.to_object.title)
+    return tsList
 
 
 @indexer(IEchelon)
