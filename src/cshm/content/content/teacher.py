@@ -6,6 +6,8 @@ from plone.namedfile import field as namedfile
 from plone.supermodel import model
 from plone.supermodel.directives import fieldset
 from z3c.form.browser.radio import RadioFieldWidget
+from z3c.relationfield.schema import RelationList, RelationChoice
+from plone.app.vocabularies.catalog import CatalogSource
 from zope import schema
 from zope.interface import implementer
 from cshm.content import _
@@ -197,6 +199,16 @@ class ITeacher(model.Schema):
         required=False,
     )
 
+    fieldset(_(u'Teache Subjects'), fields=['teacheSubjects'])
+    teacheSubjects = RelationList(
+        title=_(u'Teache Subjects'),
+        default=[],
+        required=False,
+        value_type=RelationChoice(
+            title=_(u"Subject"),
+            source=CatalogSource(Type='Subject', path='/cshm/resource/corese_template'),
+        )
+    )
 
     # directives.widget(level=RadioFieldWidget)
     # level = schema.Choice(

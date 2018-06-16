@@ -27,14 +27,14 @@ class ISubject(model.Schema):
         required=False,
     )
 
-    attachFile = namedfile.NamedBlobFile(
-        title=_(u'Attach File'),
-        required=False,
-    )
+    #attachFile = namedfile.NamedBlobFile(
+    #    title=_(u'Attach File'),
+    #    required=False,
+    #)
 
     teacher = RelationChoice(
         title=_(u"Teacher"),
-        required=True,
+        required=False,
         source=CatalogSource(Type='Teacher')
     )
 
