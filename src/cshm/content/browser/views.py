@@ -395,6 +395,16 @@ class TeacherSelector(BrowserView):
     template = ViewPageTemplateFile("template/teacher_selector.pt")
 
     def __call__(self):
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        uid = request.form.get('uid', None)
+        if not uid:
+            return self.template()
+
+        brain = api.content.find(UID=uid)
+        self.refObj = brain[0].getObject()
         return self.template()
 
 
