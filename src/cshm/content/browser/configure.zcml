@@ -169,6 +169,15 @@
    <!-- 權限未明 -->
 
   <browser:page
+      name="update_seat_no"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.UpdateSeatNo"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
       name="debugview"
       for="*"
       class=".views.DebugView"

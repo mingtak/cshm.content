@@ -264,10 +264,10 @@ class StudentsList(BrowserView):
         uid = context.UID()
         sqlInstance = SqlObj()
 
-        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt = 0""".format(uid)
+        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt = 0 ORDER BY seatNo""".format(uid)
         self.admit = sqlInstance.execSql(sqlStr) # 正取
 
-        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0""".format(uid)
+        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 ORDER BY isAlt""".format(uid)
         self.waiting = sqlInstance.execSql(sqlStr) # 備取
 
         return self.template()
@@ -355,6 +355,25 @@ class WaitingTransToAdmit(BrowserView):
         id = request.form.get('id')
         sqlInstance = SqlObj()
         sqlStr = """update `reg_course` set isAlt = 0 where id = {}""".format(id)
+        sqlInstance.execSql(sqlStr)
+
+
+class UpdateSeatNo(BrowserView):
+
+    """ 更新座位編號 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        sqlStr = ''
+        for item in request.form.keys():
+            if item.startswith('seat-'):
+                id = item.split('-')[-1]
+                sqlStr += "update `reg_course` set seatNo = {} where id = {};".format(request.form['seat-%s' % id], id)
+
+        sqlInstance = SqlObj()
         sqlInstance.execSql(sqlStr)
 
 
