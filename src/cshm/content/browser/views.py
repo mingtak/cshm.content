@@ -263,8 +263,12 @@ class StudentsList(BrowserView):
 
         uid = context.UID()
         sqlInstance = SqlObj()
-
-        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt = 0 ORDER BY seatNo""".format(uid)
+        sqlStr = """SELECT reg_course.*, status
+                    FROM reg_course, training_status_code
+                    WHERE uid = '{}' and
+                          isAlt = 0 and
+                          reg_course.training_status = training_status_code.id
+                    ORDER BY seatNo""".format(uid)
         self.admit = sqlInstance.execSql(sqlStr) # 正取
 
         sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 ORDER BY isAlt""".format(uid)
