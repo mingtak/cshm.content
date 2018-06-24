@@ -381,6 +381,9 @@ class UpdateSeatNo(BrowserView):
             if item.startswith('seat-'):
                 id = item.split('-')[-1]
                 sqlStr += "update `reg_course` set seatNo = {} where id = {};".format(request.form['seat-%s' % id], id)
+            if item.startswith('status-'):
+                id = item.split('-')[-1]
+                sqlStr += "update `reg_course` set training_status = {} where id = {};".format(request.form['status-%s' % id], id)
 
         sqlInstance = SqlObj()
         sqlInstance.execSql(sqlStr)
