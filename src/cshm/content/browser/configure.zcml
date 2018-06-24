@@ -55,6 +55,7 @@
       permission="zope2.View"
       />
 
+  <!-- 課程註冊頁 -->
   <browser:page
       name="reg_course"
       for="cshm.content.content.echelon.IEchelon"
@@ -62,6 +63,16 @@
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="zope2.View"
       />
+
+  <!-- Admin 註冊頁，不受名額限制 -->
+  <browser:page
+      name="admin_reg_course"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.AdminRegCourse"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
 
   <browser:page
       name="course_info"

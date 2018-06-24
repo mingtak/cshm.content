@@ -132,6 +132,14 @@ class RegCourse(BrowserView):
             context.classStatus = u'altFull'
 
 
+    def checkAltFull(self):
+        context = self.context
+        if context.classStatus == 'altFull':
+            return True
+        else:
+            return False
+
+
     def __call__(self):
         self.portal = api.portal.get()
         context = self.context
@@ -143,11 +151,10 @@ class RegCourse(BrowserView):
         if not form.get('studId', False):
             return self.template()
 
-        if context.classStatus == 'altFull':
-            api.portal.show_message(message=_(u"Quota Full include Alternate."), request=request, type='info')
+        if self.checkAltFull():
+            api.portal.show_message(message=_(u"Quota Full include Alternate."), request=request, type='error')
             request.response.redirect(self.portal['training']['courselist'].absolute_url())
             return
-
 
         # 報名寫入 DB
         sqlInstance = SqlObj()
@@ -161,8 +168,19 @@ class RegCourse(BrowserView):
         context.reindexObject(idxs=['studentCount', 'classStatus'])
 
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
-        request.response.redirect(self.portal['training']['courselist'].absolute_url())
+
+        # TODO: 目前預設是只有非會員會在外網註冊
+        if api.user.is_anonymous():
+            request.response.redirect(self.portal['training']['courselist'].absolute_url())
+        else:
+            request.response.redirect(request['ACTUAL_URL'])
         return
+
+
+class AdminRegCourse(RegCourse):
+
+    def checkAltFull(self):
+        return False
 
 
 class CourseInfo(BrowserView):
@@ -315,6 +333,9 @@ class AdmitBatchNumbering(BrowserView):
         sqlStr = """SELECT MAX(seatNo) FROM `reg_course` WHERE uid = '{}'""".format(uid)
         result = sqlInstance.execSql(sqlStr)
         seatNo = (int(result[0]['MAX(seatNo)']) + 1) if result[0]['MAX(seatNo)'] else 1
+
+        if seatNo > 1:
+            return '1'
 
         sqlStr = """SELECT id, seatNo FROM `reg_course` WHERE uid = '{}' and isAlt = 0""".format(uid)
         result = sqlInstance.execSql(sqlStr)
