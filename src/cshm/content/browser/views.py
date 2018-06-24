@@ -263,17 +263,22 @@ class StudentsList(BrowserView):
 
         uid = context.UID()
         sqlInstance = SqlObj()
+        # 正取名單
         sqlStr = """SELECT reg_course.*, status
                     FROM reg_course, training_status_code
                     WHERE uid = '{}' and
                           isAlt = 0 and
                           reg_course.training_status = training_status_code.id
                     ORDER BY seatNo""".format(uid)
-        self.admit = sqlInstance.execSql(sqlStr) # 正取
+        self.admit = sqlInstance.execSql(sqlStr)
 
+        # 備取名單
         sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 ORDER BY isAlt""".format(uid)
-        self.waiting = sqlInstance.execSql(sqlStr) # 備取
+        self.waiting = sqlInstance.execSql(sqlStr)
 
+        # 受訓狀態
+        sqlStr = """SELECT * FROM training_status_code WHERE 1 ORDER BY id"""
+        self.trainingStatus = sqlInstance.execSql(sqlStr)
         return self.template()
 
 
