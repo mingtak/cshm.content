@@ -64,6 +64,15 @@
       permission="zope2.View"
       />
 
+  <!-- 團體報名課程註冊頁 -->
+  <browser:page
+      name="group_reg_course"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.GroupRegCourse"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
   <!-- Admin 註冊頁，不受名額限制 -->
   <browser:page
       name="admin_reg_course"
@@ -187,6 +196,14 @@
       permission="cmf.ManagePortal"
       />
    <!-- 權限未明 -->
+
+  <browser:page
+      name="download_group_reg"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.DownloadGroupReg"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
 
   <browser:page
       name="debugview"

@@ -1,0 +1,93 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="cshm.content">
+<body>
+
+
+<metal:content-core fill-slot="content-core">
+<metal:content-core define-macro="content-core"
+                    tal:define="toc context/table_of_contents|nothing;">
+
+<div class="row">
+
+
+  <div class="col-md-12">
+    <h3>網路線上報名系統</h3>
+<h4>課程資訊</h4>
+<ul>
+  <li>課程名稱: ${python:context.getParentNode().title} / ${context/title}</li>
+  <li>時段: <span i18n:translate="">${context/duringTime}</span></li>
+  <li>上課地點: ${context/trainingCenter/to_object/title}</li>
+</ul>
+<hr>
+<h4>個人資料</h4>
+    <form action="${context/absolute_url}/@@reg_course" method="post">
+<p>      <input type="text" name="studId" id="studId" value="" placeholder="身份證字號" required></p>
+<p>      <input type="text" name="name" id="name" value="" placeholder="姓名" required></p>
+<p>      <label for="birthday">出生日期</label>
+<p>      <input type="date" name="birthday" id="birthday" value="" required></p>
+<p>      <input type="text" name="phone" id="phone" value="" placeholder="聯絡電話" required></p>
+<p>      <input type="text" name="cellphone" id="cellphone" value="" placeholder="行動電話" required></p>
+<p>      <input type="text" name="fax" id="fax" value="" placeholder="傳真電話"></p>
+<p>      <input type="text" name="address" id="address" value="" placeholder="聯絡地址" required></p>
+<p>      <input type="email" name="priv-email" id="priv-email" value="" placeholder="電子郵件(私人)" required></p>
+<p>      <input type="email" name="com-email" id="com-email" value="" placeholder="電子郵件(公司)"></p>
+<hr>
+
+
+<h4>公司資料</h4>
+<p>      <input type="text" name="company-name" id="company-name" value="" placeholder="服務單位"></p>
+<p>      <input type="text" name="job-title" id="job-title" value="" placeholder="職稱"></p>
+<p>      <input type="text" name="company-address" id="company-address" value="" placeholder="公司地址"></p>
+<hr>
+<h4>收據資料</h4>
+<p>      <input type="text" name="tax-title" id="tax-title" value="" placeholder="收據抬頭"></p>
+<p>      <input type="text" name="tax-no" id="tax-no" value="" placeholder="統一編號"></p>
+
+<hr>
+    <h3>個人資料使用同意書</h3>
+    <ol>
+<li>
+社團法人中國勞工安全衛生管理學會（下稱本會）為提供課程報名相關服務，並確保報名台端之利益，將遵循個人資料保護法及相關法令之規定，蒐集、處理及利用報名學員所提供之個人資料，包括台端電子郵件帳號姓名、性別、出生年月日、身分證字號、特徵、服務機構、職稱、戶籍地址、通訊住址 、行動電話、學校紀錄、受訓紀錄 、職業、產業特性及資格技術等。
+</li>
+
+<li>
+依據個資法第三條規定，台端就本會保有台端之個人資料得行使下列權利：<br>
+　(一)查詢或請求閱覽。<br>
+　(二)請求製給複製本。<br>
+　(三)請求補充或更正。<br>
+　(四)請求停止蒐集、處理或利用。<br>
+　(五)請求刪除。
+</li>
+<li>
+在台端就其個人資料依個人資料保護法第三條之規定，請求停止蒐集、處理或利用或請求刪除前，惟依法本會因執行業務所必須者，得不依台端請求為之。
+</li>
+<li>
+台端得自由選擇是否提供個人資料或行使個人資料保護法第三條所定之權利，但報名學員提供資料不足或有其他冒用、盜用、不實之情形，台端將無法進行必要之審核及處理作業，致無法提供台端相關服務。
+</li>
+    </ol>
+
+<input type="submit" name="submit" value="確認送出" class="btn btn-info">
+    </form>
+  </div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+</metal:content-core>
+</metal:content-core>
+
+</body>
+</html>

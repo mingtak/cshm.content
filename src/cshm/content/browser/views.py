@@ -17,6 +17,8 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from zope.interface import alsoProvides
 from DateTime import DateTime
 
+import xlwt, xlrd
+from xlutils.copy import copy
 import requests
 import logging
 
@@ -74,9 +76,34 @@ class CoverView(FolderView):
         return results
 
 
+class DownloadGroupReg(BrowserView):
+
+    def __call__(self):
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+        # TODO template file path, use configlet
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/group_reg.xls'
+
+        wb = xlrd.open_workbook(filePath, formatting_info=True)
+        wb_copy = copy(wb)
+        wb_copy.get_sheet(0).write(3,3,"%s-%s" % (context.getParentNode().title, context.title))
+        wb_copy.save('/tmp/temp.xls')
+
+        self.request.response.setHeader('Content-Type', 'application/xls')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            'attachment; filename="%s-%s-%s.xls"' %
+                ("團體報名表", context.getParentNode().title.encode('utf-8'), context.title.encode('utf-8'))
+        )
+        with open('/tmp/temp.xls', 'rb') as file:
+            docs = file.read()
+            return docs
+
+
 class RegCourse(BrowserView):
 
-    template = ViewPageTemplateFile("template/reg_course.pt")
+    template = ViewPageTemplateFile("template/group_reg_course.pt")
 
     def makeSqlStr(self):
         form = self.request.form
