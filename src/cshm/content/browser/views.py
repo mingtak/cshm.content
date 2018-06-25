@@ -19,6 +19,7 @@ from DateTime import DateTime
 
 import xlwt, xlrd
 from xlutils.copy import copy
+import base64
 import requests
 import logging
 
@@ -103,7 +104,7 @@ class DownloadGroupReg(BrowserView):
 
 class RegCourse(BrowserView):
 
-    template = ViewPageTemplateFile("template/group_reg_course.pt")
+    template = ViewPageTemplateFile("template/reg_course.pt")
 
     def makeSqlStr(self):
         form = self.request.form
@@ -202,6 +203,113 @@ class RegCourse(BrowserView):
         else:
             request.response.redirect(request['ACTUAL_URL'])
         return
+
+
+class GroupRegCourse(RegCourse):
+
+    template = ViewPageTemplateFile("template/group_reg_course.pt")
+
+    def makeSqlStr(self, form):
+
+        uid = self.context.UID()
+        path = self.context.virtual_url_path()
+# 正確性待確認
+        isAlt = self.isAlt()
+
+        form['tax-title'] = 'TODO'
+        form['job-title'] = 'TODO'
+
+#        import pdb; pdb.set_trace()
+        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax-no`, `name`, `com-email`, `company-name`,
+               `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`,
+               `studId`, `uid`, `path`, `isAlt`)
+           VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+        """.format(form.get('cellphone'), form.get('fax'), form.get('tax-no'),
+            form.get('name').encode('utf-8'), form.get('com-email'), form.get('company-name').encode('utf-8'),
+            form.get('tax-title').encode('utf-8'), form.get('company-address').encode('utf-8'),
+            form.get('priv-email'), form.get('phone'), form.get('birthday'), form.get('address').encode('utf-8'),
+            form.get('job-title').encode('utf-8'), form.get('studId'), uid, path, isAlt)
+        return sqlStr
+
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+        alsoProvides(request, IDisableCSRFProtection)
+        form = request.form
+
+        # 檢查是進入報名頁，或者為報名程序
+        if not form.get('file_data', False):
+            return self.template()
+
+        # 檢查還有名額能報否
+        if self.checkAltFull():
+            api.portal.show_message(message=_(u"Quota Full include Alternate."), request=request, type='error')
+            request.response.redirect(self.portal['training']['courselist'].absolute_url())
+            return
+
+        file_data = request.get('file_data')
+        file_data = file_data.split(',')[1]
+        text = base64.b64decode(file_data)
+        """
+        try:
+            text = text.decode('utf-8')
+        except:
+            text = text.decode('big5')
+        """
+
+        extFilename = request.form.get('file').split('.')[-1]
+        fullFilename = '/tmp/group_reg.%s' % extFilename
+        with open(fullFilename, 'wb') as file:
+            file.write(text)
+
+        wb = xlrd.open_workbook(fullFilename, formatting_info=True)
+        st = wb.sheet_by_index(0)
+
+        form = {}
+        form['company-name'] = st.cell(1,3).value
+        contact = st.cell(2,3).value # 未處理
+        courseName = st.cell(3,3).value # TODO:還沒校對正確性
+        form['company-address'] = st.cell(1,7).value
+        form['company-phone'] = st.cell(2,5).value
+        form['company-fax'] = st.cell(2,8).value
+        form['com-email'] = st.cell(3,8).value
+
+        for index in range(len(st.col(1))):
+            if st.col(1)[index].ctype != 2: # is not number
+                continue
+
+            row = st.row(index)
+            form['studId'] = row[2].value
+            form['name']= row[3].value
+            form['birthday'] = row[4].value
+            form['phone'] = row[5].value
+            form['cellphone'] = row[5].value
+            edu = row[6].value
+            form['priv-email'] = row[7].value
+            form['address'] = row[8].value
+
+            if form['studId'] and form['name']:
+                # 報名寫入 DB
+                sqlInstance = SqlObj()
+                sqlStr = self.makeSqlStr(form)
+                sqlInstance.execSql(sqlStr)
+
+        # 檢查額滿(含正備取)
+        self.checkFull()
+
+        # reindex
+        context.reindexObject(idxs=['studentCount', 'classStatus'])
+
+        api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
+
+        request.response.redirect(request['ACTUAL_URL'])
+        return
+
+
+
+
 
 
 class AdminRegCourse(RegCourse):
