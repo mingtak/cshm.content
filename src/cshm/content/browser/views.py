@@ -106,6 +106,11 @@ class RegCourse(BrowserView):
 
     template = ViewPageTemplateFile("template/reg_course.pt")
 
+    def isFrontend(self):
+        isFrontendView = api.content.get_view(name='is_frontend', context=self.portal, request=self.request)
+        return isFrontendView(self)
+
+
     def makeSqlStr(self):
         form = self.request.form
 
@@ -308,11 +313,13 @@ class GroupRegCourse(RegCourse):
         return
 
 
-
-
-
-
 class AdminRegCourse(RegCourse):
+
+    def checkAltFull(self):
+        return False
+
+
+class AdminGroupRegCourse(GroupRegCourse):
 
     def checkAltFull(self):
         return False
@@ -422,7 +429,7 @@ class StudentsList(BrowserView):
                     WHERE uid = '{}' and
                           isAlt = 0 and
                           reg_course.training_status = training_status_code.id
-                    ORDER BY seatNo""".format(uid)
+                    ORDER BY isnull(isReserve),isReserve, isnull(seatNo), seatNo""".format(uid)
         self.admit = sqlInstance.execSql(sqlStr)
 
         # 備取名單
@@ -543,6 +550,36 @@ class UpdateSeatNo(BrowserView):
 
         sqlInstance = SqlObj()
         sqlInstance.execSql(sqlStr)
+
+class ReserveSeat(BrowserView):
+
+    """ 預約保留座位 """
+
+    def __call__(self):
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        alsoProvides(request, IDisableCSRFProtection)
+
+        quota = request.form.get('quota')
+        company_name = request.form.get('company-name')
+        uid = context.UID()
+        path = context.virtual_url_path()
+
+        sqlStr = """INSERT INTO `reg_course`(`company-name`, `uid`, `path`, `isAlt`, cellphone, name, isReserve)
+           VALUES ('{}', '{}', '{}', 0)
+        """.format(company_name.encode('utf-8'), uid, path)
+
+        for i in range(int(quota)-1):
+            sqlStr += ", ('{}', '{}', '{}', 0, 1)".format(company_name.encode('utf-8'), uid, path)
+
+        sqlInstance = SqlObj()
+        sqlInstance.execSql(sqlStr)
+
+        api.portal.show_message(message=_(u"Reserve Seat is OK."), request=request, type='info')
+        request.response.redirect('%s/@@students_list' % context.absolute_url())
+        return
 
 
 class ExportToDownloadSite(BrowserView):

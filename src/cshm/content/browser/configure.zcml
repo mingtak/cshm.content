@@ -83,6 +83,16 @@
       />
   <!-- 權限未定 -->
 
+  <!-- Admin 團報註冊頁，不受名額限制 -->
+  <browser:page
+      name="admin_group_reg_course"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.AdminGroupRegCourse"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <browser:page
       name="course_info"
       for="cshm.content.content.echelon.IEchelon"
@@ -192,6 +202,15 @@
       name="update_seat_no"
       for="cshm.content.content.echelon.IEchelon"
       class=".views.UpdateSeatNo"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
+  <browser:page
+      name="reserve_seat"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.ReserveSeat"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
