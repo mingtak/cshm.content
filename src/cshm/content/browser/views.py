@@ -21,6 +21,7 @@ import xlwt, xlrd
 from xlutils.copy import copy
 import base64
 import requests
+import re
 import logging
 
 
@@ -77,7 +78,63 @@ class CoverView(FolderView):
         return results
 
 
+class ExportEmailCell(BrowserView):
+    """ 匯出email, 手機清單 """
+
+    template = ViewPageTemplateFile("template/export_email_cell.pt")
+
+    def checkCell(self, value):
+        if value.isdigit() and value.startswith('09'):
+            return True
+        else:
+            return False
+
+
+    def checkEmail(self, value):
+        pattern = re.compile(r"[^@\s]+@[^@\s]+\.[a-zA-Z0-9]+$")
+        try:
+            if bool(re.match(pattern, value)):
+                return True
+            else:
+                return False
+        except:
+            return False
+
+
+    def __call__(self):
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        uid = context.UID()
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT `name`, `priv-email`, `cellphone`
+                    FROM reg_course
+                    WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+
+        self.rightEmails = []
+        self.wrongEmails = []
+        self.rightCells = []
+        self.wrongCells = []
+        for item in result:
+            if self.checkEmail(item['priv-email']):
+                self.rightEmails.append(item['priv-email'])
+            else:
+                self.wrongEmails.append([item['name'], item['priv-email']])
+
+            if self.checkCell(item['cellphone']):
+                self.rightCells.append(item['cellphone'])
+            else:
+                self.wrongCells.append([item['name'], item['cellphone']])
+
+        return self.template()
+
+
+
 class DownloadGroupReg(BrowserView):
+    """ 下載團報報名表 """
 
     def __call__(self):
         portal = api.portal.get()
@@ -416,6 +473,11 @@ class StudentsList(BrowserView):
     """ 報名作業 / 學生列表 """
 
     template = ViewPageTemplateFile("template/students_list.pt")
+
+    def currentName(self):
+        current = api.user.get_current()
+        return current.getProperty('fullname')
+
 
     def __call__(self):
         self.portal = api.portal.get()

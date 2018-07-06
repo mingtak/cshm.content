@@ -216,6 +216,16 @@
       />
    <!-- 權限未明 -->
 
+  <!-- 匯出email, 手機清單 -->
+  <browser:page
+      name="export_email_cell"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.ExportEmailCell"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+   <!-- 權限未明 -->
+
   <browser:page
       name="download_group_reg"
       for="cshm.content.content.echelon.IEchelon"
