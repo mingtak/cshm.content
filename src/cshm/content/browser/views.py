@@ -731,6 +731,23 @@ class TeacherAppointment(BrowserView):
             return docs
 
 
+class QueryCompany(BrowserView):
+
+    """ 即時搜尋公司名稱 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        taxNo = request.form.get('tax-no')
+        sqlStr = "SELECT * FROM `company_basic_info` WHERE `tax-no` = '%s'" % taxNo
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return result[0]['company-name']
+
+
 class DebugView(BrowserView):
 
     def __call__(self):

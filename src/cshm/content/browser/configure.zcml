@@ -226,10 +226,20 @@
       />
    <!-- 權限未明 -->
 
+  <!-- 下載團報報名表 -->
   <browser:page
       name="download_group_reg"
       for="cshm.content.content.echelon.IEchelon"
       class=".views.DownloadGroupReg"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+  <!-- 即時搜尋公司名稱 -->
+  <browser:page
+      name="query_company"
+      for="*"
+      class=".views.QueryCompany"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="zope2.View"
       />
@@ -243,4 +253,3 @@
       />
 
 </configure>
-
