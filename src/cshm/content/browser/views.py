@@ -109,7 +109,7 @@ class ExportEmailCell(BrowserView):
         uid = context.UID()
 
         sqlInstance = SqlObj()
-        sqlStr = """SELECT `name`, `priv-email`, `cellphone`
+        sqlStr = """SELECT `name`, `priv_email`, `cellphone`
                     FROM reg_course
                     WHERE uid = '{}'""".format(uid)
         result = sqlInstance.execSql(sqlStr)
@@ -119,10 +119,10 @@ class ExportEmailCell(BrowserView):
         self.rightCells = []
         self.wrongCells = []
         for item in result:
-            if self.checkEmail(item['priv-email']):
-                self.rightEmails.append(item['priv-email'])
+            if self.checkEmail(item['priv_email']):
+                self.rightEmails.append(item['priv_email'])
             else:
-                self.wrongEmails.append([item['name'], item['priv-email']])
+                self.wrongEmails.append([item['name'], item['priv_email']])
 
             if self.checkCell(item['cellphone']):
                 self.rightCells.append(item['cellphone'])
@@ -175,13 +175,13 @@ class RegCourse(BrowserView):
         path = self.context.virtual_url_path()
         isAlt = self.isAlt()
 
-        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax-no`, `name`, `com-email`, `company-name`, \
-                    `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`, \
-                    `studId`, `uid`, `path`, `isAlt`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
-        """.format(form.get('cellphone'), form.get('fax'), form.get('tax-no'), form.get('name'), form.get('com-email'),
-            form.get('company-name'), form.get('tax-title'), form.get('company-address'), form.get('priv-email'), form.get('phone'),
-            form.get('birthday'), form.get('address'), form.get('job-title'), form.get('studId'), uid, path, isAlt)
+        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`, \
+                    `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`, \
+                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+        """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
+            form.get('company_name'), form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('phone'),
+            form.get('birthday'), form.get('address'), form.get('job_title'), form.get('studId'), uid, path, isAlt, form.get('invoice_tax_no'))
         return sqlStr
 
 
@@ -278,19 +278,19 @@ class GroupRegCourse(RegCourse):
 # 正確性待確認
         isAlt = self.isAlt()
 
-        form['tax-title'] = 'TODO'
-        form['job-title'] = 'TODO'
+        form['invoice_title'] = 'TODO'
+        form['job_title'] = 'TODO'
 
 #        import pdb; pdb.set_trace()
-        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax-no`, `name`, `com-email`, `company-name`,
-               `tax-title`, `company-address`, `priv-email`, `phone`, `birthday`, `address`, `job-title`,
+        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`,
+               `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`,
                `studId`, `uid`, `path`, `isAlt`)
            VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
-        """.format(form.get('cellphone'), form.get('fax'), form.get('tax-no'),
-            form.get('name').encode('utf-8'), form.get('com-email'), form.get('company-name').encode('utf-8'),
-            form.get('tax-title').encode('utf-8'), form.get('company-address').encode('utf-8'),
-            form.get('priv-email'), form.get('phone'), form.get('birthday'), form.get('address').encode('utf-8'),
-            form.get('job-title').encode('utf-8'), form.get('studId'), uid, path, isAlt)
+        """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'),
+            form.get('name').encode('utf-8'), form.get('com_email'), form.get('company_name').encode('utf-8'),
+            form.get('invoice_title').encode('utf-8'), form.get('company_address').encode('utf-8'),
+            form.get('priv_email'), form.get('phone'), form.get('birthday'), form.get('address').encode('utf-8'),
+            form.get('job_title').encode('utf-8'), form.get('studId'), uid, path, isAlt)
         return sqlStr
 
 
@@ -330,13 +330,13 @@ class GroupRegCourse(RegCourse):
         st = wb.sheet_by_index(0)
 
         form = {}
-        form['company-name'] = st.cell(1,3).value
+        form['company_name'] = st.cell(1,3).value
         contact = st.cell(2,3).value # 未處理
         courseName = st.cell(3,3).value # TODO:還沒校對正確性
-        form['company-address'] = st.cell(1,7).value
-        form['company-phone'] = st.cell(2,5).value
-        form['company-fax'] = st.cell(2,8).value
-        form['com-email'] = st.cell(3,8).value
+        form['company_address'] = st.cell(1,7).value
+        form['company_phone'] = st.cell(2,5).value
+        form['company_fax'] = st.cell(2,8).value
+        form['com_email'] = st.cell(3,8).value
 
         for index in range(len(st.col(1))):
             if st.col(1)[index].ctype != 2: # is not number
@@ -349,7 +349,7 @@ class GroupRegCourse(RegCourse):
             form['phone'] = row[5].value
             form['cellphone'] = row[5].value
             edu = row[6].value
-            form['priv-email'] = row[7].value
+            form['priv_email'] = row[7].value
             form['address'] = row[8].value
 
             if form['studId'] and form['name']:
@@ -625,11 +625,11 @@ class ReserveSeat(BrowserView):
         alsoProvides(request, IDisableCSRFProtection)
 
         quota = request.form.get('quota')
-        company_name = request.form.get('company-name')
+        company_name = request.form.get('company_name')
         uid = context.UID()
         path = context.virtual_url_path()
 
-        sqlStr = """INSERT INTO `reg_course`(`company-name`, `uid`, `path`, `isAlt`, cellphone, name, isReserve)
+        sqlStr = """INSERT INTO `reg_course`(`company_name`, `uid`, `path`, `isAlt`, cellphone, name, isReserve)
            VALUES ('{}', '{}', '{}', 0)
         """.format(company_name.encode('utf-8'), uid, path)
 
@@ -740,12 +740,12 @@ class QueryCompany(BrowserView):
         context = self.context
         request = self.request
 
-        taxNo = request.form.get('tax-no')
-        sqlStr = "SELECT * FROM `company_basic_info` WHERE `tax-no` = '%s'" % taxNo
+        taxNo = request.form.get('tax_no')
+        sqlStr = "SELECT * FROM `company_basic_info` WHERE `tax_no` = '%s'" % taxNo
         sqlInstance = SqlObj()
         result = sqlInstance.execSql(sqlStr)
         if result:
-            return result[0]['company-name']
+            return '%s,%s' % (result[0]['company_name'], result[0]['company_address'])
 
 
 class DebugView(BrowserView):

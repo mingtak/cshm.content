@@ -46,7 +46,7 @@
 <hr>
 <h4>收據資料</h4>
 <p>      <input type="text" name="tax-title" id="tax-title" value="" placeholder="收據抬頭"></p>
-<p>      <input type="text" name="tax-no" id="tax-no" value="" placeholder="統一編號"></p>
+<p>      <input type="text" name="tax_no" id="tax_no" value="" placeholder="統一編號"></p>
 
 <hr>
     <h3>個人資料使用同意書</h3>
