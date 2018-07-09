@@ -19,9 +19,13 @@ class SqlObj:
 with open('/home/andy/BGMOPEN1.csv') as file:
     reader = csv.DictReader(file)
     count = 0
+    total = 0
     errorCount = 0
     sqlInstance = SqlObj()
     for row in reader:
+        if total < 1000000:
+            total += 1
+            continue
         if not (row['統一編號'] and row['營業人名稱']):
             continue
         sqlStr = "UPDATE `company_basic_info` SET `company_address` = '%s' WHERE `tax_no` = '%s'" % (row['營業地址'], row['統一編號'])

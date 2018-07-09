@@ -22,6 +22,7 @@ from xlutils.copy import copy
 import base64
 import requests
 import re
+import json
 import logging
 
 
@@ -494,6 +495,15 @@ class StudentsList(BrowserView):
                     ORDER BY isnull(isReserve),isReserve, isnull(seatNo), seatNo""".format(uid)
         self.admit = sqlInstance.execSql(sqlStr)
 
+        self.admitForJS = []
+        for item in self.admit:
+            temp = dict(item)
+            temp['id'] = int(item['id'])
+            if temp['birthday']:
+                temp['birthday'] = temp['birthday'].strftime('%Y/%m/%d')
+            self.admitForJS.append(temp)
+        self.admitForJS = json.dumps(self.admitForJS)
+
         # 備取名單
         sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 ORDER BY isAlt""".format(uid)
         self.waiting = sqlInstance.execSql(sqlStr)
@@ -629,12 +639,10 @@ class ReserveSeat(BrowserView):
         uid = context.UID()
         path = context.virtual_url_path()
 
-        sqlStr = """INSERT INTO `reg_course`(`company_name`, `uid`, `path`, `isAlt`, cellphone, name, isReserve)
-           VALUES ('{}', '{}', '{}', 0)
-        """.format(company_name.encode('utf-8'), uid, path)
-
-        for i in range(int(quota)-1):
-            sqlStr += ", ('{}', '{}', '{}', 0, 1)".format(company_name.encode('utf-8'), uid, path)
+        sqlStr = "INSERT INTO `reg_course`(`company_name`, `uid`, `path`, `isAlt`, `isReserve`) VALUES "
+        for i in range(int(quota)):
+            sqlStr += "('%s', '%s', '%s', 0, 1), " % (company_name, uid, path)
+        sqlStr = sqlStr[:-2]
 
         sqlInstance = SqlObj()
         sqlInstance.execSql(sqlStr)
