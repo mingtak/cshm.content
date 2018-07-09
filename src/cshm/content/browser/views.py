@@ -25,6 +25,27 @@ import re
 import json
 import logging
 
+logger = logging.getLogger("cshm.content")
+
+
+class BasicBrowserView(BrowserView):
+    """ 通用method """
+
+    def insertOldStudent(self, form):
+        """ 新增舊學員資料 """
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        sqlStr = "INSERT INTO `old_student`(`studId`, `name`, `birthday`, `phone`, `cellphone`, `fax`, `priv_email`, `priv_email2`, `address`) \
+                  VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
+                  ( form.get('studId').upper(), form.get('name'), form.get('birthday'), form.get('phone'), form.get('cellphone'),
+                    form.get('fax'), form.get('priv_email'), form.get('priv_email2'), form.get('address') )
+        sqlInstance = SqlObj()
+        try:
+            sqlInstance.execSql(sqlStr)
+        except:pass
+
 
 # 仿寫自 folderListing,
 class CoverListing(BrowserView):
@@ -160,7 +181,7 @@ class DownloadGroupReg(BrowserView):
             return docs
 
 
-class RegCourse(BrowserView):
+class RegCourse(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/reg_course.pt")
 
@@ -251,6 +272,9 @@ class RegCourse(BrowserView):
         sqlInstance = SqlObj()
         sqlStr = self.makeSqlStr()
         sqlInstance.execSql(sqlStr)
+
+        # 寫入舊學員名單
+        self.insertOldStudent(request.form)
 
         # 檢查額滿(含正備取)
         self.checkFull()
@@ -358,7 +382,7 @@ class GroupRegCourse(RegCourse):
                 sqlInstance = SqlObj()
                 sqlStr = self.makeSqlStr(form)
                 sqlInstance.execSql(sqlStr)
-
+                self.insertOldStudent(form)
         # 檢查額滿(含正備取)
         self.checkFull()
 
