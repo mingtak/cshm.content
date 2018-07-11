@@ -875,6 +875,23 @@ class UpdateStudentReg(BasicBrowserView):
         return self.template()
 
 
+class SeatTable(BasicBrowserView):
+
+    """ 套印座位表 """
+    template = ViewPageTemplateFile("template/seat_table.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        uid = context.UID()
+        sqlStr = "SELECT `seatNo`, `name` FROM `reg_course` WHERE isAlt = 0 and isReserve is null and uid = '%s' ORDER BY seatNo" % uid
+        sqlInstance = SqlObj()
+        self.result = sqlInstance.execSql(sqlStr)
+        return self.template()
+
+
 class DelReserve(BrowserView):
 
     """ 刪除預約 """
