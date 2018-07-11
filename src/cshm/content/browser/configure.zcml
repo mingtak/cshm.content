@@ -244,6 +244,26 @@
       permission="zope2.View"
       />
 
+  <!-- 即時搜尋公司名稱 -->
+  <browser:page
+      name="del_reserve"
+      for="*"
+      class=".views.DelReserve"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
+  <!-- 修改學員個人詳細 -->
+  <browser:page
+      name="update_student_reg"
+      for="*"
+      class=".views.UpdateStudentReg"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
   <browser:page
       name="debugview"
       for="*"

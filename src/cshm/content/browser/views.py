@@ -31,6 +31,50 @@ logger = logging.getLogger("cshm.content")
 class BasicBrowserView(BrowserView):
     """ 通用method """
 
+    def getCityList(self):
+        """ 取得縣市列表 """
+        return api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.citySorted')
+
+
+    def getDistList(self):
+        """ 取得鄉鎮市區列表及區碼 """
+        return api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.distList')
+
+
+    def isFrontend(self):
+        """ 檢查是否前端頁面 """
+        isFrontendView = api.content.get_view(name='is_frontend', context=self.portal, request=self.request)
+        return isFrontendView(self)
+
+
+    def checkCell(self, value):
+        """ 檢查手機號碼是否09開頭 """
+        if value.isdigit() and value.startswith('09'):
+            return True
+        else:
+            return False
+
+
+    def checkEmail(self, value):
+        """ 檢查email格式 """
+        pattern = re.compile(r"[^@\s]+@[^@\s]+\.[a-zA-Z0-9]+$")
+        try:
+            if bool(re.match(pattern, value)):
+                return True
+            else:
+                return False
+        except:
+            return False
+
+
+    def getEducation(self):
+        """ 取得學歷代碼 """
+
+        sqlStr = "SELECT * FROM `education_code` WHERE 1"
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+
     def insertOldStudent(self, form):
         """ 新增舊學員資料 """
         portal = api.portal.get()
@@ -100,28 +144,10 @@ class CoverView(FolderView):
         return results
 
 
-class ExportEmailCell(BrowserView):
+class ExportEmailCell(BasicBrowserView):
     """ 匯出email, 手機清單 """
 
     template = ViewPageTemplateFile("template/export_email_cell.pt")
-
-    def checkCell(self, value):
-        if value.isdigit() and value.startswith('09'):
-            return True
-        else:
-            return False
-
-
-    def checkEmail(self, value):
-        pattern = re.compile(r"[^@\s]+@[^@\s]+\.[a-zA-Z0-9]+$")
-        try:
-            if bool(re.match(pattern, value)):
-                return True
-            else:
-                return False
-        except:
-            return False
-
 
     def __call__(self):
         portal = api.portal.get()
@@ -133,7 +159,7 @@ class ExportEmailCell(BrowserView):
         sqlInstance = SqlObj()
         sqlStr = """SELECT `name`, `priv_email`, `cellphone`
                     FROM reg_course
-                    WHERE uid = '{}'""".format(uid)
+                    WHERE uid = '{}' and isAlt = 0 and isReserve is null""".format(uid)
         result = sqlInstance.execSql(sqlStr)
 
         self.rightEmails = []
@@ -154,7 +180,6 @@ class ExportEmailCell(BrowserView):
         return self.template()
 
 
-
 class DownloadGroupReg(BrowserView):
     """ 下載團報報名表 """
 
@@ -167,7 +192,11 @@ class DownloadGroupReg(BrowserView):
 
         wb = xlrd.open_workbook(filePath, formatting_info=True)
         wb_copy = copy(wb)
+
+        # write(row, column, text)
         wb_copy.get_sheet(0).write(3,3,"%s-%s" % (context.getParentNode().title, context.title))
+        wb_copy.get_sheet(0).write(4,3, request['ACTUAL_URL'])
+
         wb_copy.save('/tmp/temp.xls')
 
         self.request.response.setHeader('Content-Type', 'application/xls')
@@ -184,11 +213,6 @@ class DownloadGroupReg(BrowserView):
 class RegCourse(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/reg_course.pt")
-
-    def isFrontend(self):
-        isFrontendView = api.content.get_view(name='is_frontend', context=self.portal, request=self.request)
-        return isFrontendView(self)
-
 
     def makeSqlStr(self):
         form = self.request.form
@@ -356,8 +380,17 @@ class GroupRegCourse(RegCourse):
 
         form = {}
         form['company_name'] = st.cell(1,3).value
-        contact = st.cell(2,3).value # 未處理
-        courseName = st.cell(3,3).value # TODO:還沒校對正確性
+        contact = st.cell(2,3).value # 承辦人未處理
+
+        courseName = st.cell(3,3).value # 檢查課程名稱
+        uploadURL = st.cell(4,3).value # 檢查上傳網址
+        realCourseName = '%s-%s' % (context.getParentNode().title, context.title)
+        regURL = request['ACTUAL_URL']
+
+        if courseName != realCourseName or regURL != regURL:
+            api.portal.show_message(message=_(u"Course name or upload url wrong, please check once."), request=request, type='error')
+            return request.response.redirect(request['ACTUAL_URL'])
+
         form['company_address'] = st.cell(1,7).value
         form['company_phone'] = st.cell(2,5).value
         form['company_fax'] = st.cell(2,8).value
@@ -572,18 +605,20 @@ class AdmitBatchNumbering(BrowserView):
         result = sqlInstance.execSql(sqlStr)
         seatNo = (int(result[0]['MAX(seatNo)']) + 1) if result[0]['MAX(seatNo)'] else 1
 
-        if seatNo > 1:
-            return '1'
+        # 只能執行批次一次
+#        if seatNo > 1:
+#            return '1'
 
-        sqlStr = """SELECT id, seatNo FROM `reg_course` WHERE uid = '{}' and isAlt = 0""".format(uid)
+        sqlStr = """SELECT id, seatNo
+                    FROM `reg_course`
+                    WHERE uid = '{}' and isAlt = 0 and isReserve is null and seatNo is null""".format(uid)
         result = sqlInstance.execSql(sqlStr)
 
         for item in result:
             id = item['id']
-            if not item['seatNo']:
-                sqlStr = """update `reg_course` set seatNo = {} where id = {}""".format(seatNo, id)
-                sqlInstance.execSql(sqlStr)
-                seatNo += 1
+            sqlStr = """update `reg_course` set seatNo = {} where id = {}""".format(seatNo, id)
+            sqlInstance.execSql(sqlStr)
+            seatNo += 1
 
 
 class AllTransToAdmit(BrowserView):
@@ -646,6 +681,7 @@ class UpdateSeatNo(BrowserView):
 
         sqlInstance = SqlObj()
         sqlInstance.execSql(sqlStr)
+
 
 class ReserveSeat(BrowserView):
 
@@ -778,6 +814,47 @@ class QueryCompany(BrowserView):
         result = sqlInstance.execSql(sqlStr)
         if result:
             return '%s,%s' % (result[0]['company_name'], result[0]['company_address'])
+
+
+class UpdateStudentReg(BasicBrowserView):
+
+    """ 修改學員個人詳細報名資訊 """
+    template = ViewPageTemplateFile("template/update_student_reg.pt")
+
+    def getRegCourse(self):
+        id = self.request.form.get('id')
+
+        sqlStr = "SELECT * FROM `reg_course` WHERE id = %s" % id
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]
+
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        return self.template()
+
+
+class DelReserve(BrowserView):
+
+    """ 刪除預約 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        id = request.form.get('id')
+
+        if not id:
+            return
+
+        sqlStr = "DELETE FROM `reg_course` WHERE id = %s and isReserve = 1" % id
+        sqlInstance = SqlObj()
+        sqlInstance.execSql(sqlStr)
 
 
 class DebugView(BrowserView):
