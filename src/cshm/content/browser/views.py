@@ -31,21 +31,29 @@ logger = logging.getLogger("cshm.content")
 class BasicBrowserView(BrowserView):
     """ 通用method """
 
+    def currentName(self):
+        """ 取得登入者名稱 """
+        current = api.user.get_current()
+        return current.getProperty('fullname')
+
+    def getTrainingStatusCode(self):
+        """ 取得受訓狀態碼 """
+        sqlStr = """SELECT * FROM training_status_code WHERE 1 ORDER BY id"""
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
     def getCityList(self):
         """ 取得縣市列表 """
         return api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.citySorted')
-
 
     def getDistList(self):
         """ 取得鄉鎮市區列表及區碼 """
         return api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.distList')
 
-
     def isFrontend(self):
         """ 檢查是否前端頁面 """
         isFrontendView = api.content.get_view(name='is_frontend', context=self.portal, request=self.request)
         return isFrontendView(self)
-
 
     def checkCell(self, value):
         """ 檢查手機號碼是否09開頭 """
@@ -53,7 +61,6 @@ class BasicBrowserView(BrowserView):
             return True
         else:
             return False
-
 
     def checkEmail(self, value):
         """ 檢查email格式 """
@@ -66,14 +73,11 @@ class BasicBrowserView(BrowserView):
         except:
             return False
 
-
     def getEducation(self):
         """ 取得學歷代碼 """
-
         sqlStr = "SELECT * FROM `education_code` WHERE 1"
         sqlInstance = SqlObj()
         return sqlInstance.execSql(sqlStr)
-
 
     def insertOldStudent(self, form):
         """ 新增舊學員資料 """
@@ -526,16 +530,11 @@ class RegisterDetail(BrowserView):
         return self.template()
 
 
-class StudentsList(BrowserView):
+class StudentsList(BasicBrowserView):
 
     """ 報名作業 / 學生列表 """
 
     template = ViewPageTemplateFile("template/students_list.pt")
-
-    def currentName(self):
-        current = api.user.get_current()
-        return current.getProperty('fullname')
-
 
     def __call__(self):
         self.portal = api.portal.get()
@@ -565,9 +564,8 @@ class StudentsList(BrowserView):
         sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 ORDER BY isAlt""".format(uid)
         self.waiting = sqlInstance.execSql(sqlStr)
 
-        # 受訓狀態
-        sqlStr = """SELECT * FROM training_status_code WHERE 1 ORDER BY id"""
-        self.trainingStatus = sqlInstance.execSql(sqlStr)
+        # 取得受訓狀態代碼
+        self.trainingStatus = self.getTrainingStatusCode()
         return self.template()
 
 
@@ -823,8 +821,9 @@ class UpdateStudentReg(BasicBrowserView):
 
     def getRegCourse(self):
         id = self.request.form.get('id')
+        uid = self.context.UID()
 
-        sqlStr = "SELECT * FROM `reg_course` WHERE id = %s" % id
+        sqlStr = "SELECT * FROM `reg_course` WHERE uid = '%s' and id = %s" % (uid, id)
         sqlInstance = SqlObj()
         result = sqlInstance.execSql(sqlStr)
         return result[0]
@@ -835,6 +834,44 @@ class UpdateStudentReg(BasicBrowserView):
         context = self.context
         request = self.request
 
+        self.regCourse = self.getRegCourse()
+        if not request.form.has_key('updateinfo'):
+            return self.template()
+
+        form = request.form
+        sqlInstance = SqlObj()
+        sqlStr = "UPDATE `reg_course` \
+                  SET `cellphone`='%s', `fax`='%s',\
+                      `tax_no`='%s',`com_email`='%s', \
+                      `company_name`='%s',`invoice_title`='%s', \
+                      `company_address`='%s',`priv_email`='%s', \
+                      `phone`='%s',`birthday`='%s',`address`='%s', \
+                      `job_title`='%s', \
+                      `training_status`=%s, \
+                      `invoice_tax_no`='%s', \
+                      `education_id`=%s,`edu_school`='%s', \
+                      `city`='%s',`zip`='%s',`company_city`='%s',`company_zip`='%s' \
+                  WHERE id=%s" % \
+                  (form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('com_email'), form.get('company_name'),
+                   form.get('invoice_title'), form.get('company_address'), form.get('priv_email'),
+                   form.get('phone'), form.get('birthday'), form.get('address'), form.get('job_title'), form.get('training_status'),
+                   form.get('invoice_tax_no'), form.get('education_id'), form.get('edu_school'), form.get('city'), form.get('zip'),
+                   form.get('company_city'), form.get('company_zip'), form.get('id'))
+        sqlInstance.execSql(sqlStr)
+
+        if form.get('contactLog'):
+            currentName = self.currentName()
+#            import pdb; pdb.set_trace()
+            if self.regCourse['contactLog']:
+                logData = '%s\n%s / %s / %s' % \
+                    (self.regCourse['contactLog'], currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(form.get('contactLog')))
+            else:
+                logData = '%s / %s / %s' % (currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(form.get('contactLog')))
+
+            sqlStr = "update reg_course set contactLog = '%s' where id = %s" % (logData, form.get('id'))
+            sqlInstance.execSql(sqlStr)
+
+        request.response.redirect('%s?id=%s' % (request['ACTUAL_URL'], request.form.get('id')))
         return self.template()
 
 
