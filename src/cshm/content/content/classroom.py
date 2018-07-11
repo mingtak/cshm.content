@@ -20,6 +20,13 @@ class IClassroom(model.Schema):
         description=_(u"Number of seats."),
         required=True
     )
+
+    seatState = schema.TextLine(
+        title=_(u'Seat State'),
+        default=u'3|4|3',
+        description=_(u'For example, 3|4|3 or 4|3|3 ext.'),
+        required=True
+    )
     # directives.widget(level=RadioFieldWidget)
     # level = schema.Choice(
     #     title=_(u'Sponsoring Level'),
