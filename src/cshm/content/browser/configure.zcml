@@ -274,6 +274,16 @@
       />
   <!-- 權限未明 -->
 
+  <!-- 套印座位表 -->
+  <browser:page
+      name="batch_update_reg_person_info"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.BatchUpdateRegPersonInfo"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
   <browser:page
       name="debugview"
       for="*"
