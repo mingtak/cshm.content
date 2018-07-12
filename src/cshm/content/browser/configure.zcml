@@ -284,6 +284,15 @@
       />
   <!-- 權限未明 -->
 
+  <!-- Backend.css -->
+  <browser:page
+      name="backend_css"
+      for="*"
+      class=".css.BackendCSS"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <browser:page
       name="debugview"
       for="*"

@@ -840,6 +840,7 @@ class UpdateStudentReg(BasicBrowserView):
 
     """ 修改學員個人詳細報名資訊 """
     template = ViewPageTemplateFile("template/update_student_reg.pt")
+    regForm = ViewPageTemplateFile("template/reg_course_print_form.pt")
 
     def __call__(self):
         self.portal = api.portal.get()
@@ -848,6 +849,11 @@ class UpdateStudentReg(BasicBrowserView):
 
         id = request.form.get('id')
         self.regCourse = self.getRegCourse(id)
+
+        # 套印報名表
+        if request.form.has_key('print_form'):
+            return self.regForm()
+
         if not request.form.has_key('updateinfo'):
             return self.template()
 
