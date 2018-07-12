@@ -892,6 +892,38 @@ class SeatTable(BasicBrowserView):
         return self.template()
 
 
+class BatchUpdateRegPersonInfo(BasicBrowserView):
+
+    """ 批次更新報名表(正取) """
+    template = ViewPageTemplateFile("template/batch_update_reg_person_info.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+        sqlInstance = SqlObj()
+
+        # 沒有update==1,出列表
+        if request.form.get('update') != 1:
+            uid = context.UID()
+            sqlStr = "SELECT * FROM `reg_course` WHERE isAlt = 0 and isReserve is null and uid = '%s' ORDER BY seatNo" % uid
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template()
+
+        id = request.form.get('id')
+        form = request.form
+        sqlStr = "UPDAET reg_course \
+                  SET phone = '%s', \
+                      cellphone = '%s', \
+                      birthday = '%s', \
+                      priv_email = '%s', \
+                  WHERE id = %s" % (form.get('phone'), form.get('cellphone'), form.get('birthday'), form.get('priv_email'), id)
+        sqlInstance.execSql(sqlStr)
+
+        if form.get('contactLog'):
+
+
+
 class DelReserve(BrowserView):
 
     """ 刪除預約 """
