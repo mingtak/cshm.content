@@ -31,6 +31,28 @@ logger = logging.getLogger("cshm.content")
 class BasicBrowserView(BrowserView):
     """ 通用method """
 
+    def getRegCourse(self, id):
+        """ 取得報名表詳細資訊 """
+        uid = self.context.UID()
+
+        sqlStr = "SELECT * FROM `reg_course` WHERE uid = '%s' and id = %s" % (uid, id)
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]
+
+    def updateContactLog(self, regCourse, text):
+        """ 更新聯絡記錄 """
+        currentName = self.currentName()
+        if regCourse['contactLog']:
+            logData = '%s\n%s / %s / %s' % \
+                (regCourse['contactLog'], currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(text))
+        else:
+            logData = '%s / %s / %s' % (currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(text))
+
+        sqlInstance = SqlObj()
+        sqlStr = "update reg_course set contactLog = '%s' where id = %s" % (logData, regCourse['id'])
+        sqlInstance.execSql(sqlStr)
+
     def currentName(self):
         """ 取得登入者名稱 """
         current = api.user.get_current()
@@ -819,22 +841,13 @@ class UpdateStudentReg(BasicBrowserView):
     """ 修改學員個人詳細報名資訊 """
     template = ViewPageTemplateFile("template/update_student_reg.pt")
 
-    def getRegCourse(self):
-        id = self.request.form.get('id')
-        uid = self.context.UID()
-
-        sqlStr = "SELECT * FROM `reg_course` WHERE uid = '%s' and id = %s" % (uid, id)
-        sqlInstance = SqlObj()
-        result = sqlInstance.execSql(sqlStr)
-        return result[0]
-
-
     def __call__(self):
         self.portal = api.portal.get()
         context = self.context
         request = self.request
 
-        self.regCourse = self.getRegCourse()
+        id = request.form.get('id')
+        self.regCourse = self.getRegCourse(id)
         if not request.form.has_key('updateinfo'):
             return self.template()
 
@@ -860,16 +873,7 @@ class UpdateStudentReg(BasicBrowserView):
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
-            currentName = self.currentName()
-#            import pdb; pdb.set_trace()
-            if self.regCourse['contactLog']:
-                logData = '%s\n%s / %s / %s' % \
-                    (self.regCourse['contactLog'], currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(form.get('contactLog')))
-            else:
-                logData = '%s / %s / %s' % (currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(form.get('contactLog')))
-
-            sqlStr = "update reg_course set contactLog = '%s' where id = %s" % (logData, form.get('id'))
-            sqlInstance.execSql(sqlStr)
+            self.updateContactLog(self.regCourse, form.get('contactLog'))
 
         request.response.redirect('%s?id=%s' % (request['ACTUAL_URL'], request.form.get('id')))
         return self.template()
@@ -904,7 +908,7 @@ class BatchUpdateRegPersonInfo(BasicBrowserView):
         sqlInstance = SqlObj()
 
         # 沒有update==1,出列表
-        if request.form.get('update') != 1:
+        if request.form.get('update') != '1':
             uid = context.UID()
             sqlStr = "SELECT * FROM `reg_course` WHERE isAlt = 0 and isReserve is null and uid = '%s' ORDER BY seatNo" % uid
             self.result = sqlInstance.execSql(sqlStr)
@@ -912,16 +916,17 @@ class BatchUpdateRegPersonInfo(BasicBrowserView):
 
         id = request.form.get('id')
         form = request.form
-        sqlStr = "UPDAET reg_course \
+        sqlStr = "UPDATE reg_course \
                   SET phone = '%s', \
                       cellphone = '%s', \
                       birthday = '%s', \
-                      priv_email = '%s', \
+                      priv_email = '%s' \
                   WHERE id = %s" % (form.get('phone'), form.get('cellphone'), form.get('birthday'), form.get('priv_email'), id)
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
-
+            regCourse = self.getRegCourse(id)
+            self.updateContactLog(regCourse, form.get('contactLog'))
 
 
 class DelReserve(BrowserView):
