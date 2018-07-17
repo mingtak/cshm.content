@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="cshm.content">
+<body>
+
+
+<metal:content-core fill-slot="content-core">
+<metal:content-core define-macro="content-core"
+                    tal:define="toc context/table_of_contents|nothing;">
+
+<style>
+.btn{
+    background: black;
+    color: white;
+    font-size: 12px;
+    font-weight: 900;
+    border: medium none;
+    padding: 8px 15px;
+    text-align: center;
+    text-decoration: none;
+}
+.btn:hover{
+    color: #4d4d4d;
+    background: #ccc;
+    border-color: #939393;
+}
+
+</style>
+<form method="post" action="check_survey">
+      <p>請填入座號</p>
+      <select name='seat_number'  id="seat_number">
+          <option selected>請選擇</option>
+      </select>
+  <input type="submit" value="送出" class="btn">
+
+</form>
+
+<script>
+window.onload = function(){
+    select = document.getElementById('seat_number')
+    for(i=1; i<=60; i++){
+        var option = document.createElement("option");
+        var t = document.createTextNode(i);
+        option.appendChild(t);
+        select.appendChild(option)
+	option.setAttribute('value', i)
+    }
+}
+</script>
+</metal:content-core>
+</metal:content-core>
+
+</body>
+</html>
+

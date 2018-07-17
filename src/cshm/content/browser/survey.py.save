@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*- 
+from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone import api
+from plone.protect.auto import safeWrite
+from mingtak.ECBase.browser.views import SqlObj
+import json
+import csv
+import base64
+import qrcode
+import datetime
+from plone.namedfile.field import NamedBlobImage,NamedBlobFile
+from plone import namedfile
+from StringIO import StringIO
+import requests
+from email.mime.text import MIMEText
+import xlsxwriter
+import inspect
+
+
+class EchelonView(BrowserView):
+    template = ViewPageTemplateFile('template/echelon_view.pt')
+    def __call__(self):
+        context = self.context
+        execSql = SqlObj()
+	import pdb;pdb.set_trace()
+        data = []
+        abs_url = api.portal.get().absolute_url()
+        today = datetime.date.today()
+	uid = context.UID()
+	for child in context.getChildNodes():
+            execStr = """SELECT seat FROM satisfaction WHERE uid = '%s' ORDER BY seat""" %child.UID()
+            seat = execSql.execSql(execStr)
+            content = 
+
+        for item in subject_list.split('\n'):
+            if item:
+                tmp = item.split(',')
+                subject= tmp[4]
+                execStr = """SELECT DISTINCT(seat) FROM satisfaction WHERE course = '{}' AND period = '{}' AND subject = '{}'
+                    ORDER BY seat""".format(course, period, subject)
+                result = execSql.execSql(execStr)
+                seat_str = ''
+                count = 0
+                for seat in result:
+                    count += 1
+                    seat_str += '%s,' %dict(seat)['seat']
+                if numbers:
+                    rate ='%s%%' %(round(float(count) / float(numbers), 2) * 100)
+                else:
+                    rate = '尚未設定學生人數'
+                data.append( [ tmp[1], tmp[2] , tmp[3], tmp[4], tmp[5], tmp[6], tmp[7], tmp[8], seat_str , rate])
+        url = """{}/check_surver?course_name={}&period={}""".format(abs_url, course_name, period)
+        # 製作qrcode
+        qr = qrcode.QRCode()
+        qr.add_data(url)
+        qr.make_image().save('url.png')
+        img = open('url.png', 'rb')
+        b64_img = base64.b64encode(img.read())
+        self.url = url
+        self.b64_img = b64_img
+        self.data = data
+        return self.template()
+

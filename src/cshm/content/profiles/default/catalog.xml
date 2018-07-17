@@ -26,6 +26,11 @@
   </index>
   <column value="studentCount"/>
 
+  <index name="startDateTime" meta_type="FieldIndex">
+    <indexed_attr value="startDateTime" />
+  </index>
+  <column value="startDateTime"/>
+
 </object>
 
 

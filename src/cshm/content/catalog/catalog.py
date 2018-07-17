@@ -5,7 +5,7 @@ from Products.CMFPlone.utils import safe_unicode
 from cshm.content.content.echelon import IEchelon
 from cshm.content.content.teacher import ITeacher
 from mingtak.ECBase.browser.views import SqlObj
-
+from cshm.content.content.subject import ISubject
 
 @indexer(ITeacher)
 def teacheSubjects_indexer(obj):
@@ -43,4 +43,9 @@ def studentCount_indexer(obj):
     sqlStr = """SELECT COUNT(id) FROM reg_course WHERE uid = '{}'""".format(uid)
     result = sqlInstance.execSql(sqlStr)
     return result[0]['COUNT(id)']
+
+
+@indexer(ISubject)
+def startDateTime_indexer(obj):
+    return obj.startDateTime
 

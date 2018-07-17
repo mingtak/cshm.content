@@ -301,5 +301,20 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="echelon_view"
+      for="*"
+      class=".survey.EchelonView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="check_survey"
+      for="*"
+      class=".survey.CheckSurvey"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
 
 </configure>

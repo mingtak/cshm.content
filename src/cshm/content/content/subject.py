@@ -22,6 +22,11 @@ class ISubject(model.Schema):
         required=True,
     )
 
+    startDateTime = schema.Datetime(
+        title=_(u"Start time"),
+        required=True
+    )
+
     notes = schema.Text(
         title=_(u"Notes"),
         required=False,
@@ -31,6 +36,11 @@ class ISubject(model.Schema):
     #    title=_(u'Attach File'),
     #    required=False,
     #)
+    isQuiz = schema.Bool(
+        title=_(u"Quiz"),
+        required=True,
+        default=True
+    )
 
     teacher = RelationChoice(
         title=_(u"Teacher"),

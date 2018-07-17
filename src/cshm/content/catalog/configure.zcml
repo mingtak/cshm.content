@@ -4,6 +4,7 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="mingtak.products">
 
+  <adapter name="startDateTime" factory=".catalog.startDateTime_indexer"/>
   <adapter name="classStatus" factory=".catalog.classStatus_indexer"/>
   <adapter name="quota" factory=".catalog.quota_indexer"/> <!-- 名額 -->
   <adapter name="altCount" factory=".catalog.altCount_indexer"/> <!-- 候補 -->
