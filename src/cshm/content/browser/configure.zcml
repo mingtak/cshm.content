@@ -317,4 +317,12 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="result_satisfaction"
+      for="*"
+      class=".survey.ResultSatisfaction"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 </configure>
