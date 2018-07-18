@@ -25,7 +25,6 @@ class ResultSatisfaction(BrowserView):
         abs_url = portal.absolute_url()
         uid = request.get('uid')
         subjectName = request.get('subjectName')
-        is_round = request.get('is_round')
         period = request.get('period')
         startDateTime = request.get('startDateTime')
         teacher = request.get('teacher')
@@ -42,27 +41,29 @@ class ResultSatisfaction(BrowserView):
         question10 = request.get('question10', '')
         question11 = request.get('question11', '')
         question12 = request.get('question12', '')
-
         execSql = SqlObj()
 
-        execStr = """SELECT course FROM satisfaction WHERE uid = '{}' AND seat = '{}'""".format(uid, seat_number)
+        execStr = """SELECT id FROM satisfaction WHERE uid = '{}' AND seat = '{}'""".format(uid, seat_number)
 
         if execSql.execSql(execStr):
-            api.portal.show_message(message='請勿重複填寫問卷', type='error', request=request)
+            api.portal.show_message(message='請勿重複填寫問卷'.decode('utf-8'), type='error', request=request)
         else:
             execStr = """INSERT INTO `satisfaction`(uid, seat, `date`, 
                 `teacher`, `question1`, `question2`, `question3`, `question4`, `question5`, 
                 `question6`, `question7`, `question8`,question9,question10,question11,question12) 
                 VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
-                '{}','{}','{}','{}','{}')""".format(uid, seat_number, startDateTime,
-                period, date, teacher, question1, question2, question3, question4, question5, 
-                question6, question7, question8, question9, question10, question11, question12)
+                '{}','{}')""".format(uid, int(seat_number), startDateTime, teacher,
+                question1, question2, question3, question4, question5,question6,
+                question7, question8, question9, question10, question11, question12)
             execSql.execSql(execStr)
             # 寄信通知
             if question9 or question10 or question11 or question12:
-                import pdb;pdb.set_trace()
+                urlList = api.content.get(UID=uid).absolute_url_path().split('/')
+                course = api.content.find(path="/%s/%s/%s" %(urlList[1], urlList[2], urlList[3]), depth=0)[0].Title
+                period = api.content.find(path="/%s/%s/%s/%s" %(urlList[1], urlList[2], urlList[3], urlList[4]), depth=0)[0].Title
+
                 body_str = """科目:%s<br>課程:%s<br>期數:%s<br/>座號:%s<br>意見提供:<br>%s<br/>%s<br/>%s<br>%s
-                    """ %(course, subject_name, period, seat, question9, question10, question11, question12)
+                    """ %(course, subjectName, period, seat_number, question9, question10, question11, question12)
                 mime_text = MIMEText(body_str, 'html', 'utf-8')
                 api.portal.send_email(
                     #recipient="lin@cshm.org.tw",
@@ -72,9 +73,13 @@ class ResultSatisfaction(BrowserView):
                    body=mime_text.as_string(),
                 )
 
-            api.portal.show_message(message='填寫完成', type='info', request=request)
-
-        request.response.redirect('%s/check_survey?seat_number=%s' %seat_number)
+            api.portal.show_message(message='填寫完成'.decode('utf-8'), type='info', request=request)
+        contentURL = api.content.get(UID=uid).absolute_url().split('/')
+        contentURL.pop()
+        url = ''
+        for i in contentURL:
+            url += i + '/'
+        request.response.redirect('%scheck_survey?seat_number=%s' %(url, seat_number))
 
 
 class CheckSurvey(BrowserView):
