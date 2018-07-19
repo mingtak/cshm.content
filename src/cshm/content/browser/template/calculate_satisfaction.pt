@@ -1,0 +1,141 @@
+<html>
+<body>
+<style>
+td,th{
+    text-align: center;
+    padding: 5px 0;
+}
+td{
+    font-size: 17px;
+}
+th{
+    font-size: 20px;
+}
+</style>
+<?python
+import json
+?>
+<form action="download_excel" method="post" style='margin-bottom: 20px'>
+    <input value="${view/each_teacher_data}" type='hidden' name="each_teacher_data">
+    <input value="${view/total_anw}" type='hidden' name='total_anw'>
+    <input value="${python:view.anw_data['count_A']}" type='hidden' name='count_A'>
+    <input value="${python:view.anw_data['count_B']}" type='hidden' name='count_B'>
+    <input value="${python:view.anw_data['count_C']}" type='hidden' name='count_C'>
+    <input value="${python:view.anw_data['count_D']}" type='hidden' name='count_D'>
+    <input value="${python:view.anw_data['count_E']}" type='hidden' name='count_E'>
+    <input value="${python:view.anw_data['count_F']}" type='hidden' name='count_F'>
+    <input value="${python:view.envir_data}" type='hidden' name='envir_data'>
+    <input value="${python:view.space_data}" type='hidden' name='space_data'>
+
+    <input value="${python:view.period}" type='hidden' name='period'>
+    <input value="${python:view.course}" type='hidden' name='course'>
+    <input value="${python: json.dumps(view.count_data)}" type='hidden' name='count_data'>
+    <input value="${python:view.point_space}" type='hidden' name='point_space'>
+    <input value="${python:view.point_envir}" type='hidden' name='point_envir'>
+    <input value="${python:view.point_teacher}" type='hidden' name='point_teacher'>
+    <input value="${python:view.point_total}" type='hidden' name='point_total'>
+    <input type='submit' value='下載Excel' />
+</form>
+
+<table>
+    <tr>
+        <th colspan='3'>中國勞工安全衛生管理學會</th>
+    </tr>
+    <tr>
+        <th colspan='1'>第${view/period}期</th>
+        <th colspan='1'>${view/course}</th>
+        <th colspan='1'>訓練班</th>
+    </tr>
+    <tr>
+        <td colspan='3'> &nbsp;</td>
+    </tr>
+    <tr>
+        <th>講師</th>
+        <th>平均權值</th>
+        <th>權值分數</th>
+    </tr>
+    <tr tal:repeat="data view/count_data">
+        <td>${data}</td>
+        <td>${python: round(view.count_data[data], 2)}</td>
+        <td>${python: round(view.count_data[data] * 20, 2)}</td>
+    </tr>
+    <tr>
+        <th>環境權值分數</th>
+        <th>輔導員權值分數</th>
+        <th>講師整體權值分數</th>
+    </tr>
+    <tr>
+        <td>${view/point_space}</td>
+        <td>${view/point_envir}</td>
+        <td>${view/point_teacher}</td>
+    </tr>
+    <tr>
+        <th colspan='4'>總體權值分數</th>
+    </tr>
+    <tr>
+        <td colspan='4'>${view/point_total}</td>
+    </tr>
+</table>
+<p id='each_teacher' style='display:none'>${view/each_teacher_data}</p>
+<p id="total_anw" style='display:none'>${python:view.total_anw}</p>
+<p id='count_A' style='display:none'>${python:view.anw_data['count_A']}</p>
+<p id='count_B' style='display:none'>${python:view.anw_data['count_B']}</p>
+<p id='count_C' style='display:none'>${python:view.anw_data['count_C']}</p>
+<p id='count_D' style='display:none'>${python:view.anw_data['count_D']}</p>
+<p id='count_E' style='display:none'>${python:view.anw_data['count_E']}</p>
+<p id='count_F' style='display:none'>${python:view.anw_data['count_F']}</p>
+<p id='envir_data' style='display:none'>${python:view.envir_data}</p>
+<p id='space_data' style='display:none'>${python:view.space_data}</p>
+<br>
+
+<table>
+  <tr>
+    <th colspan='2'>講師總整體滿意度</th>
+  </tr>
+  <tr>
+    <td id="total_pie" colspan='2'></td>
+  </tr>
+  <tr>
+    <th>教學態度</th>
+    <th>教學方式能啟發學員</th>
+  </tr>
+  <tr>
+    <td id="pie1"></td>
+    <td id="pie2"></td>
+  </tr>
+  <tr>
+    <th>能依課程、教材、內容有進度、系統講授</th>
+    <th>講授易懂，實務化</th>
+  </tr>
+  <tr>
+    <td id="pie3"></td>
+    <td id="pie4"></td>
+  </tr>
+  <tr>
+    <th>上課音量、口音表達適當、清晰</th>
+    <th>提供技能檢定或考照之建議或協助</th>
+  </tr>
+  <tr>
+    <td id="pie5"></td>
+    <td id="pie6"></td>
+  </tr>
+  <tr>
+    <th>學習環境</th>
+    <th>訓練服務</th>
+  </tr>
+  <tr>
+    <td id="pie7"></td>
+    <td id="pie8"></td>
+  </tr>
+</table>
+
+
+<hr/>
+
+<div id="each_teacher_pie" style='display:flex;flex-wrap:wrap;justify-content:space-around'>
+
+</div>
+<script src="++thene++theme-for-cshm/js/drawPie.js"></script>
+
+</body>
+</html>

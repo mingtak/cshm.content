@@ -325,4 +325,20 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="show_satisfaction_statistics"
+      for="*"
+      class=".survey.ShowStatistics"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="calculate_satisfaction"
+      for="*"
+      class=".survey.CalculateSatisfaction"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 </configure>
