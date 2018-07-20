@@ -341,4 +341,12 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="download_satisfaction_excel"
+      for="*"
+      class=".download_excel.DownloadSatisfactionExcel"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 </configure>

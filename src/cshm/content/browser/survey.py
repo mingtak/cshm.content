@@ -310,6 +310,7 @@ class CheckSurvey(BrowserView):
             execSql = SqlObj()
             execStr = "SELECT uid FROM satisfaction WHERE seat = '%s'" %(seat_number)
             uidList = execSql.execSql(execStr)
+            flag = False
 
             for item in uidList:
                 alreadyWrite.append(item[0])
@@ -317,6 +318,7 @@ class CheckSurvey(BrowserView):
                 obj = content.getObject()
                 contentUid = obj.UID()
                 if contentUid not in alreadyWrite and now >= content.startDateTime:
+                    flag = True
                     url = "%s/check_survey?seat_number=%s&uid=%s" %(context.absolute_url(), seat_number, contentUid)
                     if uid:
                         if contentUid != uid:
@@ -332,10 +334,14 @@ class CheckSurvey(BrowserView):
                             ex_data = [['請選擇', '請選擇']]
 
             self.ex_data = ex_data
-            if self.firstTarget:
-                return self.satisfaction_sec()
+            if flag:
+                if self.firstTarget:
+                    return self.satisfaction_sec()
+                else:
+                    return self.satisfaction_first()
             else:
-                return self.satisfaction_first()
+                api.portal.show_message(message='您目前沒有問卷可以作答'.encode('utf-8'), request=self.request, type='error')
+                return self.template()
 
         return self.template()
 
@@ -352,22 +358,33 @@ class CheckSurvey(BrowserView):
 class EchelonView(BrowserView):
     template = ViewPageTemplateFile('template/echelon_view.pt')
     def __call__(self):
-#尚未完成
         context = self.context
         execSql = SqlObj()
-	import pdb;pdb.set_trace()
         data = []
         abs_url = api.portal.get().absolute_url()
 	context_uid = context.UID()
 
+        execStr = "SELECT COUNT(id) FROM `reg_course` WHERE uid = '%s'" %context_uid
+        totalNumber = execSql.execSql(execStr)[0][0]
+
 	for child in context.getChildNodes():
             child_uid = child.UID()
             execStr = "SELECT seat FROM satisfaction WHERE uid = '%s' ORDER BY seat" %child_uid
-            seat = execSql.execSql(execStr)
+            seatList = execSql.execSql(execStr)
+            seatStr = ''
+            for seat in seatList:
+                seatStr += str(seat[0]) + ','
             content = api.content.get(UID = child_uid)
-            subject_name = content.title
+            subjectName = content.title
+            teacher = content.teacher.to_object.title
+            startDateTime = content.startDateTime.strftime('%Y-%m-%d %H:%M:%S')
+            if  totalNumber:
+                rate = round(float(len(seatList)) / float(totalNumber), 1) * 100
+            else:
+                rate = '無人報名'
 
-        url = "%s/check_surver?course_name=%s&period=%s" %(abs_url, course_name, period)
+            data.append([subjectName, seatStr, startDateTime, teacher, rate])
+        url = "%s/check_survey" %(context.absolute_url())
         # 製作qrcode
         qr = qrcode.QRCode()
         qr.add_data(url)
