@@ -301,22 +301,25 @@
       permission="zope2.View"
       />
 
+  <!--期數的顯示畫面-->
   <browser:page
       name="echelon_view"
-      for="*"
+      for="cshm.content.content.echelon.IEchelon"
       class=".survey.EchelonView"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="zope2.View"
       />
 
+  <!--選座位的畫面-->
   <browser:page
       name="check_survey"
-      for="*"
+      for="cshm.content.content.echelon.IEchelon"
       class=".survey.CheckSurvey"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="zope2.View"
       />
 
+  <!--處理問卷結果寫進資料庫-->
   <browser:page
       name="result_satisfaction"
       for="*"
@@ -325,6 +328,7 @@
       permission="zope2.View"
       />
 
+  <!--顯示滿意度選項畫面-->
   <browser:page
       name="show_satisfaction_statistics"
       for="*"
@@ -333,20 +337,22 @@
       permission="zope2.View"
       />
 
+  <!--計算滿意度結果並顯示-->
   <browser:page
       name="calculate_satisfaction"
       for="*"
       class=".survey.CalculateSatisfaction"
       layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="zope2.View"
+      permission="cmf.ManagePortal"
       />
 
+  <!--下載滿意度excel-->
   <browser:page
       name="download_satisfaction_excel"
       for="*"
       class=".download_excel.DownloadSatisfactionExcel"
       layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="zope2.View"
+      permission="cmf.ManagePortal"
       />
 
 </configure>

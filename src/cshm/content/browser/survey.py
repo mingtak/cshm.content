@@ -22,16 +22,13 @@ class CalculateSatisfaction(BrowserView):
     template = ViewPageTemplateFile('template/calculate_satisfaction.pt')
     def __call__(self):
         request = self.request
-        course = request.get('course')
-        period = request.get('period')
+        context = self.context
+        contextUID = context.UID()
         execSql = SqlObj()
         uidList = []
-        for child in api.content.get(UID=course).getChildNodes():
-            if child.title.encode('utf-8').split('期')[0] == period:
-                for item in api.content.get(UID=child.UID()).getChildNodes():
-                    uid = item.UID()
-                    uidList.append(uid)
-                break;
+        for child in api.content.get(UID=contextUID).getChildNodes():
+            childUID = child.UID()
+            uidList.append(childUID)
 
         execStr = """SELECT * FROM `satisfaction` WHERE uid in {}""".format(tuple(uidList))
         result = execSql.execSql(execStr)
@@ -197,8 +194,8 @@ class CalculateSatisfaction(BrowserView):
             anw_data[k] = [anw_A, anw_B, anw_C, anw_D, anw_E]
         self.anw_data = anw_data
         self.total_anw = total_anw
-        self.period = period
-        self.course = api.content.get(UID=course).title
+        self.period = context.id
+        self.course = context.getParentNode().Title()
 
         return self.template()
 
@@ -210,11 +207,12 @@ class ShowStatistics(BrowserView):
 
         execStr = """SELECT DISTINCT(uid) FROM `satisfaction`"""
         uidList = execSql.execSql(execStr)
-        result = []
+        result = {}
         for i in uidList:
             uid = api.content.get(UID=i[0]).getParentNode().getParentNode().UID()
             course = api.content.get(UID=i[0]).getParentNode().getParentNode().Title()
-            result.append([course, uid])
+            if not result.has_key(uid):
+                result[uid] = course
 
         self.result = result
         return self.template()
@@ -244,6 +242,10 @@ class ResultSatisfaction(BrowserView):
         question11 = request.get('question11', '')
         question12 = request.get('question12', '')
         execSql = SqlObj()
+        if not uid or not startDateTime or not period or not subjectName:
+            api.portal.show_message(message='資料並不完整'.decode('utf-8'), type='error', request=request)
+            request.response.redirect(abs_url)
+            return
 
         execStr = """SELECT id FROM satisfaction WHERE uid = '{}' AND seat = '{}'""".format(uid, seat_number)
 
@@ -254,10 +256,11 @@ class ResultSatisfaction(BrowserView):
                 `teacher`, `question1`, `question2`, `question3`, `question4`, `question5`, 
                 `question6`, `question7`, `question8`,question9,question10,question11,question12) 
                 VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
-                '{}','{}')""".format(uid, int(seat_number), startDateTime, teacher,
+               '{}','{}')""".format(uid, int(seat_number), startDateTime, teacher,
                 question1, question2, question3, question4, question5,question6,
                 question7, question8, question9, question10, question11, question12)
             execSql.execSql(execStr)
+
             # 寄信通知
             if question9 or question10 or question11 or question12:
                 urlList = api.content.get(UID=uid).absolute_url_path().split('/')
@@ -301,13 +304,18 @@ class CheckSurvey(BrowserView):
         subject_name = request.get('subject_name', '')
         seat_number = request.get('seat_number', '')
         uid = request.get('uid', '')
+        execSql = SqlObj()
+
+        contextUID = context.UID()
+        execStr = """SELECT MAX(seatNo) FROM reg_course WHERE isAlt = 0 AND uid = '%s'""" %contextUID
+        maxSeatNumber = execSql.execSql(execStr)
+        self.maxSeatNumber = maxSeatNumber[0][0]
 
         if seat_number:
             now = datetime.datetime.now()
             alreadyWrite = []
             ex_data = []
 
-            execSql = SqlObj()
             execStr = "SELECT uid FROM satisfaction WHERE seat = '%s'" %(seat_number)
             uidList = execSql.execSql(execStr)
             flag = False
@@ -343,10 +351,11 @@ class CheckSurvey(BrowserView):
                 api.portal.show_message(message='您目前沒有問卷可以作答'.encode('utf-8'), request=self.request, type='error')
                 return self.template()
 
+
         return self.template()
 
     def setData(self, context, obj, seat_number):
-        self.period = context.title.encode('utf-8').split('期')[0]
+        self.period = context.id
         self.subjectName = obj.title
         self.startDateTime = obj.startDateTime.strftime('%Y-%m-%d %H:%M:%S')
         self.teacher = obj.teacher.to_object.title
