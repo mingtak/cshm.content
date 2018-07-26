@@ -33,7 +33,11 @@ class CalculateSatisfaction(BrowserView):
         execStr = """SELECT * FROM `satisfaction` WHERE uid in {}""".format(tuple(uidList))
         result = execSql.execSql(execStr)
         if not result:
-            return 'error'
+            api.portal.show_message(message='查無資料'.decode('utf-8'), type='warn', request=request)
+            url = request.getURL().replace('@@calculate_satisfaction', 'folder_contents')
+            request.response.redirect(url)
+            return
+
         tmp_data = {}
         anw_set = {}
         anw_set['count_A'] = []
@@ -192,6 +196,8 @@ class CalculateSatisfaction(BrowserView):
             anw_D = int(v.count(2))
             anw_E = int(v.count(1))
             anw_data[k] = [anw_A, anw_B, anw_C, anw_D, anw_E]
+        count_F_5 = anw_data['count_F'].count(0)
+        self.count_F_flag = True if count_F_5 != 5 else False
         self.anw_data = anw_data
         self.total_anw = total_anw
         self.period = context.id

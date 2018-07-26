@@ -11,6 +11,8 @@ from StringIO import StringIO
 import requests
 import xlsxwriter
 import sys
+from io import BytesIO
+from Products.CMFPlone.utils import safe_unicode
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -49,6 +51,12 @@ class DownloadSatisfactionExcel(BrowserView):
             envir_data.append(int(item))
         for item in request.get('total_anw').split('[')[1].split(']')[0].split(','):
             total_anw.append(int(item))
+
+        count_F_flag = True if count_F.count(0) != 5 else False
+        if count_F_flag:
+            posList = ['A64', 'I64']
+        else:
+            posList = ['I48', 'A64']
 
         period = request.get('period')
         course = request.get('course')
@@ -147,15 +155,16 @@ class DownloadSatisfactionExcel(BrowserView):
         chart5.set_title({'name': '上課音量、口音表達適當、清晰'})
         worksheet1.insert_chart('A48', chart5)
 
-        chart6 = workbook.add_chart({'type': 'pie'})
-        chart6.add_series({
-            'name':       'Pie sales data',
-            'categories': '=Sheet2!$A$1:$A$5',
-            'values':     '=Sheet2!$H$1:$H$5',
-            'data_labels': {'percentage': True},
-        })
-        chart6.set_title({'name': '提供技能檢定或考照之建議或協助'})
-        worksheet1.insert_chart('I48', chart6)
+        if count_F_flag:
+            chart6 = workbook.add_chart({'type': 'pie'})
+            chart6.add_series({
+                'name':       'Pie sales data',
+                'categories': '=Sheet2!$A$1:$A$5',
+                'values':     '=Sheet2!$H$1:$H$5',
+                'data_labels': {'percentage': True},
+            })
+            chart6.set_title({'name': '提供技能檢定或考照之建議或協助'})
+            worksheet1.insert_chart('I48', chart6)
 
         chart7 = workbook.add_chart({'type': 'pie'})
         chart7.add_series({
@@ -165,7 +174,7 @@ class DownloadSatisfactionExcel(BrowserView):
             'data_labels': {'percentage': True},
         })
         chart7.set_title({'name': '學習環境'})
-        worksheet1.insert_chart('A64', chart7)
+        worksheet1.insert_chart(posList[0], chart7)
 
         chart8 = workbook.add_chart({'type': 'pie'})
         chart8.add_series({
@@ -175,7 +184,8 @@ class DownloadSatisfactionExcel(BrowserView):
             'data_labels': {'percentage': True},
         })
         chart8.set_title({'name': '訓練服務'})
-        worksheet1.insert_chart('I64', chart8)
+        worksheet1.insert_chart(posList[1], chart8)
+
         merge_format = workbook.add_format({
             'bold': 1,
             'border': 1,
@@ -219,9 +229,8 @@ class DownloadSatisfactionExcel(BrowserView):
             row += 1
 
         workbook.close()
-
-        response.setHeader('Content-Type',  'application/x-xlsx')
-        response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xlsx"' %(course, period))
+        response.setHeader('Content-Type', 'application/x-xls')
+        response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xls"' %(course, period))
         return output.getvalue()
 
 
