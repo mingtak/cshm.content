@@ -851,6 +851,23 @@ class QueryCompany(BrowserView):
             return '%s,%s' % (result[0]['company_name'], result[0]['company_address'])
 
 
+class QueryTaxNo(BrowserView):
+
+    """ 即時搜尋統一編號 """
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        companyName = request.form.get('company_name')
+        sqlStr = "SELECT * FROM `company_basic_info` WHERE `company_name` = '%s'" % companyName
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return '%s,%s' % (result[0]['tax_no'], result[0]['company_address'])
+
+
 class UpdateStudentReg(BasicBrowserView):
 
     """ 修改學員個人詳細報名資訊 """

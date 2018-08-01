@@ -244,7 +244,16 @@
       permission="zope2.View"
       />
 
-  <!-- 即時搜尋公司名稱 -->
+  <!-- 即時搜尋統一編號 -->
+  <browser:page
+      name="query_tax_no"
+      for="*"
+      class=".views.QueryTaxNo"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+  <!-- 刪除預約名額 -->
   <browser:page
       name="del_reserve"
       for="*"
