@@ -12,12 +12,27 @@ import requests
 import xlsxwriter
 import sys
 from io import BytesIO
-from Products.CMFPlone.utils import safe_unicode
+from urllib import quote
+import re
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-class DownloadSatisfactionExcel(BrowserView):
+class Basic(BrowserView):
+    def checkBrowser(self, course, period):
+        request = self.request
+        fileName = '%s-%s.xls' %(course, period)
+        user_agent = request['HTTP_USER_AGENT']
+        try:
+            if re.search('MSIE', user_agent) or re.search('Edge', user_agent):
+                fileName = quote(fileName)
+        except:
+            pass
+
+        return fileName
+
+
+class DownloadSatisfactionExcel(Basic):
     def __call__(self):
         request = self.request
         response = request.response
@@ -67,6 +82,7 @@ class DownloadSatisfactionExcel(BrowserView):
         point_total = request.get('point_total')
 
         output = StringIO()
+        #fileName = '%s-%s.xls' %(course.decode('utf-8'), period)
         workbook = xlsxwriter.Workbook(output)
         worksheet1 = workbook.add_worksheet('Sheet1')
         worksheet2 = workbook.add_worksheet('Sheet2')
@@ -229,12 +245,18 @@ class DownloadSatisfactionExcel(BrowserView):
             row += 1
 
         workbook.close()
-        response.setHeader('Content-Type', 'application/x-xls')
-        response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xls"' %(course, period))
+        fileName = self.checkBrowser(course, period)
+
+        response.setHeader('Content-Type', 'application/xls')
+        response.setHeader('Content-Disposition', 'attachment; filename="%s"' %(fileName))
         return output.getvalue()
+#        path = '/home/andy/cshm/zeocluster/%s-%s.xls' %(course.decode('utf-8'), period)
+#        with open(path, 'rb') as file:
+#            docs = file.read()
+#            return docs
 
 
-class DownloadManagerExcel(BrowserView):
+class DownloadManagerExcel(Basic):
     def __call__(self):
         request = self.request
         response = request.response
@@ -407,12 +429,14 @@ class DownloadManagerExcel(BrowserView):
 
         workbook.close()
 
+        fileName = self.checkBrowser(course, period)
+
         response.setHeader('Content-Type',  'application/x-xlsx')
         response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xlsx"' %(course, period))
         return output.getvalue()
 
 
-class DownloadStackerExcel(BrowserView):
+class DownloadStackerExcel(Basic):
     def __call__(self):
         request = self.request
         response = request.response
@@ -524,12 +548,14 @@ class DownloadStackerExcel(BrowserView):
 
         workbook.close()
 
+        fileName = self.checkBrowser(course, period)
+
         response.setHeader('Content-Type',  'application/x-xlsx')
         response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xlsx"' %(course, period))
         return output.getvalue()
 
 
-class DownloadCtypeExcel(BrowserView):
+class DownloadCtypeExcel(Basic):
     def __call__(self):
         request = self.request
         response = request.response
@@ -641,12 +667,14 @@ class DownloadCtypeExcel(BrowserView):
 
         workbook.close()
 
+        fileName = self.checkBrowser(course, period)
+
         response.setHeader('Content-Type',  'application/x-xlsx')
         response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xlsx"' %(course, period))
         return output.getvalue()
 
 
-class DownloadEmergencyExcel(BrowserView):
+class DownloadEmergencyExcel(Basic):
     def __call__(self):
         request = self.request
         response = request.response
@@ -769,6 +797,8 @@ class DownloadEmergencyExcel(BrowserView):
         worksheet1.insert_chart('A61', chart_total)
 
         workbook.close()
+
+        fileName = self.checkBrowser(course, period)
 
         response.setHeader('Content-Type',  'application/x-xlsx')
         response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xlsx"' %(course, period))
