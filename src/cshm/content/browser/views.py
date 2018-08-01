@@ -939,10 +939,10 @@ class BatchUpdateRegPersonInfo(BasicBrowserView):
         form = request.form
         sqlStr = "UPDATE reg_course \
                   SET phone = '%s', \
-                      cellphone = '%s', \
-                      birthday = '%s', \
-                      priv_email = '%s' \
-                  WHERE id = %s" % (form.get('phone'), form.get('cellphone'), form.get('birthday'), form.get('priv_email'), id)
+                      city = '%s', \
+                      zip = '%s', \
+                      address = '%s' \
+                  WHERE id = %s" % (form.get('phone'), form.get('city'), form.get('zip'), form.get('address'), id)
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
