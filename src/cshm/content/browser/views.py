@@ -221,7 +221,7 @@ class DownloadGroupReg(BrowserView):
 
         # write(row, column, text)
         wb_copy.get_sheet(0).write(3,3,"%s-%s" % (context.getParentNode().title, context.title))
-        wb_copy.get_sheet(0).write(4,3, request['ACTUAL_URL'])
+        wb_copy.get_sheet(0).write(4,3, request['HTTP_REFERER'])
 
         wb_copy.save('/tmp/temp.xls')
 
