@@ -45,9 +45,9 @@ class BasicBrowserView(BrowserView):
         currentName = self.currentName()
         if regCourse['contactLog']:
             logData = '%s\n%s / %s / %s' % \
-                (regCourse['contactLog'], currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(text))
+                (regCourse['contactLog'], currentName, DateTime().strftime('%Y-%m-%d %H:%M'), safe_unicode(text))
         else:
-            logData = '%s / %s / %s' % (currentName, DateTime().strftime('%Y-%m-%d'), safe_unicode(text))
+            logData = '%s / %s / %s' % (currentName, DateTime().strftime('%Y-%m-%d %H:%M'), safe_unicode(text))
 
         sqlInstance = SqlObj()
         sqlStr = "update reg_course set contactLog = '%s' where id = %s" % (logData, regCourse['id'])
