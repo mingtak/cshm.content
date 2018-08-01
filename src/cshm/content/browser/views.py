@@ -422,6 +422,8 @@ class GroupRegCourse(RegCourse):
         form['company_fax'] = st.cell(2,8).value
         form['com_email'] = st.cell(3,8).value
 
+        errorMsg = []
+        sucessMsg = []
         for index in range(len(st.col(1))):
             if st.col(1)[index].ctype != 2: # is not number
                 continue
@@ -436,19 +438,32 @@ class GroupRegCourse(RegCourse):
             form['priv_email'] = row[7].value
             form['address'] = row[8].value
 
-            if form['studId'] and form['name']:
-                # 報名寫入 DB
-                sqlInstance = SqlObj()
-                sqlStr = self.makeSqlStr(form)
-                sqlInstance.execSql(sqlStr)
-                self.insertOldStudent(form)
+            # 所有欄位無資料，表空白行
+            if not(form['studId'] or form['name'] or form['birthday'] or form['phone'] or form['cellphone'] or form['priv_email'] or form['address']):
+                continue
+            # 任一欄位有資料，即有填寫
+            if not(form['studId'] and form['name'] and form['birthday'] and form['phone'] and form['cellphone'] and form['priv_email'] and form['address']):
+                errorMsg.append('編號 %s 報名失敗:資料缺漏' % int(st.col(1)[index].value))
+                continue
+
+            # 報名寫入 DB
+            sqlInstance = SqlObj()
+            sqlStr = self.makeSqlStr(form)
+            sqlInstance.execSql(sqlStr)
+            self.insertOldStudent(form)
+            sucessMsg.append('編號%s: %s 報名成功' % (int(st.col(1)[index].value), form['name']))
+
+
         # 檢查額滿(含正備取)
         self.checkFull()
 
         # reindex
         context.reindexObject(idxs=['studentCount', 'classStatus'])
 
-        api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
+        for msg in sucessMsg:
+            api.portal.show_message(message=msg, request=request, type='info')
+        for msg in errorMsg:
+            api.portal.show_message(message=msg, request=request, type='error')
 
         request.response.redirect(request['ACTUAL_URL'])
         return
