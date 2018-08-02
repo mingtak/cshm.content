@@ -65,8 +65,8 @@ class IEchelon(model.Schema):
         'memo',
         'contact',
         'regDeadline',
-        'discountProgram',
         'discountInfo_no_open',
+        'discountProgram',
         'prepareInfo',
         'courseHours',
         'detailClassTime',
@@ -106,7 +106,7 @@ class IEchelon(model.Schema):
         required=False,
     )
 
-    discountInfo_no_open = schema.TextLine(
+    discountInfo_no_open = schema.Text(
         title=_(u'Discount Information, No Open'),
         required=False,
     )

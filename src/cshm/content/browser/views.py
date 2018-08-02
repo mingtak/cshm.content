@@ -31,6 +31,13 @@ logger = logging.getLogger("cshm.content")
 class BasicBrowserView(BrowserView):
     """ 通用method """
 
+    def getOnTraining(self):
+        """ 取得 on_training_status 選項資訊 """
+        sqlStr = "SELECT * FROM `on_training_status` WHERE 1"
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
     def getRegCourse(self, id):
         """ 取得報名表詳細資訊 """
         uid = self.context.UID()
@@ -954,15 +961,24 @@ class BatchUpdateBeforeTraining(BasicBrowserView):
             sqlStr = "SELECT * FROM `reg_course` WHERE isAlt = 0 and isReserve is null and uid = '%s' ORDER BY seatNo" % uid
             self.result = sqlInstance.execSql(sqlStr)
             return self.template()
-
+        #import pdb; pdb.set_trace()
         id = request.form.get('id')
         form = request.form
+        on_training = int(form.get('on_training'))
+        seatNo = None
+        isAlt = 0
+        if on_training == 3:
+            seatNo = 'NULL'
+            isAlt = 100 # 100??
+
+
         sqlStr = "UPDATE reg_course \
                   SET phone = '%s', \
-                      city = '%s', \
-                      zip = '%s', \
-                      address = '%s' \
-                  WHERE id = %s" % (form.get('phone'), form.get('city'), form.get('zip'), form.get('address'), id)
+                      on_training = '%s' " % (form.get('phone'), form.get('on_training'))
+        if seatNo:
+            sqlStr += ", seatNo = %s, isAlt = %s " % (seatNo, isAlt)
+
+        sqlStr += "WHERE id = %s" % id
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
