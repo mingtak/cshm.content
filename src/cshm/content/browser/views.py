@@ -335,7 +335,9 @@ class RegCourse(BasicBrowserView):
 
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
 
-        # TODO: 目前預設是只有非會員會在外網註冊
+        if api.user.is_anonymous():
+            api.portal.show_message(message=u"請以傳真:02-22222222或Email: service@cshm.org.tw 傳送XX/XX等證件影本(文字待確認).", request=request, type='info')
+
         if api.user.is_anonymous():
             request.response.redirect(self.portal['training']['courselist'].absolute_url())
         else:
@@ -935,10 +937,76 @@ class SeatTable(BasicBrowserView):
         return self.template()
 
 
-class BatchUpdateRegPersonInfo(BasicBrowserView):
+class BatchUpdateBeforeTraining(BasicBrowserView):
 
-    """ 批次更新報名表(正取) """
-    template = ViewPageTemplateFile("template/batch_update_reg_person_info.pt")
+    """ 批次更新(訓前) """
+    template = ViewPageTemplateFile("template/batch_update_before_training.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+        sqlInstance = SqlObj()
+
+        # 沒有update==1,出列表
+        if request.form.get('update') != '1':
+            uid = context.UID()
+            sqlStr = "SELECT * FROM `reg_course` WHERE isAlt = 0 and isReserve is null and uid = '%s' ORDER BY seatNo" % uid
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template()
+
+        id = request.form.get('id')
+        form = request.form
+        sqlStr = "UPDATE reg_course \
+                  SET phone = '%s', \
+                      city = '%s', \
+                      zip = '%s', \
+                      address = '%s' \
+                  WHERE id = %s" % (form.get('phone'), form.get('city'), form.get('zip'), form.get('address'), id)
+        sqlInstance.execSql(sqlStr)
+
+        if form.get('contactLog'):
+            regCourse = self.getRegCourse(id)
+            self.updateContactLog(regCourse, form.get('contactLog'))
+
+
+class BatchUpdateOnTraining(BasicBrowserView):
+
+    """ 批次更新(訓中) """
+    template = ViewPageTemplateFile("template/batch_update_on_training.pt")
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        context = self.context
+        request = self.request
+        sqlInstance = SqlObj()
+
+        # 沒有update==1,出列表
+        if request.form.get('update') != '1':
+            uid = context.UID()
+            sqlStr = "SELECT * FROM `reg_course` WHERE isAlt = 0 and isReserve is null and uid = '%s' ORDER BY seatNo" % uid
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template()
+
+        id = request.form.get('id')
+        form = request.form
+        sqlStr = "UPDATE reg_course \
+                  SET phone = '%s', \
+                      city = '%s', \
+                      zip = '%s', \
+                      address = '%s' \
+                  WHERE id = %s" % (form.get('phone'), form.get('city'), form.get('zip'), form.get('address'), id)
+        sqlInstance.execSql(sqlStr)
+
+        if form.get('contactLog'):
+            regCourse = self.getRegCourse(id)
+            self.updateContactLog(regCourse, form.get('contactLog'))
+
+
+class BatchUpdateAfterTraining(BasicBrowserView):
+
+    """ 批次更新(訓後) """
+    template = ViewPageTemplateFile("template/batch_update_after_training.pt")
 
     def __call__(self):
         self.portal = api.portal.get()

@@ -23,10 +23,13 @@ class ICourse(model.Schema):
         required=False,
     )
 
-    reTrainingCourse = RelationChoice(
+    reTrainingCourse = RelationList(
         title=_(u"Retrainging Course"),
         required=False,
-        source=CatalogSource(Type='Course')
+        value_type=RelationChoice(
+            title=_(u"Course"),
+            source=CatalogSource(Type='Course', path='/cshm/resource/corese_template'),
+        )
     )
 
     handbookTitle = schema.TextLine(

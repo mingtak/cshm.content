@@ -283,11 +283,31 @@
       />
   <!-- 權限未明 -->
 
-  <!-- 套印座位表 -->
+  <!-- 批次修改個人資訊(訓前) -->
   <browser:page
-      name="batch_update_reg_person_info"
+      name="batch_update_before_training"
       for="cshm.content.content.echelon.IEchelon"
-      class=".views.BatchUpdateRegPersonInfo"
+      class=".views.BatchUpdateBeforeTraining"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
+  <!-- 批次修改個人資訊(訓中) -->
+  <browser:page
+      name="batch_update_on_training"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.BatchUpdateOnTraining"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
+  <!-- 批次修改個人資訊(訓後) -->
+  <browser:page
+      name="batch_update_after_training"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.BatchUpdateAfterTraining"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
