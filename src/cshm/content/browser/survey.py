@@ -206,24 +206,6 @@ class CalculateSatisfaction(BrowserView):
         return self.template()
 
 
-class ShowStatistics(BrowserView):
-    template = ViewPageTemplateFile('template/show_statistics.pt')
-    def __call__(self):
-        execSql = SqlObj()
-
-        execStr = """SELECT DISTINCT(uid) FROM `satisfaction`"""
-        uidList = execSql.execSql(execStr)
-        result = {}
-        for i in uidList:
-            uid = api.content.get(UID=i[0]).getParentNode().getParentNode().UID()
-            course = api.content.get(UID=i[0]).getParentNode().getParentNode().Title()
-            if not result.has_key(uid):
-                result[uid] = course
-
-        self.result = result
-        return self.template()
-
-
 class ResultSatisfaction(BrowserView):
     def __call__(self):
         request = self.request

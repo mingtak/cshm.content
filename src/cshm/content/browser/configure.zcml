@@ -357,15 +357,6 @@
       permission="zope2.View"
       />
 
-  <!--顯示滿意度選項畫面-->
-  <browser:page
-      name="show_satisfaction_statistics"
-      for="*"
-      class=".survey.ShowStatistics"
-      layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="zope2.View"
-      />
-
   <!--計算滿意度結果並顯示-->
   <browser:page
       name="calculate_satisfaction"
