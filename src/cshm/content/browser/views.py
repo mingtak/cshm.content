@@ -1080,3 +1080,52 @@ class DebugView(BrowserView):
 
         alsoProvides(request, IDisableCSRFProtection)
         import pdb; pdb.set_trace()
+
+
+class ListPrint(BrowserView):
+    template = ViewPageTemplateFile('template/list_print.pt')
+    def __call__(self):
+        context = self.context
+
+        uid = context.UID()
+        request = self.request
+        numbers = request.get('numbers', '')
+        if numbers:
+            self.hasNumbers = True
+            sqlInstance = SqlObj()
+            # 正取名單
+            sqlStr = """SELECT reg_course.name, reg_course.seatNo, reg_course.on_training
+                        FROM reg_course, training_status_code
+                        WHERE uid = '{}' and
+                              isAlt = 0 and
+                              reg_course.training_status = training_status_code.id
+                        ORDER BY seatNo""".format(uid)
+            admit = sqlInstance.execSql(sqlStr)
+            admitLen = len(admit)
+            data = []
+            numbers = int(numbers)
+            count = 0
+
+            while admitLen > 0:
+                if count == 0:
+                    data.append(admit[:numbers])
+                else:
+                    data.append(admit[numbers * count : numbers * (count + 1)])
+                count += 1
+                admitLen -= numbers
+
+            courseList = []
+            for course in context.getChildNodes():
+                date = course.startDateTime.strftime('%m%d')
+                title = course.title
+                courseList.append(date + '-' + title)
+
+            self.totalNumber = len(admit)
+            self.courseList = courseList
+            self.numbers = numbers
+            self.data = data
+        else:
+            self.hasNumbers = False
+
+
+        return self.template()

@@ -375,4 +375,13 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--選擇名單個數及顯示-->
+  <browser:page
+      name="list_print"
+      for="*"
+      class=".views.ListPrint"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>
