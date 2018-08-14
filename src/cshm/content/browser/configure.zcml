@@ -384,4 +384,13 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--教材-->
+  <browser:page
+      name="manipulate_material"
+      for="*"
+      class=".views.ManipulateMaterial"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

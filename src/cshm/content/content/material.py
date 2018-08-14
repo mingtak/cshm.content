@@ -12,44 +12,45 @@ from cshm.content import _
 
 
 class IMaterial(model.Schema):
-    """ Marker interface and Dexterity Python Schema for Material
-    """
+    title = schema.TextLine(
+        title=_(u"Title"),
+        required=True,
+    )
 
-    # directives.widget(level=RadioFieldWidget)
-    # level = schema.Choice(
-    #     title=_(u'Sponsoring Level'),
-    #     vocabulary=LevelVocabulary,
-    #     required=True
-    # )
+    version = schema.TextLine(
+        title=_(u"Version"),
+        required=False,
+    )
 
-    # text = RichText(
-    #     title=_(u'Text'),
-    #     required=False
-    # )
+    price = schema.Int(
+        title=_(u"Price"),
+        required=True,
+    )
 
-    # url = schema.URI(
-    #     title=_(u'Link'),
-    #     required=False
-    # )
+    discountPrice = schema.Int(
+        title=_(u"Discount Price"),
+        required=False,
+    )
 
-    # fieldset('Images', fields=['logo', 'advertisement'])
-    # logo = namedfile.NamedBlobImage(
-    #     title=_(u'Logo'),
-    #     required=False,
-    # )
+    unit = schema.TextLine(
+        title=_(u"Unit"),
+        required=False,
+    )
 
-    # advertisement = namedfile.NamedBlobImage(
-    #     title=_(u'Advertisement (Gold-sponsors and above)'),
-    #     required=False,
-    # )
+    code = schema.TextLine(
+        title=_(u"Code"),
+        required=False,
+    )
 
-    # directives.read_permission(notes='cmf.ManagePortal')
-    # directives.write_permission(notes='cmf.ManagePortal')
-    # notes = RichText(
-    #     title=_(u'Secret Notes (only for site-admins)'),
-    #     required=False
-    # )
+    cover = namedfile.NamedBlobImage(
+        title=_(u'Cover'),
+        required=False,
+    )
 
+    copyright = namedfile.NamedBlobFile(
+        title=_(u'Copyright'),
+        required=False,
+    )
 
 @implementer(IMaterial)
 class Material(Item):
