@@ -3,6 +3,14 @@
   <permissions>
   <!-- -*- extra stuff goes here -*- -->
 
+    <permission name="cshm.content: Add Material" acquire="True">
+      <role name="Manager"/>
+      <role name="Site Administrator"/>
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+
+        
     <permission name="cshm.content: Add Subject" acquire="True">
       <role name="Manager"/>
       <role name="Site Administrator"/>
