@@ -411,5 +411,13 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--顯示出貨及退還詳細資料-->
+  <browser:page
+      name="print_preview"
+      for="*"
+      class=".material.PrintPreview"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
 
 </configure>
