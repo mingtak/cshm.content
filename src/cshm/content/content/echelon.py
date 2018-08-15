@@ -138,6 +138,14 @@ class IEchelon(model.Schema):
         required=False,
     )
 
+    availableMaterial = schema.List(
+        title=_(u"Select Material"),
+        required=False,
+        value_type=schema.Choice(
+            title=_(u"material"),
+            vocabulary='cshm.content.MaterialList'
+        )
+    )
 
 @implementer(IEchelon)
 class Echelon(Container):

@@ -384,13 +384,32 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--教材-->
+  <!--顯示教材總畫面-->
   <browser:page
-      name="manipulate_material"
+      name="material_view"
       for="*"
-      class=".views.ManipulateMaterial"
+      class=".material.MaterialView"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
+
+  <!--新增/追加/退還 教材-->
+  <browser:page
+      name="manipulate_material"
+      for="*"
+      class=".material.ManipulateMaterial"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--顯示出貨單或教材單-->
+  <browser:page
+      name="print_order"
+      for="*"
+      class=".material.PrintOrder"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 
 </configure>

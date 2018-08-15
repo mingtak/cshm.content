@@ -1131,17 +1131,3 @@ class ListPrint(BrowserView):
         return self.template()
 
 
-class ManipulateMaterial(BrowserView):
-    template = ViewPageTemplateFile('template/manipulate_material.pt')
-    def __call__(self):
-        context = self.context
-        portal = api.portal.get()
-        uid = context.UID()
-        request = self.request
-        execSql = SqlObj()
-
-        execStr = """SELECT * FROM material WHERE uid = '%s'""" %uid
-        self.result = execSql.execSql(execStr)
-        self.materialList = api.content.find(context=portal['resource']['material_folder'], portal_type='material', depth=1)
-
-        return self.template()

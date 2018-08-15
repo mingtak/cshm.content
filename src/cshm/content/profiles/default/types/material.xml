@@ -7,7 +7,7 @@
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">教材</property>
+      name="title">material</property>
   <property
       i18n:translate=""
       name="description"></property>
