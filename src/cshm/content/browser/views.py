@@ -1083,36 +1083,35 @@ class DebugView(BrowserView):
 
 
 class ListPrint(BrowserView):
-    template = ViewPageTemplateFile('template/list_print.pt')
+    """選擇畫面"""
+    template = ViewPageTemplateFile('template/list_print_view.pt')
+    """顯示表格畫面"""
+    list_print_template = ViewPageTemplateFile('template/list_print_template.pt')
     def __call__(self):
         context = self.context
 
         uid = context.UID()
         request = self.request
-        numbers = request.get('numbers', '')
-        if numbers:
-            self.hasNumbers = True
-            sqlInstance = SqlObj()
-            # 正取名單
+        execSql = SqlObj()
+        execStr = """SELECT COUNT(reg_course.id) FROM reg_course, training_status_code WHERE uid = '%s' and 
+                  isAlt = 0 and reg_course.training_status = training_status_code.id""" %uid
+        self.total_number = execSql.execSql(execStr)[0][0]
+
+        page = request.get('page', '')
+        gap = request.get('gap', '')
+
+        if page and gap:
+            page = int(page)
+            gap = int(gap)
             sqlStr = """SELECT reg_course.name, reg_course.seatNo, reg_course.training_status
                         FROM reg_course, training_status_code
                         WHERE uid = '{}' and
                               isAlt = 0 and
                               reg_course.training_status = training_status_code.id
                         ORDER BY seatNo""".format(uid)
-            admit = sqlInstance.execSql(sqlStr)
-            admitLen = len(admit)
+            admit = execSql.execSql(sqlStr)
             data = []
-            numbers = int(numbers)
-            count = 0
-
-            while admitLen > 0:
-                if count == 0:
-                    data.append(admit[:numbers])
-                else:
-                    data.append(admit[numbers * count : numbers * (count + 1)])
-                count += 1
-                admitLen -= numbers
+            data.append(admit[(page - 1) * gap:page * gap])
 
             courseList = []
             for course in context.getChildNodes():
@@ -1120,14 +1119,9 @@ class ListPrint(BrowserView):
                 title = course.title
                 courseList.append(date + '-' + title)
 
-            self.totalNumber = len(admit)
             self.courseList = courseList
-            self.numbers = numbers
             self.data = data
+            return self.list_print_template()
         else:
-            self.hasNumbers = False
-
-
-        return self.template()
-
+            return self.template()
 
