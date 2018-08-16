@@ -384,7 +384,7 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--顯示教材總畫面-->
+  <!--顯示教材畫面-->
   <browser:page
       name="material_view"
       for="*"
@@ -402,7 +402,7 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--顯示出貨單或教材單-->
+  <!--顯示列印出貨單或教材單-->
   <browser:page
       name="print_order"
       for="*"
@@ -420,4 +420,21 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--條列教材頁面-->
+  <browser:page
+      name="material_listing"
+      for="*"
+      class=".material.MaterialListing"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--條列期別表-->
+  <browser:page
+      name="period_listing"
+      for="*"
+      class=".material.PeriodListing"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
 </configure>

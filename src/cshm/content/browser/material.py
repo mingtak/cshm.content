@@ -5,6 +5,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone import api
 from mingtak.ECBase.browser.views import SqlObj
 import json
+import datetime
 
 
 class MaterialView(BrowserView):
@@ -178,3 +179,46 @@ class PrintPreview(BrowserView):
             materialList[title]= [finalPrice, unit]
         self.materialList = materialList
         return self.template()
+
+
+class MaterialListing(BrowserView):
+    template = ViewPageTemplateFile('template/material_listing.pt')
+    def __call__(self):
+
+        return self.template()
+
+
+class PeriodListing(BrowserView):
+    template = ViewPageTemplateFile('template/period_listing.pt')
+    def __call__(self):
+        portal = api.portal.get()
+        echelonBrain = api.content.find(context=portal['mana_course'], portal_type='Echelon')
+        nowDate = datetime.datetime.now().date()
+        data = {}
+        execSql = SqlObj()
+        for item in echelonBrain:
+            obj = item.getObject()
+            courseStart = obj.courseStart
+            if courseStart > nowDate:
+                trainingCenter = str(obj.trainingCenter.to_object.title)
+                period = obj.id
+                name = str(obj.getParentNode().title)
+                uid = obj.UID()
+                execStr = """SELECT COUNT(id), organizer FROM `material` WHERE uid = '%s' GROUP BY organizer""" %uid
+                result = execSql.execSql(execStr)
+
+                times = result[0][0] if result else '尚未請領'
+                organizer = result[0][1] if result else ''
+                contentUrl = obj.absolute_url()
+                courseStart = courseStart.strftime('%Y-%m-%d')
+                if data.has_key(trainingCenter):
+                    data[trainingCenter].append([name, period, courseStart, organizer, times, contentUrl])
+                else:
+                    data[trainingCenter] = [[name, period, courseStart, organizer, times, contentUrl]]
+
+        for k,v in data.items():
+            data[k] = sorted(v, key=lambda x:x[2])
+        self.data = data
+        self.trainingCenterBrains = api.content.find(portal['resource']['training_center'], portal_type='TrainingCenter')
+        return self.template()
+

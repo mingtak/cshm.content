@@ -1094,7 +1094,7 @@ class ListPrint(BrowserView):
             self.hasNumbers = True
             sqlInstance = SqlObj()
             # 正取名單
-            sqlStr = """SELECT reg_course.name, reg_course.seatNo, reg_course.on_training
+            sqlStr = """SELECT reg_course.name, reg_course.seatNo, reg_course.training_status
                         FROM reg_course, training_status_code
                         WHERE uid = '{}' and
                               isAlt = 0 and
