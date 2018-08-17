@@ -437,4 +437,14 @@
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
+
+  <!--轉出列表-->
+  <browser:page
+      name="has_export_view"
+      for="*"
+      class=".views.HasExportView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

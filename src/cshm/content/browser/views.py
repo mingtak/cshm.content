@@ -24,6 +24,7 @@ import requests
 import re
 import json
 import logging
+import datetime
 
 logger = logging.getLogger("cshm.content")
 
@@ -608,7 +609,7 @@ class StudentsList(BasicBrowserView):
         self.admitForJS = json.dumps(self.admitForJS)
 
         # 備取名單
-        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 ORDER BY isAlt""".format(uid)
+        sqlStr = """SELECT * FROM reg_course WHERE uid = '{}' and isAlt > 0 and on_training != 3 ORDER BY isAlt""".format(uid)
         self.waiting = sqlInstance.execSql(sqlStr)
 
         # 取得受訓狀態代碼
@@ -702,7 +703,7 @@ class WaitingTransToAdmit(BrowserView):
 
         id = request.form.get('id')
         sqlInstance = SqlObj()
-        sqlStr = """update `reg_course` set isAlt = 0 where id = {}""".format(id)
+        sqlStr = """update `reg_course` set isAlt = 0, on_training = 1 where id = {}""".format(id)
         sqlInstance.execSql(sqlStr)
 
 
@@ -1125,3 +1126,41 @@ class ListPrint(BrowserView):
         else:
             return self.template()
 
+
+class HasExportView(BrowserView):
+    template = ViewPageTemplateFile('template/has_export_view.pt')
+    def __call__(self):
+        request = self.request
+        context = self.context
+        execSql = SqlObj()
+        data = {}
+        nowDate = datetime.datetime.now().date()
+
+        period = request.get('period', '')
+        user_id = request.get('user_id', '')
+        if period and user_id:
+            path = api.content.get(UID=period).absolute_url_path()
+            execStr = """UPDATE reg_course SET isAlt = 0, on_training = 1, path = '{}', uid = '{}' WHERE id = {}
+                     """.format(path, period, user_id)
+            execSql.execSql(execStr)
+
+        for course in context.getChildNodes():
+            uidList = []
+            echelonDict = {}
+            courseName = course.title
+
+            for echelon in course.getChildNodes():
+                echelonUID = echelon.UID()
+                echelonID = echelon.id
+                uidList.append(echelonUID)
+                courseStart = echelon.courseStart
+                courseEnd = echelon.courseEnd
+                if nowDate >= courseStart and nowDate <= courseEnd:
+                    echelonDict[echelonUID] = echelonID
+
+            execStr = """SELECT cellphone,name,company_name,priv_email,phone,id FROM reg_course WHERE uid in {} AND isAlt != 0 AND 
+                         on_training = 3""".format(tuple(uidList))
+            result = execSql.execSql(execStr)
+            data[courseName] = [ result, sorted(echelonDict.items(), key= lambda x: x[1]) ]
+        self.data = data
+        return self.template()
