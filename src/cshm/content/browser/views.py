@@ -603,6 +603,7 @@ class StudentsList(BasicBrowserView):
         for item in self.admit:
             temp = dict(item)
             temp['id'] = int(item['id'])
+            temp['apply_time'] = temp['apply_time'].strftime('%Y/%m/%d %H:%M:%S')
             if temp['birthday']:
                 temp['birthday'] = temp['birthday'].strftime('%Y/%m/%d')
             self.admitForJS.append(temp)
@@ -1097,7 +1098,7 @@ class ListPrint(BrowserView):
         execStr = """SELECT COUNT(reg_course.id) FROM reg_course, training_status_code WHERE uid = '%s' and 
                   isAlt = 0 and reg_course.training_status = training_status_code.id""" %uid
         self.total_number = execSql.execSql(execStr)[0][0]
-
+        # page為第幾頁，gap為一頁幾個
         page = request.get('page', '')
         gap = request.get('gap', '')
 
@@ -1135,7 +1136,7 @@ class HasExportView(BrowserView):
         execSql = SqlObj()
         data = {}
         nowDate = datetime.datetime.now().date()
-
+        # 用來判斷是否要更新資料
         period = request.get('period', '')
         user_id = request.get('user_id', '')
         if period and user_id:
@@ -1143,12 +1144,12 @@ class HasExportView(BrowserView):
             execStr = """UPDATE reg_course SET isAlt = 0, on_training = 1, path = '{}', uid = '{}' WHERE id = {}
                      """.format(path, period, user_id)
             execSql.execSql(execStr)
-
+        # mana_course根目錄
         for course in context.getChildNodes():
             uidList = []
             echelonDict = {}
             courseName = course.title
-
+            # 所有的course
             for echelon in course.getChildNodes():
                 echelonUID = echelon.UID()
                 echelonID = echelon.id
@@ -1161,6 +1162,8 @@ class HasExportView(BrowserView):
             execStr = """SELECT cellphone,name,company_name,priv_email,phone,id FROM reg_course WHERE uid in {} AND isAlt != 0 AND 
                          on_training = 3""".format(tuple(uidList))
             result = execSql.execSql(execStr)
+            # {uid: id}排序
             data[courseName] = [ result, sorted(echelonDict.items(), key= lambda x: x[1]) ]
         self.data = data
         return self.template()
+

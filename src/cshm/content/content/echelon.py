@@ -11,6 +11,8 @@ from plone.app.vocabularies.catalog import CatalogSource
 from zope import schema
 from zope.interface import implementer
 from cshm.content import _
+from zope.interface import Invalid
+from zope.interface import invariant
 
 
 class IEchelon(model.Schema):
@@ -67,6 +69,8 @@ class IEchelon(model.Schema):
         'regDeadline',
         'discountInfo_no_open',
         'discountProgram',
+        'discountStart',
+        'discountEnd',
         'prepareInfo',
         'courseHours',
         'detailClassTime',
@@ -109,6 +113,20 @@ class IEchelon(model.Schema):
     discountInfo_no_open = schema.Text(
         title=_(u'Discount Information, No Open'),
         required=False,
+    )
+    @invariant
+    def check_date(data):
+        if data.discountEnd < data.discountStart:
+            raise Invalid(_(u'The End Date Need Bigger Then Start Date'))
+
+    discountStart = schema.Date(
+        title=_(u'Discount Start Date'),
+        required=False
+    )
+
+    discountEnd = schema.Date(
+        title=_(u'Discount End Date'),
+        required=False
     )
 
     prepareInfo = schema.Text(

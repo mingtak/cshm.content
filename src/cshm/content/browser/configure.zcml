@@ -447,4 +447,31 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--收據列表-->
+  <browser:page
+      name="receipt_list"
+      for="*"
+      class=".receipt.ReceiptList"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--收據建立畫面-->
+  <browser:page
+      name="receipt_create_view"
+      for="*"
+      class=".receipt.ReceiptCreateView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--建立收據-->
+  <browser:page
+      name="do_receipt_create"
+      for="*"
+      class=".receipt.DoReceiptCreate"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

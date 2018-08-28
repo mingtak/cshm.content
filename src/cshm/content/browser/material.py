@@ -31,7 +31,7 @@ class MaterialView(BrowserView):
                 send_date = tmp['send_date']
                 action = tmp['action']
                 orderList.append([status, apply_time, order_id, logistics_code, send_date, action])
-
+                # 切割detail，判斷action
                 for detail in tmp['detail'].split('/'):
                     if detail:
                         name = detail.split('*')[0]
@@ -48,6 +48,7 @@ class MaterialView(BrowserView):
 
         materialList = []
         availableMaterial = context.availableMaterial
+        # 抓此期別底下可以被新增的教材
         for materialUID in availableMaterial:
             content = api.content.get(UID=materialUID)
             title = content.title
@@ -76,13 +77,12 @@ class ManipulateMaterial(BrowserView):
         period = context.id
         context_url = context.absolute_url()
         organizer = api.user.get_current().getUserName()
-
+        # 做新增及退還
         execSql = SqlObj()
         execStr = """INSERT INTO `material`( `course`, `period`, `uid`, `status`, `send_date`, `logistics_code`, `detail`, `remark`,
                  `organizer`, `address`, `action`) VALUES('{}','{}','{}','{}','{}','{}','{}','{}', '{}', '{}', '{}')
                   """.format(course, period, uid, '處理中(寫死)', send_date, 'TODO', material_detail, remark, organizer, address, action)
         execSql.execSql(execStr)
-
 
         request.response.redirect(context_url + '/@@material_view')
 
@@ -118,14 +118,14 @@ class PrintOrder(BrowserView):
             materialList = {}
             availableList = {}
             availableMaterial = self.context.availableMaterial
-
+            # 抓此期別底下可以被新增的教材
             for available in availableMaterial:
                 content = api.content.get(UID=available)
                 title = content.title
                 price = content.price
                 discountPrice = content.discountPrice
                 availableList[title] = discountPrice if discountPrice else price
-
+            # 切割detail，判斷action
             for item in result:
                 for material in item[8].split('/'):
                     name = material.split('*')[0]
@@ -206,7 +206,7 @@ class PeriodListing(BrowserView):
                 uid = obj.UID()
                 execStr = """SELECT COUNT(id), organizer FROM `material` WHERE uid = '%s' GROUP BY organizer""" %uid
                 result = execSql.execSql(execStr)
-
+                # 若result為空代表尚未請領
                 times = result[0][0] if result else '尚未請領'
                 organizer = result[0][1] if result else ''
                 contentUrl = obj.absolute_url()
