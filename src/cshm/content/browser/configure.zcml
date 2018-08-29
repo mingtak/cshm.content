@@ -474,4 +474,22 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--建立/更新收據金錢-->
+  <browser:page
+      name="update_receipt_money"
+      for="*"
+      class=".receipt.UpdateReceiptMoney"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--收據的報名表-->
+  <browser:page
+      name="receipt_apply_form"
+      for="*"
+      class=".receipt.ReceiptApplyForm"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>
