@@ -447,11 +447,20 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--收據列表-->
+  <!--承辦人  收據列表-->
   <browser:page
       name="receipt_list"
       for="*"
       class=".receipt.ReceiptList"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--後台管理者  收據列表-->
+  <browser:page
+      name="admin_receipt_list"
+      for="*"
+      class=".receipt.AdminReceiptList"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
@@ -488,6 +497,24 @@
       name="receipt_apply_form"
       for="*"
       class=".receipt.ReceiptApplyForm"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--撤銷收據-->
+  <browser:page
+      name="cancel_receipt"
+      for="*"
+      class=".receipt.CancelReceipt"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--收據明細-->
+  <browser:page
+      name="receipt_detail"
+      for="*"
+      class=".receipt.ReceiptDetail"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />

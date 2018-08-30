@@ -20,14 +20,25 @@ class ReceiptList(BrowserView):
         sqlStr = """SELECT reg_course.*,receipt_money.money FROM reg_course LEFT JOIN receipt_money ON receipt_money.user_id = reg_course.id 
                     WHERE reg_course.uid = '{}' and isAlt = 0 and on_training = 1 ORDER BY reg_course.seatNo""".format(uid)
         self.admit = sqlInstance.execSql(sqlStr)
-        sqlStr = """SELECT user_id FROM receipt"""
-        user_id = sqlInstance.execSql(sqlStr)
-        idList = []
-        for ids in user_id:
-            for id in ids[0].split(','):
+        sqlStr = """SELECT id,user_id FROM receipt WHERE is_cancel = 0"""
+        receipt = sqlInstance.execSql(sqlStr)
+        idDict = {}
+        for item in receipt:
+            idList = item[1].split(',')
+            for id in idList:
                 if id:
-                    idList.append(int(id))
-        self.idList = idList
+                    idDict[id] = item[0]
+        self.idDict = idDict
+        return self.template()
+
+
+class AdminReceiptList(BrowserView):
+    template = ViewPageTemplateFile("template/admin_receipt_list.pt")
+    def __call__(self):
+        request = self.request
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM receipt WHERE is_cancel = 0 ORDER BY receipt_date"""
+        self.result = sqlInstance.execSql(sqlStr)
         return self.template()
 
 
@@ -84,7 +95,7 @@ class DoReceiptCreate(BrowserView):
         apply_date = request.get('apply_date')
         receipt_date = request.get('receipt_date')
         title = request.get('title')
-        code = request.get('code')
+        tax_no = request.get('tax_no')
         note = request.get('note')
         detail1_money = request.get('detail1_money')
         detail2_money = request.get('detail2_money')
@@ -92,14 +103,45 @@ class DoReceiptCreate(BrowserView):
         detail2_name = request.get('detail2_name')
         detail1_note = request.get('detail1_note')
         detail2_note = request.get('detail2_note')
+        user_name = api.user.get_current().getUserName()
+        training_center = self.context.trainingCenter.to_object.title
+        if training_center == '台北職訓中心':
+            training_center = '北訓'
+        elif training_center == '基隆職訓中心':
+            training_center = '基訓'
+        elif training_center == '桃園職訓中心':
+            training_center = '桃訓'
+        elif training_center == '中壢職訓中心':
+            training_center = '壢訓'
+        elif training_center == '台中職訓中心':
+            training_center = '中訓'
+        elif training_center == '花蓮職訓中心':
+            training_center = '花訓'
+        elif training_center == '嘉義職訓中心':
+            training_center = '嘉訓'
+        elif training_center == '高雄職訓中心':
+            training_center = '高訓'
+        elif training_center == '南科職訓中心':
+            training_center = '南訓'
+
+        sqlStr = """SELECT MAX(serial_number) FROM receipt WHERE training_center = '{}'""".format(training_center)
+        serial_number = sqlInstance.execSql(sqlStr)[0][0]
+        if serial_number:
+            serial_number += 1
+        else:
+            serial_number = 1
+
+        year = datetime.datetime.now().year - 1911
+
         ids = ''
         for id in user_id:
             ids += '%s,' %id
 
         detail = detail1_name + '/' + detail1_money + '/' + detail1_note + ',' +detail2_name + '/' + detail2_money + '/' + detail2_note
-        sqlStr = """INSERT INTO `receipt`(`uid`, `user_id`, `money`, `type`, `receipt_date`, `apply_date`, `title`, `code`, `note`,
-                    `detail`) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')""".format(uid, ids, total_money, type,
-                    receipt_date, apply_date, title, code, note, detail)
+        sqlStr = """INSERT INTO `receipt`(`uid`, `user_id`, `money`, `type`, `receipt_date`, `apply_date`, `title`, `tax_no`, `note`,
+                    `detail`, `undertaker`, training_center, serial_number, year) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
+                    '{}','{}',{}, {})""".format(uid, ids, total_money, type, receipt_date, apply_date, title, tax_no, note, detail,
+                    user_name, training_center, serial_number, year)
 
         sqlInstance.execSql(sqlStr)
         request.response.redirect(self.context.absolute_url() + '/@@receipt_list')
@@ -135,4 +177,27 @@ class ReceiptApplyForm(BrowserView):
         sqlInstance = SqlObj()
         sqlStr = """SELECT * FROM reg_course WHERE id = '{}'""".format(user_id)
         self.result = sqlInstance.execSql(sqlStr)
+        return self.template()
+
+
+class CancelReceipt(BrowserView):
+    def __call__(self):
+        request = self.request
+        receipt_id = request.get('receipt_id')
+        if receipt_id:
+            sqlInstance = SqlObj()
+            sqlStr = """UPDATE receipt SET is_cancel = 1 WHERE id = {}""".format(int(receipt_id))
+            sqlInstance.execSql(sqlStr)
+            request.response.redirect('%s/@@receipt_list' %self.context.absolute_url())
+
+
+class ReceiptDetail(BrowserView):
+    template = ViewPageTemplateFile("template/receipt_detail.pt")
+    def __call__(self):
+        request = self.request
+        receipt_id = request.get('receipt_id')
+        if receipt_id:
+            sqlInstance = SqlObj()
+            sqlStr = """SELECT * FROM receipt WHERE id = {}""".format(receipt_id)
+            self.result = sqlInstance.execSql(sqlStr)
         return self.template()
