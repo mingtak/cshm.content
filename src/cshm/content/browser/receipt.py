@@ -6,6 +6,9 @@ from plone import api
 from mingtak.ECBase.browser.views import SqlObj
 import json
 import datetime
+import pdfkit
+import wkhtmltopdf
+import weasyprint
 
 
 class ReceiptList(BrowserView):
@@ -37,7 +40,7 @@ class AdminReceiptList(BrowserView):
     def __call__(self):
         request = self.request
         sqlInstance = SqlObj()
-        sqlStr = """SELECT * FROM receipt WHERE is_cancel = 0 ORDER BY receipt_date"""
+        sqlStr = """SELECT * FROM receipt WHERE is_cancel = 0 AND is_check = 0 ORDER BY receipt_date"""
         self.result = sqlInstance.execSql(sqlStr)
         return self.template()
 
@@ -200,4 +203,32 @@ class ReceiptDetail(BrowserView):
             sqlInstance = SqlObj()
             sqlStr = """SELECT * FROM receipt WHERE id = {}""".format(receipt_id)
             self.result = sqlInstance.execSql(sqlStr)
+            self.receipt_id = receipt_id
+        return self.template()
+
+
+class PassReceipt(BrowserView):
+    def __call__(self):
+        request = self.request
+        receipt_id = request.get('receipt_id')
+        if receipt_id:
+            sqlInstance = SqlObj()
+            now = datetime.datetime.now().strftime('%Y-%m-%d')
+            user_name = api.user.get_current().getUserName()
+            sqlStr = """UPDATE receipt SET is_check = 1,check_date = '{}',inspector = '{}'  WHERE id = {}""".format(now, user_name, receipt_id)
+            self.result = sqlInstance.execSql(sqlStr)
+            request.response.redirect('%s/@@admin_receipt_list' %self.context.absolute_url())
+
+
+class DownloadReceiptPdf(BrowserView):
+    template = ViewPageTemplateFile("template/receipt_pdf_template.pt")
+    def __call__(self):
+        request = self.request
+        receipt_id = request.get('receipt_id')
+        sqlInstance = SqlObj()
+
+        sqlStr = """SELECT * FROM receipt WHERE id = {}""".format(receipt_id)
+        self.result = sqlInstance.execSql(sqlStr)
+        self.trainingCenter = self.context.trainingCenter.to_object.title
+
         return self.template()

@@ -519,4 +519,22 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--通過收據-->
+  <browser:page
+      name="pass_receipt"
+      for="*"
+      class=".receipt.PassReceipt"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--下載財務pdf-->
+  <browser:page
+      name="download_receipt_pdf"
+      for="*"
+      class=".receipt.DownloadReceiptPdf"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
 </configure>
