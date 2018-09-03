@@ -537,4 +537,13 @@
       permission="zope2.View"
       />
 
+  <!--下載財務pdf-->
+  <browser:page
+      name="search_receipt"
+      for="*"
+      class=".receipt.SearchReceipt"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

@@ -40,13 +40,15 @@ class AdminReceiptList(BrowserView):
     def __call__(self):
         request = self.request
         sqlInstance = SqlObj()
-        sqlStr = """SELECT * FROM receipt WHERE is_cancel = 0 AND is_check = 0 ORDER BY receipt_date"""
+        uid = self.context.UID()
+        sqlStr = """SELECT * FROM receipt WHERE uid = '{}' ORDER BY receipt_date""".format(uid)
         self.result = sqlInstance.execSql(sqlStr)
         return self.template()
 
 
 class ReceiptCreateView(BrowserView):
     template = ViewPageTemplateFile("template/receipt_create.pt")
+    empty_template = ViewPageTemplateFile("template/empty_receipt_create.pt")
     def __call__(self):
         request = self.request
         userList = request.get("userList", "")
@@ -84,15 +86,28 @@ class ReceiptCreateView(BrowserView):
                 pass
             self.userList = userList
 
-        return self.template()
+            return self.template()
+        else:
+            return self.empty_template()
 
 
 class DoReceiptCreate(BrowserView):
     def __call__(self):
         request = self.request
-        uid = self.context.UID()
+        # 用來判斷是不是來自空白的create_view
+        is_empty = request.get('empty')
+        if is_empty:
+            uid = ''
+            path = ''
+        else:
+            uid = self.context.UID()
+            path = self.context.absolute_url_path()
+
         sqlInstance = SqlObj()
-        user_id = json.loads(request.get('user_id'))
+        user_id = request.get('user_id', 'anonymouse')
+        if user_id != 'anonymouse':
+            user_id = json.loads(user_id)
+
         total_money = request.get('total_money')
         type = request.get('type')
         apply_date = request.get('apply_date')
@@ -107,7 +122,12 @@ class DoReceiptCreate(BrowserView):
         detail1_note = request.get('detail1_note')
         detail2_note = request.get('detail2_note')
         user_name = api.user.get_current().getUserName()
-        training_center = self.context.trainingCenter.to_object.title
+
+        # 空白的create_view會抓的到request,非空白頁用context的trainingCenter
+        training_center = request.get('training_center')
+        if not training_center:
+            training_center = self.context.trainingCenter.to_object.title
+
         if training_center == '台北職訓中心':
             training_center = '北訓'
         elif training_center == '基隆職訓中心':
@@ -137,17 +157,21 @@ class DoReceiptCreate(BrowserView):
         year = datetime.datetime.now().year - 1911
 
         ids = ''
-        for id in user_id:
-            ids += '%s,' %id
+        if user_id != 'anonymouse':
+            for id in user_id:
+                ids += '%s,' %id
 
         detail = detail1_name + '/' + detail1_money + '/' + detail1_note + ',' +detail2_name + '/' + detail2_money + '/' + detail2_note
         sqlStr = """INSERT INTO `receipt`(`uid`, `user_id`, `money`, `type`, `receipt_date`, `apply_date`, `title`, `tax_no`, `note`,
-                    `detail`, `undertaker`, training_center, serial_number, year) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
-                    '{}','{}',{}, {})""".format(uid, ids, total_money, type, receipt_date, apply_date, title, tax_no, note, detail,
-                    user_name, training_center, serial_number, year)
+                    `detail`, `undertaker`, training_center, serial_number, year, path) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
+                    '{}','{}',{}, {}, '{}')""".format(uid, ids, total_money, type, receipt_date, apply_date, title, tax_no, note, detail,
+                    user_name, training_center, serial_number, year, path)
 
         sqlInstance.execSql(sqlStr)
-        request.response.redirect(self.context.absolute_url() + '/@@receipt_list')
+        contextUrl = self.context.absolute_url()
+        url = contextUrl + '/@@receipt_create_view' if is_empty else contextUrl + '/@@receipt_list'
+
+        request.response.redirect(url)
 
 
 class UpdateReceiptMoney(BrowserView):
@@ -157,6 +181,7 @@ class UpdateReceiptMoney(BrowserView):
             money = int(request.get('money'))
             user_id = int(request.get('user_id'))
             uid = self.context.UID()
+            path = self.context.absolute_url_path()
             sqlInstance = SqlObj()
             sqlStr = """SELECT id FROM receipt_money WHERE user_id = {}""".format(user_id)
             check = sqlInstance.execSql(sqlStr)
@@ -164,7 +189,8 @@ class UpdateReceiptMoney(BrowserView):
                 sqlStr = """UPDATE receipt_money SET money = {} WHERE user_id = {}""".format(money, user_id)
                 sqlInstance.execSql(sqlStr)
             else:
-                sqlStr = """INSERT INTO receipt_money(user_id, money, uid) VALUES({}, {}, '{}')""".format(user_id, money, uid)
+                sqlStr = """INSERT INTO receipt_money(user_id, money, uid, path) VALUES({}, {}, '{}', '{}')
+                         """.format(user_id, money, uid, path)
                 sqlInstance.execSql(sqlStr)
             return 'success'
         except  Exception as e:
@@ -191,7 +217,7 @@ class CancelReceipt(BrowserView):
             sqlInstance = SqlObj()
             sqlStr = """UPDATE receipt SET is_cancel = 1 WHERE id = {}""".format(int(receipt_id))
             sqlInstance.execSql(sqlStr)
-            request.response.redirect('%s/@@receipt_list' %self.context.absolute_url())
+            request.response.redirect('%s/@@admin_receipt_list' %self.context.absolute_url())
 
 
 class ReceiptDetail(BrowserView):
@@ -232,3 +258,25 @@ class DownloadReceiptPdf(BrowserView):
         self.trainingCenter = self.context.trainingCenter.to_object.title
 
         return self.template()
+
+
+class SearchReceipt(BrowserView):
+    template = ViewPageTemplateFile("template/search_receipt.pt")
+    search_result = ViewPageTemplateFile("template/search_receipt_result.pt")
+    def __call__(self):
+        request = self.request
+        action = request.get('action')
+        self.action = action
+        key_word = request.get('key_word')
+        if key_word:
+            sqlInstance = SqlObj()
+            if action == 'between_date':
+                start_date = key_word.split(',')[0]
+                end_date = key_word.split(',')[1]
+                sqlStr = """SELECT * FROM receipt WHERE receipt_date between '{}' AND '{}'""".format(start_date, end_date)
+            else:
+                sqlStr = """SELECT * FROM receipt WHERE {} = '{}'""".format(action, key_word)
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.search_result()
+        else:
+            return self.template()
