@@ -1144,7 +1144,8 @@ class HasExportView(BrowserView):
             execStr = """UPDATE reg_course SET isAlt = 0, on_training = 1, path = '{}', uid = '{}' WHERE id = {}
                      """.format(path, period, user_id)
             execSql.execSql(execStr)
-        # mana_course根目錄
+            request.response.redirect(context.absolute_url() + '/@@has_export_view')
+        # 從mana_course開始
         for course in context.getChildNodes():
             uidList = []
             echelonDict = {}
