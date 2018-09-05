@@ -31,6 +31,106 @@ class Basic(BrowserView):
 
         return fileName
 
+    def getUidCourseData(self, uid):
+        """抓符合UID的reg_course資料"""
+        sqlStr = """SELECT reg_course.*,training_status_code.status FROM reg_course,training_status_code WHERE uid = '{}' and 
+                    reg_course.training_status = training_status_code.id""".format(uid)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+
+class RegisterExcel(Basic):
+    def __call__(self):
+        request = self.request
+        response = request.response
+        context = self.context
+
+        uid = context.UID()
+        data = self.getUidCourseData(uid)
+        trainingCenterCode = context.trainingCenter.to_object.code
+        period = context.id
+        courseStart = context.courseStart.strftime('%Y-%m-%d')
+        courseEnd = context.courseEnd.strftime('%Y-%m-%d')
+        output = StringIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet('Sheet1')
+
+        header_format = workbook.add_format({
+            'border': 1,
+            'align': 'center',
+            'valign': 'center',
+            'font_color': '#000000',
+            'bg_color': '#d7ffff',
+        })
+        normal_format = workbook.add_format({
+            'border': 1,
+            'align': 'left',
+            'valign': 'center',
+            'font_color': 'black',
+        })
+        worksheet.set_column('A:A', 20)
+        worksheet.set_column('C:C', 15)
+        worksheet.set_column('I:I', 30)
+        worksheet.set_column('K:L', 15)
+        worksheet.set_column('L:L', 15)
+        worksheet.set_column('J:J', 15)
+        worksheet.set_column('D:D', 15)
+
+        worksheet.write('A1', '訓練單位(請填代碼)：', header_format)
+        worksheet.merge_range('B1:E1', trainingCenterCode, normal_format)
+
+        worksheet.write('A2', '訓練種類(請填代碼)：', header_format)
+        worksheet.merge_range('B2:E2', 'TODO', normal_format)
+
+        worksheet.write('A3', '期別：', header_format)
+        worksheet.write('B3', '第', normal_format)
+        worksheet.merge_range('C3:D3', period, normal_format)
+        worksheet.write('E3', '期', normal_format)
+
+        worksheet.write('A4', '(訓練單位)開班文號：', header_format)
+        worksheet.merge_range('B4:E4', 'TODO', normal_format)
+
+        worksheet.write('A5', '文號日期：', header_format)
+        worksheet.merge_range('B5:E5', 'TODO', normal_format)
+
+        worksheet.write('A6', '證書編號', header_format)
+        worksheet.write('B6', '姓名', header_format)
+        worksheet.write('C6', '出生日期', header_format)
+        worksheet.write('D6', '身份證字號', header_format)
+        worksheet.write('E6', '學歷', header_format)
+        worksheet.write('F6', '畢業學校', header_format)
+        worksheet.write('G6', '服務單位', header_format)
+        worksheet.write('H6', '郵遞區號', header_format)
+        worksheet.write('I6', '聯絡地址', header_format)
+        worksheet.write('J6', '電話', header_format)
+        worksheet.write('K6', '開訓日', header_format)
+        worksheet.write('L6', '結訓日', header_format)
+        worksheet.write('M6', '備註', header_format)
+
+        count = 7
+        for item in data:
+            worksheet.write('A%s' %count, '', normal_format)
+            worksheet.write('B%s' %count, item[4], normal_format)
+            worksheet.write('C%s' %count, item[11], normal_format)
+            worksheet.write('D%s' %count, item[14], normal_format)
+            worksheet.write('E%s' %count, item[33], normal_format)
+            worksheet.write('F%s' %count, item[24], normal_format)
+            worksheet.write('G%s' %count, 'TODO', normal_format)
+            worksheet.write('H%s' %count, item[27], normal_format)
+            worksheet.write('I%s' %count, item[13], normal_format)
+            worksheet.write('J%s' %count, item[1], normal_format)
+            worksheet.write('K%s' %count, courseStart, normal_format)
+            worksheet.write('L%s' %count, courseEnd, normal_format)
+            worksheet.write('M%s' %count, '', normal_format)
+
+            count += 1
+
+        workbook.close()
+
+        response.setHeader('Content-Type', 'application/xls')
+        response.setHeader('Content-Disposition', 'attachment; filename="aaa.xlsx"')
+        return output.getvalue()
+
 
 class DownloadSatisfactionExcel(Basic):
     def __call__(self):

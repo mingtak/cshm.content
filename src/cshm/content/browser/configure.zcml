@@ -537,11 +537,29 @@
       permission="zope2.View"
       />
 
-  <!--下載財務pdf-->
+  <!--收據搜尋-->
   <browser:page
       name="search_receipt"
       for="*"
       class=".receipt.SearchReceipt"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--期別表的橫式名冊-->
+  <browser:page
+      name="register_print"
+      for="*"
+      class=".views.RegisterPrint"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--結業excel-->
+  <browser:page
+      name="register_excel"
+      for="*"
+      class=".download_excel.RegisterExcel"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />

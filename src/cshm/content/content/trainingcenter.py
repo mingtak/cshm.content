@@ -30,6 +30,11 @@ class ITrainingcenter(model.Schema):
         required=True,
     )
 
+    code = schema.TextLine(
+        title=_(u"Training Center Code."),
+        required=True,
+    )
+
     # directives.widget(level=RadioFieldWidget)
     # level = schema.Choice(
     #     title=_(u'Sponsoring Level'),

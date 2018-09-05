@@ -257,12 +257,12 @@ class RegCourse(BasicBrowserView):
 
         sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`, \
                     `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`, \
-                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `city`, `zip`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
         """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
             form.get('company_name'), form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('phone'),
             form.get('birthday'), form.get('address'), form.get('job_title'), form.get('studId'), uid, path, isAlt, form.get('invoice_tax_no'),
-            form.get('city'), form.get('zip'))
+            form.get('education_id'), form.get('city'), form.get('zip'), form.get('industry'))
         return sqlStr
 
 
@@ -907,7 +907,7 @@ class UpdateStudentReg(BasicBrowserView):
                   SET `cellphone`='%s', `fax`='%s',\
                       `tax_no`='%s',`com_email`='%s', \
                       `company_name`='%s',`invoice_title`='%s', \
-                      `company_address`='%s',`priv_email`='%s', \
+                      `company_address`='%s',`priv_email`='%s',`industry`='%s',\
                       `phone`='%s',`birthday`='%s',`address`='%s', \
                       `job_title`='%s', \
                       `training_status`=%s, \
@@ -916,7 +916,7 @@ class UpdateStudentReg(BasicBrowserView):
                       `city`='%s',`zip`='%s',`company_city`='%s',`company_zip`='%s' \
                   WHERE id=%s" % \
                   (form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('com_email'), form.get('company_name'),
-                   form.get('invoice_title'), form.get('company_address'), form.get('priv_email'),
+                   form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('industry'),
                    form.get('phone'), form.get('birthday'), form.get('address'), form.get('job_title'), form.get('training_status'),
                    form.get('invoice_tax_no'), form.get('education_id'), form.get('edu_school'), form.get('city'), form.get('zip'),
                    form.get('company_city'), form.get('company_zip'), form.get('id'))
@@ -1167,4 +1167,18 @@ class HasExportView(BrowserView):
             data[courseName] = [ result, sorted(echelonDict.items(), key= lambda x: x[1]) ]
         self.data = data
         return self.template()
+
+
+class RegisterPrint(BrowserView):
+    # 橫式
+    template_horizontal = ViewPageTemplateFile("template/register_print_horizontal.pt")
+    def __call__(self):
+        request = self.request
+        context = self.context
+        uid = context.UID()
+
+        self.result = self.getUidCourseData(uid)
+
+        return self.template_horizontal()
+
 
