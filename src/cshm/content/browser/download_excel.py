@@ -39,7 +39,74 @@ class Basic(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
-class RegisterExcel(Basic):
+class RegisterExcelTeacher(BrowserView):
+   def __call__(self):
+        request = self.request
+        response = request.response
+        context = self.context
+        output = StringIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet('Sheet1')
+
+        code = context.trainingCenter.to_object.code
+
+        normal_format = workbook.add_format({
+            'border': 1,
+            'align': 'center',
+            'valign': 'top',
+        })
+        worksheet.set_column('A:A', 10)
+        worksheet.set_column('B:B', 15)
+        worksheet.set_column('C:C', 15)
+        worksheet.set_column('D:D', 40)
+        worksheet.set_column('E:E', 35)
+        worksheet.set_column('F:F', 25)
+
+        worksheet.merge_range('A1:B1', '訓練單位(請填代碼)：', normal_format)
+        worksheet.merge_range('C1:F1', code, normal_format)
+        worksheet.merge_range('A2:B2', '訓練種類：', normal_format)
+        worksheet.merge_range('C2:F2', 'TODO', normal_format)
+        worksheet.write('A3', '期別：', normal_format)
+        worksheet.write('B3', '第', normal_format)
+        worksheet.merge_range('C3:E3', context.id, normal_format)
+        worksheet.write('F3', '期', normal_format)
+
+        worksheet.write('A4', '編號', normal_format)
+        worksheet.write('B4', '講師姓名', normal_format)
+        worksheet.write('C4', '學歷', normal_format)
+        worksheet.write('D4', '經歷', normal_format)
+        worksheet.write('E4', '通訊處', normal_format)
+        worksheet.write('F4', '電話', normal_format)
+        worksheet.set_row(2, 25)
+        worksheet.set_row(3, 25)
+        worksheet.set_row(4, 25)
+        worksheet.set_row(1, 30)
+        count = 5
+        number = 1
+        already = []
+        for item in context.getChildNodes():
+            teacher = item.teacher.to_object
+            title = teacher.title
+            if title not in already:
+                phone = teacher.cellPhone if teacher.cellPhone else teacher.homePhone
+                worksheet.write('A%s' %count, number, normal_format)
+                worksheet.write('B%s' %count, title, normal_format)
+                worksheet.write('C%s' %count, 'TODO', normal_format)
+                worksheet.write('D%s' %count, teacher.personExp, normal_format)
+                worksheet.write('E%s' %count, teacher.contactAddr, normal_format)
+                worksheet.write('F%s' %count, phone, normal_format)
+                worksheet.set_row(count, 70)
+                already.append(title)
+                number += 1
+                count += 1
+        workbook.close()
+
+        response.setHeader('Content-Type', 'application/xls')
+        response.setHeader('Content-Disposition', 'attachment; filename="teacher.xlsx"')
+        return output.getvalue()
+
+
+class RegisterExcelGraduaction(Basic):
     def __call__(self):
         request = self.request
         response = request.response
@@ -128,7 +195,7 @@ class RegisterExcel(Basic):
         workbook.close()
 
         response.setHeader('Content-Type', 'application/xls')
-        response.setHeader('Content-Disposition', 'attachment; filename="aaa.xlsx"')
+        response.setHeader('Content-Disposition', 'attachment; filename="graduaction.xlsx"')
         return output.getvalue()
 
 

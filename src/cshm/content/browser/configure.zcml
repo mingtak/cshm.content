@@ -557,11 +557,21 @@
 
   <!--結業excel-->
   <browser:page
-      name="register_excel"
+      name="register_excel_graduaction"
       for="*"
-      class=".download_excel.RegisterExcel"
+      class=".download_excel.RegisterExcelGraduaction"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
+
+  <!--講師excel-->
+  <browser:page
+      name="register_excel_teacher"
+      for="*"
+      class=".download_excel.RegisterExcelTeacher"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 
 </configure>
