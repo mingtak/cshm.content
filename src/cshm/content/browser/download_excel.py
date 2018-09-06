@@ -33,11 +33,14 @@ class Basic(BrowserView):
 
     def getUidCourseData(self, uid):
         """抓符合UID的reg_course資料"""
-        sqlStr = """SELECT reg_course.*,training_status_code.status,education_code.degree FROM reg_course,training_status_code,education_code 
-                    WHERE uid = '{}' and reg_course.training_status = training_status_code.id AND reg_course.education_id = education_code.id
+        sqlStr = """SELECT reg_course.*,training_status_code.status,education_code.degree FROM reg_course,training_status_code,
+                    education_code WHERE uid = '{}' and reg_course.training_status = training_status_code.id AND
+                    reg_course.education_id = education_code.id
                     """.format(uid)
         sqlInstance = SqlObj()
+
         return sqlInstance.execSql(sqlStr)
+
     def getCourseCode(self, course):
         courseList = {
             '職業安全管理師教育訓練': '01010',
@@ -132,6 +135,21 @@ class RegisterExcelClass(Basic):
         trainingCenterPhone = trainingCenter.phone
         trainingCenterFax = trainingCenter.fax
 
+        counselor = context.counselor
+        classroom = context.classroom
+        if classroom == 'first_room':
+            classroom = '一'
+        elif classroom == 'second_room':
+            classroom = '＝'
+        elif classroom == 'Taoyuan':
+            classroom = '桃園'
+        elif classroom == 'Zhongli':
+            classroom = '中壢'
+        elif classroom == 'Tainan':
+            classroom = '台南'
+        elif classroom == 'Kaohsiung':
+            classroom = '高雄'
+
         normal_format = workbook.add_format({
             'border': 1,
             'align': 'center',
@@ -151,11 +169,11 @@ class RegisterExcelClass(Basic):
         worksheet.merge_range('C3:H3', trainingCenterAddress, normal_format)
         worksheet.merge_range('A4:B4', '教室名稱：', normal_format)
         worksheet.write('C4', '第', normal_format)
-        worksheet.merge_range('D4:G4', 'TODO', normal_format)
+        worksheet.merge_range('D4:G4', classroom, normal_format)
         worksheet.write('H4', '教室', normal_format)
 
         worksheet.merge_range('A5:B5', '輔導員姓名：', normal_format)
-        worksheet.merge_range('C5:H5', 'TODO', normal_format)
+        worksheet.merge_range('C5:H5', counselor, normal_format)
         worksheet.merge_range('A6:B6', '電話：', normal_format)
         worksheet.merge_range('C6:H6', trainingCenterPhone, normal_format)
         worksheet.merge_range('A7:B7', '傳真：', normal_format)
@@ -344,15 +362,16 @@ class RegisterExcelGraduaction(Basic):
 
         count = 7
         for item in data:
+            address = item[13] if item[13] else item[9]
             worksheet.write('A%s' %count, '', normal_format)
             worksheet.write('B%s' %count, item[4], normal_format)
             worksheet.write('C%s' %count, item[11], normal_format)
             worksheet.write('D%s' %count, item[14], normal_format)
             worksheet.write('E%s' %count, item[34], normal_format)
             worksheet.write('F%s' %count, item[25], normal_format)
-            worksheet.write('G%s' %count, 'TODO', normal_format)
+            worksheet.write('G%s' %count, item[6], normal_format)
             worksheet.write('H%s' %count, item[27], normal_format)
-            worksheet.write('I%s' %count, item[13], normal_format)
+            worksheet.write('I%s' %count, address, normal_format)
             worksheet.write('J%s' %count, item[1], normal_format)
             worksheet.write('K%s' %count, courseStart, normal_format)
             worksheet.write('L%s' %count, courseEnd, normal_format)

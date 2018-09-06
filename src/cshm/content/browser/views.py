@@ -124,6 +124,15 @@ class BasicBrowserView(BrowserView):
             sqlInstance.execSql(sqlStr)
         except:pass
 
+    def getUidCourseData(self, uid):
+        """抓符合UID的reg_course資料"""
+        sqlStr = """SELECT reg_course.*,training_status_code.status,education_code.degree FROM reg_course,training_status_code,
+                    education_code WHERE uid = '{}' and reg_course.training_status = training_status_code.id AND
+                    reg_course.education_id = education_code.id
+                    """.format(uid)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
 
 # 仿寫自 folderListing,
 class CoverListing(BrowserView):
@@ -255,10 +264,10 @@ class RegCourse(BasicBrowserView):
         path = self.context.virtual_url_path()
         isAlt = self.isAlt()
 
-        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`, \
+        sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`,\
                     `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`, \
                     `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{})
         """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
             form.get('company_name'), form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('phone'),
             form.get('birthday'), form.get('address'), form.get('job_title'), form.get('studId'), uid, path, isAlt, form.get('invoice_tax_no'),
@@ -913,13 +922,15 @@ class UpdateStudentReg(BasicBrowserView):
                       `training_status`=%s, \
                       `invoice_tax_no`='%s', \
                       `education_id`=%s,`edu_school`='%s', \
-                      `city`='%s',`zip`='%s',`company_city`='%s',`company_zip`='%s' \
+                      `city`='%s',`zip`='%s',`company_city`='%s',`company_zip`='%s',`reTrainingCat`='%s',`reTrainingCode`='%s',\
+                      reTrainingHour=%s\
                   WHERE id=%s" % \
                   (form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('com_email'), form.get('company_name'),
                    form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('industry'),
                    form.get('phone'), form.get('birthday'), form.get('address'), form.get('job_title'), form.get('training_status'),
                    form.get('invoice_tax_no'), form.get('education_id'), form.get('edu_school'), form.get('city'), form.get('zip'),
-                   form.get('company_city'), form.get('company_zip'), form.get('id'))
+                   form.get('company_city'), form.get('company_zip'), form.get('reTrainingCat'), form.get('reTrainingCode'),
+                   form.get('reTrainingHour'), form.get('id'))
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
@@ -1169,7 +1180,7 @@ class HasExportView(BrowserView):
         return self.template()
 
 
-class RegisterPrint(BrowserView):
+class RegisterPrint(BasicBrowserView):
     # 橫式
     template_horizontal = ViewPageTemplateFile("template/register_print_horizontal.pt")
     def __call__(self):

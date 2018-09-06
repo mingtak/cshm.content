@@ -47,6 +47,18 @@ class IEchelon(model.Schema):
         required=True
     )
 
+    undertaker = schema.Choice(
+        title=_(u'undertaker'),
+        vocabulary='cshm.content.AllUser',
+        required=True
+    )
+
+    counselor = schema.Choice(
+        title=_(u'counselor'),
+        vocabulary='cshm.content.AllUser',
+        required=True
+    )
+
     trainingCenter = RelationChoice(
         title=_(u"Training Center"),
         required=False,

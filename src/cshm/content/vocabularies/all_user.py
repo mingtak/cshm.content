@@ -8,6 +8,7 @@ from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from plone import api
 
 
 class VocabItem(object):
@@ -24,10 +25,11 @@ class AllUser(object):
     def __call__(self, context):
         # Just an example list of content for our vocabulary,
         # this can be any static or dynamic data, a catalog result for example.
-        items = [
-            VocabItem(u'sony-a7r-iii', _(u'Sony Aplha 7R III')),
-            VocabItem(u'canon-5d-iv', _(u'Canon 5D IV')),
-        ]
+        users = api.user.get_users()
+        items = []
+        for user in users:
+            userName = user.getUserName()
+            items.append(VocabItem(u'%s' %userName, (u'%s' %userName)))
 
         # Fix context if you are using the vocabulary in DataGridField.
         # See https://github.com/collective/collective.z3cform.datagridfield/issues/31:  # NOQA: 501

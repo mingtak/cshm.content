@@ -204,7 +204,8 @@ class ReceiptApplyForm(BrowserView):
         request = self.request
         user_id = request.get('user_id')
         sqlInstance = SqlObj()
-        sqlStr = """SELECT * FROM reg_course WHERE id = '{}'""".format(user_id)
+        sqlStr = """SELECT reg_course.*,training_status_code.status FROM reg_course,training_status_code WHERE reg_course.id = '{}' AND
+                    reg_course.training_status = training_status_code.id""".format(user_id)
         self.result = sqlInstance.execSql(sqlStr)
         return self.template()
 
