@@ -573,5 +573,13 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--課程excel-->
+  <browser:page
+      name="register_excel_class"
+      for="*"
+      class=".download_excel.RegisterExcelClass"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
 
 </configure>

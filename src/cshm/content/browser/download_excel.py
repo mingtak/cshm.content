@@ -33,13 +33,180 @@ class Basic(BrowserView):
 
     def getUidCourseData(self, uid):
         """抓符合UID的reg_course資料"""
-        sqlStr = """SELECT reg_course.*,training_status_code.status FROM reg_course,training_status_code WHERE uid = '{}' and 
-                    reg_course.training_status = training_status_code.id""".format(uid)
+        sqlStr = """SELECT reg_course.*,training_status_code.status,education_code.degree FROM reg_course,training_status_code,education_code 
+                    WHERE uid = '{}' and reg_course.training_status = training_status_code.id AND reg_course.education_id = education_code.id
+                    """.format(uid)
         sqlInstance = SqlObj()
         return sqlInstance.execSql(sqlStr)
+    def getCourseCode(self, course):
+        courseList = {
+            '職業安全管理師教育訓練': '01010',
+            '職業衛生管理師教育訓練': '01020',
+            '職業安全衛生管理員教育訓練': '01030',
+            '甲種職業安全衛生業務主管安全衛生教育訓練': '02010',
+            '乙種職業安全衛生業務主管安全衛生教育訓練': '02020',
+            '丙種職業安全衛生業務主管安全衛生教育訓練': '02030',
+            '吊升荷重在三公噸以上之固定式起重機及吊升荷重在一公噸以上之斯達卡式起重機操作人員安全衛生教育訓練': '03010',
+            '吊升荷重在三公噸以上之固定式起重機(架空型─機上操作)操作人員': '03011',
+            '吊升荷重在三公噸以上之固定式起重機(架空型─地面操作)操作人員': '03012',
+            '吊升荷重在三公噸以上之固定式起重機(伸臂型)操作人員': '03013',
+            '吊升荷重在三公噸以上之移動式起重機操作人員安全衛生教育訓練': '03020',
+            '吊升荷重在三公噸以上之移動式起重機(伸臂可伸縮式)操作人員': '03021',
+            '吊升荷重在三公噸以上之移動式起重機(伸臂不可伸縮式)操作人員': '03022',
+            '吊升荷重在三公噸以上之人字臂起重桿操作人員安全衛生教育訓練': '03030',
+            '吊籠操作人員安全衛生教育訓練': '03040',
+            '(停用)吊升荷重在一公噸以上之斯達卡式起重機操作人員安全衛生教育訓練': '03050',
+            '導軌或升降路之高度在二十公尺以上之營建用提升機操作人員安全衛生教育訓練': '03060',
+            '鍋爐操作人員安全衛生教育訓練': '04010',
+            '甲級鍋爐操作人員安全衛生教育訓練': '04011',
+            '乙級鍋爐操作人員安全衛生教育訓練': '04012',
+            '丙級鍋爐操作人員安全衛生教育訓練': '04013',
+            '第一種壓力容器操作人員安全衛生教育訓練': '04020',
+            '高壓氣體特定設備操作人員安全衛生教育訓練': '04030',
+            '高壓氣體容器操作人員安全衛生教育訓練': '04040',
+            '高壓氣體製造安全主任安全衛生教育訓練': '05040',
+            '高壓氣體製造安全作業主管安全衛生教育訓練': '05050',
+            '高壓氣體供應及消費作業主管安全衛生教育訓練': '05060',
+            '擋土支撐作業主管安全衛生教育訓練': '06010',
+            '模板支撐作業主管安全衛生教育訓練': '06020',
+            '隧道等挖掘作業主管安全衛生教育訓練': '06030',
+            '隧道等襯砌作業主管安全衛生教育訓練': '06040',
+            '施工架組配作業主管安全衛生教育訓練': '06050',
+            '鋼構組配作業主管安全衛生教育訓練': '06060',
+            '露天開挖作業主管安全衛生教育訓練': '06070',
+            '(停用)施工架及施工構台組配作業主管安全衛生教育訓練': '06080',
+            '屋頂作業主管安全衛生教育訓練': '06090',
+            '有機溶劑作業主管安全衛生教育訓練': '07010',
+            '鉛作業主管安全衛生教育訓練': '07020',
+            '四烷基鉛作業主管安全衛生教育訓練': '07030',
+            '缺氧作業主管安全衛生教育訓練': '07040',
+            '特定化學物質作業主管安全衛生教育訓練': '07050',
+            '粉塵作業主管安全衛生教育訓練': '07060',
+            '高壓室內作業主管安全衛生教育訓練': '07070',
+            '潛水作業主管安全衛生教育訓練': '07080',
+            '小型鍋爐操作人員特殊安全衛生教育訓練': '08010',
+            '荷重在一公噸以上之堆高機操作人員特殊安全衛生教育訓練': '08020',
+            '吊升荷重在零點五公噸以上未滿三公噸之固定式起重機操作人員特殊安全衛生教育訓練': '08030',
+            '吊升荷重在零點五公噸以上未滿三公噸之移動式起重機操作人員特殊安全衛生教育訓練': '08040',
+            '吊升荷重在零點五公噸以上未滿三公噸之人字臂起重桿操作人員特殊安全衛生教育訓練': '08050',
+            '使用起重機具從事吊掛作業人員特殊安全衛生教育訓練': '08060',
+            '以乙炔熔接裝置或氣體集合裝置從事金屬之熔接、切斷或加熱作業人員特殊安全衛生教育訓練': '08080',
+            '火藥爆破作業人員特殊安全衛生教育訓練': '08100',
+            '胸高直徑七十公分以上之伐木作業人員特殊安全衛生教育訓練': '08120',
+            '機械集材運材作業人員特殊安全衛生教育訓練': '08130',
+            '高壓室內作業人員特殊安全衛生教育訓練': '08140',
+            '潛水作業人員特殊安全衛生教育訓練': '08150',
+            '油輪清艙作業人員特殊安全衛生教育訓練': '08160',
+            '急救人員安全衛生教育訓練': '10010',
+            '甲級化學性因子作業環境監測人員安全衛生教育訓練': '11010',
+            '甲級物理性因子作業環境監測人員安全衛生教育訓練': '11020',
+            '乙級化學性因子作業環境監測人員教育訓練': '11030',
+            '乙級物理性因子作業環境監測人員安全衛生教育訓練': '11040',
+            '施工安全評估人員安全衛生教育訓練': '12010',
+            '製程安全評估人員安全衛生教育訓練': '12020',
+            '(停用)營造業流動勞工安全衛生教育訓練': '13010',
+            '營造業甲種職業安全衛生業務主管教育訓練': '14010',
+            '營造業乙種職業安全衛生業務主管教育訓練': '14020',
+            '營造業丙種職業安全衛生業務主管教育訓練': '14030',
+            '勞工健康服務護理人員安全衛生教育訓練': '15010'
+        }
+
+        for k,v in courseList.items():
+            if re.match(course, k.decode()):
+                return v
 
 
-class RegisterExcelTeacher(BrowserView):
+class RegisterExcelClass(Basic):
+    def __call__(self):
+        request = self.request
+        response = request.response
+        context = self.context
+        output = StringIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet('Sheet1')
+        trainingCenter =  context.trainingCenter.to_object
+
+        trainingCenterCode = trainingCenter.code
+        courseCode = self.getCourseCode(context.getParentNode().title)
+        trainingCenterAddress = trainingCenter.address
+        trainingCenterPhone = trainingCenter.phone
+        trainingCenterFax = trainingCenter.fax
+
+        normal_format = workbook.add_format({
+            'border': 1,
+            'align': 'center',
+            'valign': 'top',
+        })
+
+        worksheet.merge_range('A1:B1', '訓練單位(請填代碼)：', normal_format)
+        worksheet.merge_range('C1:H1', trainingCenterCode, normal_format)
+        worksheet.merge_range('A2:B2', '訓練種類：', normal_format)
+        worksheet.merge_range('C2:H2', courseCode, normal_format)
+        worksheet.merge_range('D2:E2', '期別', normal_format)
+        worksheet.write('F2', '第', normal_format)
+        worksheet.write('G2', context.id, normal_format)
+        worksheet.write('H2', '期', normal_format)
+
+        worksheet.merge_range('A3:B3', '訓練場所地址：', normal_format)
+        worksheet.merge_range('C3:H3', trainingCenterAddress, normal_format)
+        worksheet.merge_range('A4:B4', '教室名稱：', normal_format)
+        worksheet.write('C4', '第', normal_format)
+        worksheet.merge_range('D4:G4', 'TODO', normal_format)
+        worksheet.write('H4', '教室', normal_format)
+
+        worksheet.merge_range('A5:B5', '輔導員姓名：', normal_format)
+        worksheet.merge_range('C5:H5', 'TODO', normal_format)
+        worksheet.merge_range('A6:B6', '電話：', normal_format)
+        worksheet.merge_range('C6:H6', trainingCenterPhone, normal_format)
+        worksheet.merge_range('A7:B7', '傳真：', normal_format)
+        worksheet.merge_range('C7:H7', trainingCenterFax, normal_format)
+
+        worksheet.merge_range('A8:A9', '日期', normal_format)
+        worksheet.merge_range('B8:B9', '星期', normal_format)
+        worksheet.merge_range('C8:C9', '時間', normal_format)
+        worksheet.merge_range('D8:D9', '課程名稱', normal_format)
+        worksheet.merge_range('E8:E9', '時數', normal_format)
+        worksheet.merge_range('F8:F9', '講師姓名', normal_format)
+        worksheet.merge_range('G8:G9', '講師編號(無講師編號者，敘明符合規定之資格條款)', normal_format)
+        worksheet.merge_range('H8:H9', '備註', normal_format)
+        worksheet.set_column('A:A', 20)
+        worksheet.set_column('C:C', 20)
+        worksheet.set_column('D:D', 30)
+        worksheet.set_column('G:G', 80)
+
+        count = 10
+        courseList = {}
+
+        for course in context.getChildNodes():
+            startDateTime = course.startDateTime
+            courseList[startDateTime] = course
+
+        courseList = sorted(courseList.items(), key=lambda x: x[0])
+        for item in courseList:
+            course = item[1]
+            hour = course.hours
+            startDateTime = item[0]
+            courseTime = '%s~%s' %(startDateTime.strftime('%H%M'), (startDateTime + datetime.timedelta(hours=int(hour))).strftime('%H%M'))
+            teacher = course.teacher.to_object
+
+            worksheet.write('A%s' %count, startDateTime.strftime('%Y%m%d'), normal_format)
+            worksheet.write('B%s' %count, startDateTime.isoweekday(), normal_format)
+            worksheet.write('C%s' %count, courseTime, normal_format)
+            worksheet.write('D%s' %count, course.title, normal_format)
+            worksheet.write('E%s' %count, hour, normal_format)
+            worksheet.write('F%s' %count, teacher.title, normal_format)
+            worksheet.write('G%s' %count, teacher.teacherSN if teacher.teacherSN else '符合附表15(2項6款)', normal_format)
+            worksheet.write('H%s' %count, '', normal_format)
+            count += 1
+
+        workbook.close()
+
+        response.setHeader('Content-Type', 'application/xls')
+        response.setHeader('Content-Disposition', 'attachment; filename="class.xlsx"')
+        return output.getvalue()
+
+
+class RegisterExcelTeacher(Basic):
    def __call__(self):
         request = self.request
         response = request.response
@@ -48,8 +215,8 @@ class RegisterExcelTeacher(BrowserView):
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet('Sheet1')
 
-        code = context.trainingCenter.to_object.code
-
+        trainingCenterCode = context.trainingCenter.to_object.code
+        courseCode = self.getCourseCode(context.getParentNode().title)
         normal_format = workbook.add_format({
             'border': 1,
             'align': 'center',
@@ -63,9 +230,9 @@ class RegisterExcelTeacher(BrowserView):
         worksheet.set_column('F:F', 25)
 
         worksheet.merge_range('A1:B1', '訓練單位(請填代碼)：', normal_format)
-        worksheet.merge_range('C1:F1', code, normal_format)
+        worksheet.merge_range('C1:F1', trainingCenterCode, normal_format)
         worksheet.merge_range('A2:B2', '訓練種類：', normal_format)
-        worksheet.merge_range('C2:F2', 'TODO', normal_format)
+        worksheet.merge_range('C2:F2', courseCode, normal_format)
         worksheet.write('A3', '期別：', normal_format)
         worksheet.write('B3', '第', normal_format)
         worksheet.merge_range('C3:E3', context.id, normal_format)
@@ -115,6 +282,7 @@ class RegisterExcelGraduaction(Basic):
         uid = context.UID()
         data = self.getUidCourseData(uid)
         trainingCenterCode = context.trainingCenter.to_object.code
+        courseCode = self.getCourseCode(context.getParentNode().title)
         period = context.id
         courseStart = context.courseStart.strftime('%Y-%m-%d')
         courseEnd = context.courseEnd.strftime('%Y-%m-%d')
@@ -147,7 +315,7 @@ class RegisterExcelGraduaction(Basic):
         worksheet.merge_range('B1:E1', trainingCenterCode, normal_format)
 
         worksheet.write('A2', '訓練種類(請填代碼)：', header_format)
-        worksheet.merge_range('B2:E2', 'TODO', normal_format)
+        worksheet.merge_range('B2:E2', courseCode, normal_format)
 
         worksheet.write('A3', '期別：', header_format)
         worksheet.write('B3', '第', normal_format)
@@ -180,8 +348,8 @@ class RegisterExcelGraduaction(Basic):
             worksheet.write('B%s' %count, item[4], normal_format)
             worksheet.write('C%s' %count, item[11], normal_format)
             worksheet.write('D%s' %count, item[14], normal_format)
-            worksheet.write('E%s' %count, item[33], normal_format)
-            worksheet.write('F%s' %count, item[24], normal_format)
+            worksheet.write('E%s' %count, item[34], normal_format)
+            worksheet.write('F%s' %count, item[25], normal_format)
             worksheet.write('G%s' %count, 'TODO', normal_format)
             worksheet.write('H%s' %count, item[27], normal_format)
             worksheet.write('I%s' %count, item[13], normal_format)
