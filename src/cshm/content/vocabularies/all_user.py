@@ -8,7 +8,6 @@ from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from plone import api
 
 
 class VocabItem(object):
@@ -18,21 +17,16 @@ class VocabItem(object):
 
 
 @implementer(IVocabularyFactory)
-class ClassRoom(object):
+class AllUser(object):
     """
     """
 
     def __call__(self, context):
         # Just an example list of content for our vocabulary,
         # this can be any static or dynamic data, a catalog result for example.
-
         items = [
-            VocabItem(u'first_room', _(u'first_room')),
-            VocabItem(u'second_room', _(u'second_room')),
-            VocabItem(u'Taoyuan', _(u'Taoyuan')),
-            VocabItem(u'Zhongli', _(u'Zhongli')),
-            VocabItem(u'Tainan', _(u'Tainan')),
-            VocabItem(u'Kaohsiung', _(u'Kaohsiung')),
+            VocabItem(u'sony-a7r-iii', _(u'Sony Aplha 7R III')),
+            VocabItem(u'canon-5d-iv', _(u'Canon 5D IV')),
         ]
 
         # Fix context if you are using the vocabulary in DataGridField.
@@ -55,4 +49,4 @@ class ClassRoom(object):
         return SimpleVocabulary(terms)
 
 
-ClassRoomFactory = ClassRoom()
+AllUserFactory = AllUser()

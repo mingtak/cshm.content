@@ -43,10 +43,9 @@ class IEchelon(model.Schema):
 
     classroom = schema.Choice(
         title=_(u'Classroom'),
-        vocabulary='cshm.content.Classroom',
+        vocabulary='cshm.content.ClassRoom',
         required=True
     )
-
 
     trainingCenter = RelationChoice(
         title=_(u"Training Center"),

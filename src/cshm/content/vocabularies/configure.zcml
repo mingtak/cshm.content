@@ -5,6 +5,12 @@
     <!-- -*- extra stuff goes here -*- -->
 
     <utility
+        component=".all_user.AllUserFactory"
+        name="cshm.content.AllUser"
+    />
+
+        
+    <utility
         component=".class_room.ClassRoomFactory"
         name="cshm.content.ClassRoom"
     />
