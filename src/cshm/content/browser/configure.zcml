@@ -555,7 +555,7 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--結業excel-->
+  <!--學員excel-->
   <browser:page
       name="register_excel_graduaction"
       for="*"

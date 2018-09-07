@@ -263,15 +263,15 @@ class RegCourse(BasicBrowserView):
         uid = self.context.UID()
         path = self.context.virtual_url_path()
         isAlt = self.isAlt()
-
+        is_print =  1 if form.get('check_print') == 'on' else 0
         sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`,\
                     `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`, \
-                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{})
+                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`, `is_print`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {})
         """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
             form.get('company_name'), form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('phone'),
             form.get('birthday'), form.get('address'), form.get('job_title'), form.get('studId'), uid, path, isAlt, form.get('invoice_tax_no'),
-            form.get('education_id'), form.get('city'), form.get('zip'), form.get('industry'))
+            form.get('education_id'), form.get('city'), form.get('zip'), form.get('industry'), is_print)
         return sqlStr
 
 

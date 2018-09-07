@@ -199,7 +199,7 @@ class PeriodListing(BrowserView):
         for item in echelonBrain:
             obj = item.getObject()
             courseStart = obj.courseStart
-            if courseStart > nowDate:
+            if courseStart >= nowDate:
                 trainingCenter = str(obj.trainingCenter.to_object.title)
                 period = obj.id
                 name = str(obj.getParentNode().title)

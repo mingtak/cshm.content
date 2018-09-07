@@ -275,8 +275,20 @@ class SearchReceipt(BrowserView):
                 start_date = key_word.split(',')[0]
                 end_date = key_word.split(',')[1]
                 sqlStr = """SELECT * FROM receipt WHERE receipt_date between '{}' AND '{}'""".format(start_date, end_date)
+            elif action == 'code':
+                keyList = key_word.split(',')
+                trainingCenter = keyList[0]
+                year = keyList[1]
+                sn = keyList[2]
+                sqlStr = """SELECT * FROM receipt WHERE 1"""
+                if year:
+                    sqlStr += ' AND year = %s' %year
+                if trainingCenter:
+                    sqlStr += " AND training_center LIKE '%s%%%%'" %trainingCenter
+                if sn:
+                    sqlStr += " AND serial_number = %s" %sn
             else:
-                sqlStr = """SELECT * FROM receipt WHERE {} = '{}'""".format(action, key_word)
+                sqlStr = """SELECT * FROM receipt WHERE {} LIKE '{}%%'""".format(action, key_word)
             self.result = sqlInstance.execSql(sqlStr)
             return self.search_result()
         else:
