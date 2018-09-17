@@ -582,4 +582,49 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--學員簽到報表-->
+  <browser:page
+      name="student_sing_report"
+      for="*"
+      class=".report.StudentSingReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--學員名冊報表-->
+  <browser:page
+      name="student_list_report"
+      for="*"
+      class=".report.StudentListReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--學員成績冊報表-->
+  <browser:page
+      name="student_grade_report"
+      for="*"
+      class=".report.StudentGradeReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--學員核發清冊報表-->
+  <browser:page
+      name="student_issue_report"
+      for="*"
+      class=".report.StudentIssueReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--學員核發清冊報表-->
+  <browser:page
+      name="triple_excel"
+      for="*"
+      class=".download_excel.TripleExcel"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

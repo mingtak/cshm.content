@@ -1158,3 +1158,93 @@ class DownloadEmergencyExcel(Basic):
         response.setHeader('Content-Disposition', 'attachment; filename="%s-%s.xlsx"' %(course, period))
         return output.getvalue()
 
+
+class TripleExcel(Basic):
+    def __call__(self):
+        uid = self.context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT *, training_status_code.status FROM `reg_course`, `training_status_code` WHERE uid = '{}' and isAlt = 0 and 
+                 seatNo IS NOT null and reg_course.training_status = training_status_code.id""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+
+        output = StringIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet1 = workbook.add_worksheet('Sheet1')
+
+        format = workbook.add_format({
+            'align': 'center',
+            'valign': 'vcenter',
+        })
+        courseStart = self.context.courseStart
+        courseEnd = self.context.courseEnd
+        if courseStart != courseEnd:
+            courseStart = '%s年%s月%s日' %(courseStart.year - 1911, courseStart.month, courseStart.day)
+            courseEnd = '%s年%s月%s日' %(courseEnd.year - 1911, courseEnd.month, courseEnd.day)
+            date = '受訓日期：%s~%s' %(courseStart, courseEnd)
+            msg = True
+        else:
+            date = '受訓日期：%s年%s月%s日' %(courseStart.year - 1911, courseStart.month, courseStart.day)
+            msg = False
+
+        worksheet1.merge_range('A1:K1', '學員名冊、點名紀錄一覽表、證書核發清冊三合一表格'.decode(), format)
+        worksheet1.merge_range('A2:K2', date.decode(), format)
+
+        worksheet1.merge_range('A3:A4', '編號'.decode(), format)
+        worksheet1.merge_range('B3:B4', '姓名'.decode(), format)
+        worksheet1.write('C3', '身分證字號'.decode(), format)
+        worksheet1.write('C4', '統一編號'.decode(), format)
+
+        worksheet1.merge_range('D3:D4', '聯絡電話'.decode(), format)
+        worksheet1.merge_range('E3:E4', '通訊地址'.decode(), format)
+        worksheet1.merge_range('F3:F4', '電子信箱'.decode(), format)
+        worksheet1.merge_range('G3:J3', '點名紀錄'.decode(), format)
+        worksheet1.write('G4', '第1日上午'.decode(), format)
+        worksheet1.write('H4', '第1日下午'.decode(), format)
+        worksheet1.write('I4', '第2日上午'.decode() if msg else '', format)
+        worksheet1.write('J4', '第2日下午'.decode() if msg else '', format)
+        worksheet1.merge_range('K3:K4', '核發證書字號'.decode(), format)
+
+        count = 5
+        number = 1
+        for item in result:
+            obj = dict(item)
+            phone = obj['cellphone'] if obj['cellphone'] else obj['phone']
+            email = obj['com_email'] if obj['com_email'] else obj['priv_email']
+            worksheet1.write('A%s' %count, str(number).decode(), format)
+            worksheet1.write('B%s' %count, obj['name'].decode(), format)
+            worksheet1.write('C%s' %count, obj['studId'].decode(), format)
+            worksheet1.write('D%s' %count, phone.decode(), format)
+            worksheet1.write('E%s' %count, obj['address'].decode(), format)
+            worksheet1.write('F%s' %count, email.decode(), format)
+            worksheet1.write('G%s' %count, '')
+            worksheet1.write('H%s' %count, '')
+            worksheet1.write('I%s' %count, '')
+            worksheet1.write('J%s' %count, '')
+            worksheet1.write('K%s' %count, '')
+            worksheet1.set_column('C:C', 20)
+            worksheet1.set_column('D:D', 20)
+            worksheet1.set_column('E:E', 35)
+            worksheet1.set_column('F:F', 35)
+            worksheet1.set_column('K:K', 20)
+            worksheet1.set_column('G:H', 10)
+            worksheet1.set_column('H:H', 10)
+            worksheet1.set_column('I:I', 10)
+            worksheet1.set_column('J:J', 10)
+            number += 1
+            count += 1
+        workbook.close()
+
+        fileName = '%s-%s-三合一' %(self.context.getParentNode().Title(), self.context.id)
+        user_agent = self.request['HTTP_USER_AGENT']
+        try:
+            if re.search('MSIE', user_agent) or re.search('Edge', user_agent):
+                fileName = quote(fileName)
+        except:
+            pass
+
+        response = self.request.response
+        response.setHeader('Content-Type',  'application/x-xlsx')
+        response.setHeader('Content-Disposition', 'attachment; filename="%s.xlsx"' %fileName)
+        return output.getvalue()
+
+

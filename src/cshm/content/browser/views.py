@@ -1107,7 +1107,7 @@ class ListPrint(BrowserView):
         request = self.request
         execSql = SqlObj()
         execStr = """SELECT COUNT(reg_course.id) FROM reg_course, training_status_code WHERE uid = '%s' and 
-                  isAlt = 0 and reg_course.training_status = training_status_code.id""" %uid
+                  isAlt = 0 and reg_course.training_status = training_status_code.id and reg_course.seatNo is not null""" %uid
         self.total_number = execSql.execSql(execStr)[0][0]
         # page為第幾頁，gap為一頁幾個
         page = request.get('page', '')
@@ -1120,7 +1120,8 @@ class ListPrint(BrowserView):
                         FROM reg_course, training_status_code
                         WHERE uid = '{}' and
                               isAlt = 0 and
-                              reg_course.training_status = training_status_code.id
+                              reg_course.training_status = training_status_code.id and
+                              reg_course.seatNo is not null
                         ORDER BY seatNo""".format(uid)
             admit = execSql.execSql(sqlStr)
             data = []
