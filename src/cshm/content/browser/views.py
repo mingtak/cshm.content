@@ -923,14 +923,14 @@ class UpdateStudentReg(BasicBrowserView):
                       `invoice_tax_no`='%s', \
                       `education_id`=%s,`edu_school`='%s', \
                       `city`='%s',`zip`='%s',`company_city`='%s',`company_zip`='%s',`reTrainingCat`='%s',`reTrainingCode`='%s',\
-                      reTrainingHour=%s\
+                      `reTrainingHour`=%s,training_hour=%s \
                   WHERE id=%s" % \
                   (form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('com_email'), form.get('company_name'),
                    form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('industry'),
                    form.get('phone'), form.get('birthday'), form.get('address'), form.get('job_title'), form.get('training_status'),
                    form.get('invoice_tax_no'), form.get('education_id'), form.get('edu_school'), form.get('city'), form.get('zip'),
                    form.get('company_city'), form.get('company_zip'), form.get('reTrainingCat'), form.get('reTrainingCode'),
-                   form.get('reTrainingHour'), form.get('id'))
+                   form.get('reTrainingHour'), form.get('training_hour'), form.get('id'))
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
@@ -1116,7 +1116,7 @@ class ListPrint(BrowserView):
         if page and gap:
             page = int(page)
             gap = int(gap)
-            sqlStr = """SELECT reg_course.name, reg_course.seatNo, reg_course.training_status
+            sqlStr = """SELECT reg_course.name, reg_course.seatNo, reg_course.training_status, reg_course.training_hour
                         FROM reg_course, training_status_code
                         WHERE uid = '{}' and
                               isAlt = 0 and

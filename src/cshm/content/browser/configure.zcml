@@ -584,9 +584,9 @@
 
   <!--學員簽到報表-->
   <browser:page
-      name="student_sing_report"
+      name="student_sing_in_report"
       for="*"
-      class=".report.StudentSingReport"
+      class=".report.StudentSingInReport"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
@@ -623,6 +623,24 @@
       name="triple_excel"
       for="*"
       class=".download_excel.TripleExcel"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--急救成績報表-->
+  <browser:page
+      name="emergency_grade_report"
+      for="*"
+      class=".report.EmergencyGradeReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--報班報表-->
+  <browser:page
+      name="student_sing_up_report"
+      for="*"
+      class=".report.StudentSingUpReport"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />

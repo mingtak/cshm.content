@@ -206,8 +206,8 @@ class RegisterExcelClass(Basic):
             startDateTime = item[0]
             courseTime = '%s~%s' %(startDateTime.strftime('%H%M'), (startDateTime + datetime.timedelta(hours=int(hour))).strftime('%H%M'))
             teacher = course.teacher.to_object
-
-            worksheet.write('A%s' %count, startDateTime.strftime('%Y%m%d'), normal_format)
+            year = startDateTime.year - 1911
+            worksheet.write('A%s' %count, '%s%s' %(year, startDateTime.strftime('%m%d')), normal_format)
             worksheet.write('B%s' %count, startDateTime.isoweekday(), normal_format)
             worksheet.write('C%s' %count, courseTime, normal_format)
             worksheet.write('D%s' %count, course.title, normal_format)
@@ -302,8 +302,8 @@ class RegisterExcelGraduaction(Basic):
         trainingCenterCode = context.trainingCenter.to_object.code
         courseCode = self.getCourseCode(context.getParentNode().title)
         period = context.id
-        courseStart = context.courseStart.strftime('%Y-%m-%d')
-        courseEnd = context.courseEnd.strftime('%Y-%m-%d')
+        courseStart = context.courseStart
+        courseEnd = context.courseEnd
         output = StringIO()
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet('Sheet1')
@@ -365,7 +365,8 @@ class RegisterExcelGraduaction(Basic):
             address = item[13] if item[13] else item[9]
             worksheet.write('A%s' %count, '', normal_format)
             worksheet.write('B%s' %count, item[4], normal_format)
-            worksheet.write('C%s' %count, item[11], normal_format)
+            year = item[12].year - 1911
+            worksheet.write('C%s' %count, '%s%s' %(year, item[12].strftime('%m%d')), normal_format)
             worksheet.write('D%s' %count, item[14], normal_format)
             worksheet.write('E%s' %count, item[34], normal_format)
             worksheet.write('F%s' %count, item[25], normal_format)
@@ -373,8 +374,10 @@ class RegisterExcelGraduaction(Basic):
             worksheet.write('H%s' %count, item[27], normal_format)
             worksheet.write('I%s' %count, address, normal_format)
             worksheet.write('J%s' %count, item[1], normal_format)
-            worksheet.write('K%s' %count, courseStart, normal_format)
-            worksheet.write('L%s' %count, courseEnd, normal_format)
+            courseStartYear = courseStart.year - 1911
+            worksheet.write('K%s' %count, '%s%s' %(courseStartYear, courseStart.strftime('%m%d')), normal_format)
+            courseEndYear = courseEnd.year - 1911
+            worksheet.write('L%s' %count, '%s%s' %(courseEndYear, courseEnd.strftime('%m%d')), normal_format)
             worksheet.write('M%s' %count, '', normal_format)
 
             count += 1
@@ -604,10 +607,6 @@ class DownloadSatisfactionExcel(Basic):
         response.setHeader('Content-Type', 'application/xls')
         response.setHeader('Content-Disposition', 'attachment; filename="%s"' %(fileName))
         return output.getvalue()
-#        path = '/home/andy/cshm/zeocluster/%s-%s.xls' %(course.decode('utf-8'), period)
-#        with open(path, 'rb') as file:
-#            docs = file.read()
-#            return docs
 
 
 class DownloadManagerExcel(Basic):
@@ -1172,6 +1171,7 @@ class TripleExcel(Basic):
         worksheet1 = workbook.add_worksheet('Sheet1')
 
         format = workbook.add_format({
+            'border': 1,
             'align': 'center',
             'valign': 'vcenter',
         })
@@ -1181,10 +1181,10 @@ class TripleExcel(Basic):
             courseStart = '%s年%s月%s日' %(courseStart.year - 1911, courseStart.month, courseStart.day)
             courseEnd = '%s年%s月%s日' %(courseEnd.year - 1911, courseEnd.month, courseEnd.day)
             date = '受訓日期：%s~%s' %(courseStart, courseEnd)
-            msg = True
+            notOneDay = True
         else:
             date = '受訓日期：%s年%s月%s日' %(courseStart.year - 1911, courseStart.month, courseStart.day)
-            msg = False
+            notOneDay = False
 
         worksheet1.merge_range('A1:K1', '學員名冊、點名紀錄一覽表、證書核發清冊三合一表格'.decode(), format)
         worksheet1.merge_range('A2:K2', date.decode(), format)
@@ -1200,8 +1200,8 @@ class TripleExcel(Basic):
         worksheet1.merge_range('G3:J3', '點名紀錄'.decode(), format)
         worksheet1.write('G4', '第1日上午'.decode(), format)
         worksheet1.write('H4', '第1日下午'.decode(), format)
-        worksheet1.write('I4', '第2日上午'.decode() if msg else '', format)
-        worksheet1.write('J4', '第2日下午'.decode() if msg else '', format)
+        worksheet1.write('I4', '第2日上午'.decode() if notOneDay else '', format)
+        worksheet1.write('J4', '第2日下午'.decode() if notOneDay else '', format)
         worksheet1.merge_range('K3:K4', '核發證書字號'.decode(), format)
 
         count = 5
@@ -1216,11 +1216,20 @@ class TripleExcel(Basic):
             worksheet1.write('D%s' %count, phone.decode(), format)
             worksheet1.write('E%s' %count, obj['address'].decode(), format)
             worksheet1.write('F%s' %count, email.decode(), format)
-            worksheet1.write('G%s' %count, '')
-            worksheet1.write('H%s' %count, '')
-            worksheet1.write('I%s' %count, '')
-            worksheet1.write('J%s' %count, '')
-            worksheet1.write('K%s' %count, '')
+            if obj['status']:
+                if notOneDay:
+                    worksheet1.merge_range('G%s:J%s' %(count, count), obj['status'].decode(), format)
+                else:
+                    worksheet1.merge_range('G%s:H%s' %(count, count), obj['status'].decode(), format)
+                    worksheet1.write('I%s' %count, '', format)
+                    worksheet1.write('J%s' %count, '', format)
+                    worksheet1.write('K%s' %count, '', format)
+            else:
+                worksheet1.write('G%s' %count, '', format)
+                worksheet1.write('H%s' %count, '', format)
+                worksheet1.write('I%s' %count, '', format)
+                worksheet1.write('J%s' %count, '', format)
+                worksheet1.write('K%s' %count, '', format)
             worksheet1.set_column('C:C', 20)
             worksheet1.set_column('D:D', 20)
             worksheet1.set_column('E:E', 35)
