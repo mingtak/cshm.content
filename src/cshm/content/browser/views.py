@@ -1132,7 +1132,7 @@ class ListPrint(BrowserView):
             for course in context.getChildNodes():
                 date = course.startDateTime.strftime('%m%d')
                 title = course.title
-                courseList.append(date + '-' + title)
+                courseList.append([date, title])
 
             self.courseList = courseList
             self.data = data

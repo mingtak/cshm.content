@@ -591,15 +591,6 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--學員簽到報表-->
-  <browser:page
-      name="student_sing_in_report"
-      for="*"
-      class=".report.StudentSingInReport"
-      layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="cmf.ManagePortal"
-      />
-
   <!--學員三合一報表-->
   <browser:page
       name="triple_excel"
