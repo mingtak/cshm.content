@@ -29,6 +29,9 @@ class ClassTime(object):
             VocabItem(u'inDay', _(u'inDay')),
             VocabItem(u'inEvening', _(u'inEvening')),
             VocabItem(u'inWeekend', _(u'inWeekend')),
+            VocabItem(u'inWeekendEvening', _(u'inWeekendEvening')),
+            VocabItem(u'complex', _(u'complex')),
+            VocabItem(u'phone', _(u'phone'))
         ]
 
         # Fix context if you are using the vocabulary in DataGridField.

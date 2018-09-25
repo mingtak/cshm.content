@@ -8,6 +8,12 @@ import json
 import datetime
 
 
+class AdminMaterialView(BrowserView):
+    template = ViewPageTemplateFile('template/admin_material_view.pt')
+    def __call__(self):
+        return self.template()
+
+
 class MaterialView(BrowserView):
     template = ViewPageTemplateFile('template/material_view.pt')
     def __call__(self):

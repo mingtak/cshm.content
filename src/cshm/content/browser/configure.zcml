@@ -393,6 +393,15 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--顯示教材畫面-->
+  <browser:page
+      name="admin_material_view"
+      for="*"
+      class=".material.AdminMaterialView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!--新增/追加/退還 教材-->
   <browser:page
       name="manipulate_material"
@@ -591,34 +600,7 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--學員名冊報表-->
-  <browser:page
-      name="student_list_report"
-      for="*"
-      class=".report.StudentListReport"
-      layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="cmf.ManagePortal"
-      />
-
-  <!--學員成績冊報表-->
-  <browser:page
-      name="student_grade_report"
-      for="*"
-      class=".report.StudentGradeReport"
-      layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="cmf.ManagePortal"
-      />
-
-  <!--學員核發清冊報表-->
-  <browser:page
-      name="student_issue_report"
-      for="*"
-      class=".report.StudentIssueReport"
-      layer="cshm.content.interfaces.ICshmContentLayer"
-      permission="cmf.ManagePortal"
-      />
-
-  <!--學員核發清冊報表-->
+  <!--學員三合一報表-->
   <browser:page
       name="triple_excel"
       for="*"
@@ -627,22 +609,21 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--急救成績報表-->
+  <!--直式＆橫式&防火＆核發＆成績 報表-->
   <browser:page
-      name="emergency_grade_report"
+      name="gernal_report"
       for="*"
-      class=".report.EmergencyGradeReport"
+      class=".report.GernalReport"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
 
-  <!--報班報表-->
+  <!--簽到表 報表-->
   <browser:page
-      name="student_sing_up_report"
+      name="student_sing_in_report"
       for="*"
-      class=".report.StudentSingUpReport"
+      class=".report.StudentSingInReport"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
-
 </configure>

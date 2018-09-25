@@ -1216,7 +1216,7 @@ class TripleExcel(Basic):
             worksheet1.write('D%s' %count, phone.decode(), format)
             worksheet1.write('E%s' %count, obj['address'].decode(), format)
             worksheet1.write('F%s' %count, email.decode(), format)
-            if obj['status']:
+            if obj['status'] == '未到訓' or obj['status'] == '退訓':
                 if notOneDay:
                     worksheet1.merge_range('G%s:J%s' %(count, count), obj['status'].decode(), format)
                 else:

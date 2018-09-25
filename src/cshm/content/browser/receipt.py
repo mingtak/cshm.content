@@ -242,7 +242,16 @@ class PassReceipt(BrowserView):
             sqlInstance = SqlObj()
             now = datetime.datetime.now().strftime('%Y-%m-%d')
             user_name = api.user.get_current().getUserName()
-            sqlStr = """UPDATE receipt SET is_check = 1,check_date = '{}',inspector = '{}'  WHERE id = {}""".format(now, user_name, receipt_id)
+            time = request.get('time')
+            if time == 'one':
+                check = 'one_check'
+                date = 'one_check_date'
+            elif time == 'two':
+                check = 'two_check'
+                date = 'two_check_date'
+
+            sqlStr = """UPDATE receipt SET {} = 1,{} = '{}',inspector = '{}'  WHERE id = {}
+                     """.format(check, date, now, user_name, receipt_id)
             self.result = sqlInstance.execSql(sqlStr)
             request.response.redirect('%s/@@admin_receipt_list' %self.context.absolute_url())
 

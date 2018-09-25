@@ -923,14 +923,15 @@ class UpdateStudentReg(BasicBrowserView):
                       `invoice_tax_no`='%s', \
                       `education_id`=%s,`edu_school`='%s', \
                       `city`='%s',`zip`='%s',`company_city`='%s',`company_zip`='%s',`reTrainingCat`='%s',`reTrainingCode`='%s',\
-                      `reTrainingHour`=%s,training_hour=%s \
+                      `reTrainingHour`=%s,training_hour=%s,license_unit='%s',license_date='%s',license_code='%s' \
                   WHERE id=%s" % \
                   (form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('com_email'), form.get('company_name'),
                    form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('industry'),
                    form.get('phone'), form.get('birthday'), form.get('address'), form.get('job_title'), form.get('training_status'),
                    form.get('invoice_tax_no'), form.get('education_id'), form.get('edu_school'), form.get('city'), form.get('zip'),
                    form.get('company_city'), form.get('company_zip'), form.get('reTrainingCat'), form.get('reTrainingCode'),
-                   form.get('reTrainingHour'), form.get('training_hour'), form.get('id'))
+                   form.get('reTrainingHour'), form.get('training_hour'), form.get('license_unit'), form.get('license_date'),
+                   form.get('license_code'), form.get('id'))
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
