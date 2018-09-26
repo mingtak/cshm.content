@@ -11,6 +11,7 @@ from docxtpl import DocxTemplate, Listing
 from Products.CMFPlone.utils import safe_unicode
 import re
 from docx import Document
+from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.text import WD_BREAK
 from docx.enum.section import WD_ORIENT
