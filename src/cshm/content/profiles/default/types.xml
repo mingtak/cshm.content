@@ -8,5 +8,6 @@
   <object meta_type="Dexterity FTI" name="TrainingCenter"/>
   <object meta_type="Dexterity FTI" name="Teacher"/>
   <object meta_type="Dexterity FTI" name="Subject"/>
+  <object meta_type="Dexterity FTI" name="OfficialDoc"/>
   <object meta_type="Dexterity FTI" name="material"/>
 </object>
