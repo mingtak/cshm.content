@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
-  <index name="docHeader_indexer" meta_type="KeywordIndex">
+  <index name="docHeader_indexer" meta_type="FieldIndex">
     <indexed_attr value="docHeader_indexer" />
   </index>
   <column value="docHeader_indexer"/>
 
-  <index name="docSN_indexer" meta_type="KeywordIndex">
+  <index name="docSN_indexer" meta_type="FieldIndex">
     <indexed_attr value="docSN_indexer" />
   </index>
   <column value="docSN_indexer"/>

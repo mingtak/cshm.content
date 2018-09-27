@@ -620,9 +620,9 @@
 
   <!--建立公文畫面-->
   <browser:page
-      name="create_office_view"
+      name="create_official_view"
       for="*"
-      class=".office.CreateOfficeView"
+      class=".official.CreateOfficialView"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
@@ -640,7 +640,16 @@
   <browser:page
       name="official_view"
       for="*"
-      class=".office.OfficialView"
+      class=".official.OfficialView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--公文畫面-->
+  <browser:page
+      name="search_official"
+      for="*"
+      class=".official.SearchOfficial"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />

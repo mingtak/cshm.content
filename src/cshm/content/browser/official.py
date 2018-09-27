@@ -11,12 +11,45 @@ from datetime import datetime
 import json
 
 
-class CreateOfficeView(BrowserView):
-    template = ViewPageTemplateFile('template/create_office_view.pt')
+class SearchOfficial(BrowserView):
+    template = ViewPageTemplateFile('template/search_official.pt')
+    template2 = ViewPageTemplateFile('template/search_official_result.pt')
+    def __call__(self):
+        request = self.request
+        docHeader = request.get('docHeader')
+        docSN = request.get('docSN')
+        if docHeader or docSN:
+            portal = api.portal.get()
+            query = {
+                'context': portal['official_doc'],
+                'portal_type': 'OfficialDoc',
+            }
+            if docHeader:
+                query['docHeader_indexer'] = docHeader
+            if docSN:
+                query['docSN_indexer'] = docSN
+
+            result = api.content.find(**query)
+            data = []
+            for item in result:
+                obj = item.getObject()
+                title = obj.title
+                code = obj.docHeader + obj.docSN
+                date = obj.docDate.strftime('%Y-%m-%d')
+                recipient = obj.recipient
+                data.append([title, code, date, recipient])
+            self.data = data
+            return self.template2()
+
+        return self.template()
+
+
+class CreateOfficialView(BrowserView):
+    template = ViewPageTemplateFile('template/create_official_view.pt')
     def __call__(self):
         self.office_header = api.portal.get_registry_record('office_header', interface=IOffice)
         request = self.request
-        office_header = request.get('office_header')
+        official_header = request.get('official_header')
         title = request.get('title')
         date = request.get('date')
         recipient = request.get('recipient')
@@ -39,26 +72,26 @@ class CreateOfficeView(BrowserView):
             config_count = api.portal.get_registry_record('count_office_header', interface=IOffice)
 
             if config_count:
-                office_header = safe_unicode(office_header)
+                official_header = safe_unicode(official_header)
                 config_count = json.loads(config_count)
 
-                if config_count.has_key(office_header):
-                    config_count[office_header] += 1
-                    count = str(config_count[office_header])
+                if config_count.has_key(official_header):
+                    config_count[official_header] += 1
+                    count = str(config_count[official_header])
                 else:
-                    config_count[office_header] = 1
+                    config_count[official_header] = 1
                     count = '1'
 
                 config_count = json.dumps(config_count)
 
             else:
                 config_count = {}
-                config_count[office_header] = 1
+                config_count[official_header] = 1
                 config_count = json.dumps(config_count)
                 count = '1'
             id = ''
             for item in config_office_header.split('/'):
-                if item.split(':')[0] == office_header:
+                if item.split(':')[0] == official_header:
                     id += item.split(':')[1]
 
             for i in range(5 - len(count)):
@@ -71,7 +104,7 @@ class CreateOfficeView(BrowserView):
                 docDate=date,
                 recipient=recipient,
                 docSN=count,
-                docHeader=office_header,
+                docHeader=official_header,
                 detail_1=detail_1,
                 detail_2=detail_2,
                 detail_3=detail_3,
