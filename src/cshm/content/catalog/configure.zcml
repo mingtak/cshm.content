@@ -11,6 +11,10 @@
   <adapter name="studentCount" factory=".catalog.studentCount_indexer"/>
   <adapter name="regDeadline" factory=".catalog.regDeadline_indexer"/>
   <adapter name="teacheSubjects" factory=".catalog.teacheSubjects_indexer"/> <!-- 講師教授課目 -->
+  <adapter name="docHeader_indexer" factory=".catalog.docHeader_indexer"/>
+  <adapter name="docSN_indexer" factory=".catalog.docSN_indexer"/>
+
+
 <!--  <adapter name="" factory=".catalog._indexer"/> -->
 
 </configure>

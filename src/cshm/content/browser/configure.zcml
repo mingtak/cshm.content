@@ -617,4 +617,39 @@
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
+
+  <!--建立公文畫面-->
+  <browser:page
+      name="create_office_view"
+      for="*"
+      class=".office.CreateOfficeView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--公文和簽呈 下載-->
+  <browser:page
+      name="download_official_doc"
+      for="*"
+      class=".report.DownloadOfficialDoc"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--公文畫面-->
+  <browser:page
+      name="official_view"
+      for="*"
+      class=".office.OfficialView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!-- configlet -->
+  <browser:page
+    name="officeControlPanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    permission="cmf.ManagePortal"
+    class=".configlet.OfficeControlPanelView"
+    />
 </configure>

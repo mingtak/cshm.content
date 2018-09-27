@@ -48,6 +48,44 @@ class Basic(BrowserView):
             return docs
 
 
+class DownloadOfficialDoc(Basic):
+    def __call__(self):
+        request = self.request
+        uid = request.get('uid')
+        mode = request.get('mode')
+        obj = api.content.get(UID=uid)
+        title = obj.title
+        recipient = obj.recipient
+        parameter = {}
+        parameter['title'] = title
+        parameter['docDate'] = safe_unicode(self.getChineseBirthday(obj.docDate))
+        parameter['recipient'] = safe_unicode(obj.recipient)
+        parameter['docSN'] = safe_unicode(obj.docHeader + obj.docSN)
+        parameter['detail_1'] = safe_unicode(obj.detail_1)
+        parameter['detail_2'] = safe_unicode(obj.detail_2)
+        parameter['detail_3'] = safe_unicode(obj.detail_3)
+        parameter['detail_4'] = safe_unicode(obj.detail_4)
+        parameter['detail_5'] = safe_unicode(obj.detail_5)
+        parameter['detail_6'] = safe_unicode(obj.detail_6)
+        parameter['detail_7'] = safe_unicode(obj.detail_7)
+        parameter['detail_8'] = safe_unicode(obj.detail_8)
+        parameter['detail_9'] = safe_unicode(obj.detail_9)
+        parameter['detail_10'] = safe_unicode(obj.detail_10)
+        parameter['year'] = safe_unicode(obj.docDate.year - 1911)
+        parameter['month'] = safe_unicode(obj.docDate.month)
+        parameter['day'] = safe_unicode(obj.docDate.day)
+        if mode == 'official':
+            filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/official_document.docx'
+        elif mode == 'paper':
+            filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/paper_report.docx'
+
+        doc = DocxTemplate(filePath)
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
+
+        return self.downloadFile(title)
+
+
 class GernalReport(Basic):
     def __call__(self):
         result = self.getAllStudent()

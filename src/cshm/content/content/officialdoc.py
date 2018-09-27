@@ -22,6 +22,11 @@ class IOfficialDoc(model.Schema):
         required=True,
     )
 
+    docHeader = schema.TextLine(
+        title=_(u'Official Document Header.'),
+        required=True,
+    )
+
     docSN = schema.TextLine(
         title=_(u'Official Document Serial No.'),
         required=True,

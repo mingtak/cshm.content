@@ -1,0 +1,118 @@
+# -*- coding: utf-8 -*-
+from cshm.content import _
+from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone import api
+from Products.CMFPlone.utils import safe_unicode
+from cshm.content.browser.configlet import IOffice
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
+from datetime import datetime
+import json
+
+
+class CreateOfficeView(BrowserView):
+    template = ViewPageTemplateFile('template/create_office_view.pt')
+    def __call__(self):
+        self.office_header = api.portal.get_registry_record('office_header', interface=IOffice)
+        request = self.request
+        office_header = request.get('office_header')
+        title = request.get('title')
+        date = request.get('date')
+        recipient = request.get('recipient')
+        detail_1 = request.get('detail_1')
+        detail_2 = request.get('detail_2')
+        detail_3 = request.get('detail_3')
+        detail_4 = request.get('detail_4')
+        detail_5 = request.get('detail_5')
+        detail_6 = request.get('detail_6')
+        detail_7 = request.get('detail_7')
+        detail_8 = request.get('detail_8')
+        detail_9 = request.get('detail_9')
+        detail_10 = request.get('detail_10')
+
+        if title and date:
+            date = datetime.strptime(date, '%Y-%m-%d')
+            alsoProvides(request, IDisableCSRFProtection)
+            portal = api.portal.get()
+            config_office_header = api.portal.get_registry_record('office_header', interface=IOffice)
+            config_count = api.portal.get_registry_record('count_office_header', interface=IOffice)
+
+            if config_count:
+                office_header = safe_unicode(office_header)
+                config_count = json.loads(config_count)
+
+                if config_count.has_key(office_header):
+                    config_count[office_header] += 1
+                    count = str(config_count[office_header])
+                else:
+                    config_count[office_header] = 1
+                    count = '1'
+
+                config_count = json.dumps(config_count)
+
+            else:
+                config_count = {}
+                config_count[office_header] = 1
+                config_count = json.dumps(config_count)
+                count = '1'
+            id = ''
+            for item in config_office_header.split('/'):
+                if item.split(':')[0] == office_header:
+                    id += item.split(':')[1]
+
+            for i in range(5 - len(count)):
+                count = '0' + count
+            id += count
+
+            obj = api.content.create(
+                type='OfficialDoc',
+                title=title,
+                docDate=date,
+                recipient=recipient,
+                docSN=count,
+                docHeader=office_header,
+                detail_1=detail_1,
+                detail_2=detail_2,
+                detail_3=detail_3,
+                detail_4=detail_4,
+                detail_5=detail_5,
+                detail_6=detail_6,
+                detail_7=detail_7,
+                detail_8=detail_8,
+                detail_9=detail_9,
+                detail_10=detail_10,
+                container=portal['official_doc'],
+                id=id
+            )
+            uid = obj.UID()
+            api.portal.set_registry_record('count_office_header', safe_unicode(config_count), interface=IOffice)
+            url = api.portal.get().absolute_url() + '/official_view?uid=%s' %uid
+            request.response.redirect(url)
+        else:
+            return self.template()
+
+
+class OfficialView(BrowserView):
+    template = ViewPageTemplateFile('template/official_view.pt')
+    def __call__(self):
+        request = self.request
+        uid = request.get('uid')
+        obj = api.content.get(UID=uid)
+        self.uid = uid
+        self.title = obj.title
+        self.code = obj.docHeader + obj.docSN
+        self.date = obj.docDate
+        self.recipient = obj.recipient
+        self.detail_1 = obj.detail_1
+        self.detail_2 = obj.detail_2
+        self.detail_3 = obj.detail_3
+        self.detail_4 = obj.detail_4
+        self.detail_5 = obj.detail_5
+        self.detail_6 = obj.detail_6
+        self.detail_7 = obj.detail_7
+        self.detail_8 = obj.detail_8
+        self.detail_9 = obj.detail_9
+        self.detail_10 = obj.detail_10
+
+        return self.template()

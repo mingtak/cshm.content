@@ -6,6 +6,17 @@ from cshm.content.content.echelon import IEchelon
 from cshm.content.content.teacher import ITeacher
 from mingtak.ECBase.browser.views import SqlObj
 from cshm.content.content.subject import ISubject
+from cshm.content.content.officialdoc import IOfficialDoc
+
+@indexer(IOfficialDoc)
+def docHeader_indexer(obj):
+    return obj.docHeader
+
+
+@indexer(IOfficialDoc)
+def docSN_indexer(obj):
+    return obj.docSN
+
 
 @indexer(ITeacher)
 def teacheSubjects_indexer(obj):
