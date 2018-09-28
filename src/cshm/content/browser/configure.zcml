@@ -699,6 +699,24 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--簽呈範本-->
+  <browser:page
+      name="sql_signature_sample"
+      for="*"
+      class=".official.SqlSignatureSample"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--新增範本-->
+  <browser:page
+      name="add_signature_sample"
+      for="*"
+      class=".official.AddSignatureSample"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"

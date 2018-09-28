@@ -12,11 +12,60 @@ import json
 from mingtak.ECBase.browser.views import SqlObj
 
 
+class Basic(BrowserView):
+
+    def GetSignatureSample(self):
+        sqlInstance = SqlObj()
+        user = api.user.get_current().getUserName()
+        sqlStr = """SELECT * FROM `signature_sample` WHERE user = '{}' or user is NULL """.format(user)
+        return sqlInstance.execSql(sqlStr)
+
+
+class SqlSignatureSample(BrowserView):
+    def __call__(self):
+        request = self.request
+        id = request.get('id')
+        action = request.get('action')
+        sqlInstance = SqlObj()
+        if action == 'search':
+            sqlStr = """SELECT * FROM signature_sample WHERE id = {}""".format(id)
+            result = dict(sqlInstance.execSql(sqlStr)[0])
+            return json.dumps(result)
+        elif action == 'delect':
+            sqlStr = """DELETE FROM signature_sample WHERE id = {}""".format(id)
+            sqlInstance.execSql(sqlStr)
+
+
+class AddSignatureSample(BrowserView):
+    template = ViewPageTemplateFile('template/add_signature_sample.pt')
+    def __call__(self):
+        request = self.request
+        sample_name = request.get('sample_name')
+        category = request.get('category')
+        title = request.get('title')
+        detail_1 = request.get('detail_1')
+        detail_2 = request.get('detail_2')
+        detail_3 = request.get('detail_3')
+        detail_4 = request.get('detail_4')
+        user = api.user.get_current().getUserName()
+        if sample_name:
+            sqlInstance = SqlObj()
+            sqlStr = """INSERT INTO signature_sample(`sample_name`, `user`, `category`, `title`, `detail_1`, `detail_2`, `detail_3`, 
+                        `detail_4`) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(sample_name, user, category,
+                         title, detail_1, detail_2, detail_3, detail_4)
+            sqlInstance.execSql(sqlStr)
+            api.portal.show_message(message='新增範本成功!'.decode(), request=request)
+            abs_url = api.portal.get().absolute_url()
+            request.response.redirect(abs_url + '/signature_view')
+        else:
+            return self.template()
+
+
 class SignatureView(BrowserView):
     template = ViewPageTemplateFile('template/signature_view.pt')
     def __call__(self):
         sqlInstance = SqlObj()
-        sqlStr = """SELECT * FROM signature  ORDER BY code LIMIT 50"""
+        sqlStr = """SELECT * FROM signature  ORDER BY code desc LIMIT 50"""
         self.result = sqlInstance.execSql(sqlStr)
 
         return self.template()
@@ -41,7 +90,7 @@ class ManageSignature(BrowserView):
             return self.template()
 
 
-class ModifySignature(BrowserView):
+class ModifySignature(Basic):
     template = ViewPageTemplateFile('template/modify_signature.pt')
     def __call__(self):
         request = self.request
@@ -56,7 +105,7 @@ class ModifySignature(BrowserView):
         detail_3 = request.get('detail_3')
         detail_4 = request.get('detail_4')
         sqlInstance = SqlObj()
-        if type and category and title:
+        if category and title:
             sqlStr = """UPDATE signature SET title='{}',category='{}',date='{}',type='{}',department='{}',title='{}',detail_1='{}',
                         detail_2='{}',detail_3='{}',detail_4='{}' WHERE id = {}""".format(title, category, date, type, department, title,
                         detail_1, detail_2, detail_3, detail_4, id)
@@ -67,11 +116,13 @@ class ModifySignature(BrowserView):
         else:
             sqlStr = """SELECT * FROM signature WHERE id = {}""".format(id)
             self.result = sqlInstance.execSql(sqlStr)
+            self.sample = self.GetSignatureSample()
+
             return self.template()
 
 
 
-class AddSignature(BrowserView):
+class AddSignature(Basic):
     template = ViewPageTemplateFile('template/add_signature.pt')
     def __call__(self):
         request = self.request
@@ -98,6 +149,8 @@ class AddSignature(BrowserView):
             api.portal.show_message(message='新增簽呈成功!'.decode(), request=request)
             abs_url = api.portal.get().absolute_url()
             request.response.redirect(abs_url + '/signature_view')
+
+        self.sample = self.GetSignatureSample()
 
         return self.template()
 
