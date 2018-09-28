@@ -48,36 +48,71 @@ class Basic(BrowserView):
             return docs
 
 
+class DownloadSignatureDoc(Basic):
+    def __call__(self):
+        request = self.request
+        id = request.get('id')
+        type = request.get('type')
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM signature WHERE id = {}""".format(id)
+        result = sqlInstance.execSql(sqlStr)[0]
+        obj = dict(result)
+        parameter = {}
+        sn = obj['year']
+        for i in range(4 - len(str(obj['code']))):
+            sn = '0' + str(sn)
+        parameter['sn'] = safe_unicode(sn)
+        parameter['year'] = safe_unicode(obj['date'].year)
+        parameter['month'] = safe_unicode(obj['date'].month)
+        parameter['day'] = safe_unicode(obj['date'].day)
+        parameter['title'] = safe_unicode(obj['title'])
+        parameter['detail_1'] = safe_unicode(obj['detail_1'])
+        parameter['detail_2'] = safe_unicode(obj['detail_2'])
+        parameter['detail_3'] = safe_unicode(obj['detail_3'])
+        parameter['detail_4'] = safe_unicode(obj['detail_4'])
+        parameter['department'] = safe_unicode(obj['department'])
+        parameter['type'] = safe_unicode(obj['type'])
+        parameter['category'] = safe_unicode(obj['category'])
+        if type == '1':
+            parameter['condition'] = safe_unicode('會辦部門行政服務處')
+
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/signature.docx'
+
+        doc = DocxTemplate(filePath)
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
+
+        return self.downloadFile('%s_簽呈' %sn)
+
+
 class DownloadOfficialDoc(Basic):
     def __call__(self):
         request = self.request
         uid = request.get('uid')
         mode = request.get('mode')
-        obj = api.content.get(UID=uid)
-        title = obj.title
-        recipient = obj.recipient
         parameter = {}
-        parameter['title'] = title
-        parameter['docDate'] = safe_unicode(self.getChineseBirthday(obj.docDate))
-        parameter['recipient'] = safe_unicode(obj.recipient)
-        parameter['docSN'] = safe_unicode(obj.docHeader + obj.docSN)
-        parameter['detail_1'] = safe_unicode(obj.detail_1)
-        parameter['detail_2'] = safe_unicode(obj.detail_2)
-        parameter['detail_3'] = safe_unicode(obj.detail_3)
-        parameter['detail_4'] = safe_unicode(obj.detail_4)
-        parameter['detail_5'] = safe_unicode(obj.detail_5)
-        parameter['detail_6'] = safe_unicode(obj.detail_6)
-        parameter['detail_7'] = safe_unicode(obj.detail_7)
-        parameter['detail_8'] = safe_unicode(obj.detail_8)
-        parameter['detail_9'] = safe_unicode(obj.detail_9)
-        parameter['detail_10'] = safe_unicode(obj.detail_10)
-        parameter['year'] = safe_unicode(obj.docDate.year - 1911)
-        parameter['month'] = safe_unicode(obj.docDate.month)
-        parameter['day'] = safe_unicode(obj.docDate.day)
         if mode == 'official':
+            obj = api.content.get(UID=uid)
+            title = obj.title
+            recipient = obj.recipient
+            parameter['title'] = title
+            parameter['docDate'] = safe_unicode(self.getChineseBirthday(obj.docDate))
+            parameter['recipient'] = safe_unicode(obj.recipient)
+            parameter['docSN'] = safe_unicode(obj.docHeader + obj.docSN)
+            parameter['detail_1'] = safe_unicode(obj.detail_1)
+            parameter['detail_2'] = safe_unicode(obj.detail_2)
+            parameter['detail_3'] = safe_unicode(obj.detail_3)
+            parameter['detail_4'] = safe_unicode(obj.detail_4)
+            parameter['detail_5'] = safe_unicode(obj.detail_5)
+            parameter['detail_6'] = safe_unicode(obj.detail_6)
+            parameter['detail_7'] = safe_unicode(obj.detail_7)
+            parameter['detail_8'] = safe_unicode(obj.detail_8)
+            parameter['detail_9'] = safe_unicode(obj.detail_9)
+            parameter['detail_10'] = safe_unicode(obj.detail_10)
+            parameter['year'] = safe_unicode(obj.docDate.year - 1911)
+            parameter['month'] = safe_unicode(obj.docDate.month)
+            parameter['day'] = safe_unicode(obj.docDate.day)
             filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/official_document.docx'
-        elif mode == 'paper':
-            filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/paper_report.docx'
 
         doc = DocxTemplate(filePath)
         doc.render(parameter)

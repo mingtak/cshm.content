@@ -9,6 +9,97 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from zope.interface import alsoProvides
 from datetime import datetime
 import json
+from mingtak.ECBase.browser.views import SqlObj
+
+
+class SignatureView(BrowserView):
+    template = ViewPageTemplateFile('template/signature_view.pt')
+    def __call__(self):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM signature  ORDER BY code LIMIT 50"""
+        self.result = sqlInstance.execSql(sqlStr)
+
+        return self.template()
+
+
+class ManageSignature(BrowserView):
+    template = ViewPageTemplateFile('template/manage_signature.pt')
+    def __call__(self):
+        request = self.request
+        id = request.get('id')
+        status = request.get('status')
+        sqlInstance = SqlObj()
+        if status:
+            sqlStr = """UPDATE signature SET status = '{}' WHERE id = {}""".format(status, id)
+            sqlInstance.execSql(sqlStr)
+            url = api.portal.get().absolute_url() + '/signature_view'
+            api.portal.show_message(message='更新狀態成功!'.decode(), request=request)
+            request.response.redirect(url)
+        else:
+            sqlStr = """SELECT * FROM signature WHERE id = {}""".format(id)
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template()
+
+
+class ModifySignature(BrowserView):
+    template = ViewPageTemplateFile('template/modify_signature.pt')
+    def __call__(self):
+        request = self.request
+        id = request.get('id')
+        type = request.get('type')
+        category = request.get('category')
+        date = request.get('date')
+        department = request.get('department')
+        title = request.get('title')
+        detail_1 = request.get('detail_1')
+        detail_2 = request.get('detail_2')
+        detail_3 = request.get('detail_3')
+        detail_4 = request.get('detail_4')
+        sqlInstance = SqlObj()
+        if type and category and title:
+            sqlStr = """UPDATE signature SET title='{}',category='{}',date='{}',type='{}',department='{}',title='{}',detail_1='{}',
+                        detail_2='{}',detail_3='{}',detail_4='{}' WHERE id = {}""".format(title, category, date, type, department, title,
+                        detail_1, detail_2, detail_3, detail_4, id)
+            sqlInstance.execSql(sqlStr)
+            url = api.portal.get().absolute_url() + '/signature_view'
+            api.portal.show_message(message='更新簽呈成功!'.decode(), request=request)
+            request.response.redirect(url)
+        else:
+            sqlStr = """SELECT * FROM signature WHERE id = {}""".format(id)
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template()
+
+
+
+class AddSignature(BrowserView):
+    template = ViewPageTemplateFile('template/add_signature.pt')
+    def __call__(self):
+        request = self.request
+        type = request.get('type')
+        category = request.get('category')
+        date = request.get('date')
+        department = request.get('department')
+        title = request.get('title')
+        detail_1 = request.get('detail_1')
+        detail_2 = request.get('detail_2')
+        detail_3 = request.get('detail_3')
+        detail_4 = request.get('detail_4')
+        user = api.user.get_current().getUserName()
+        if type and category and date:
+            sqlInstance = SqlObj()
+            year = datetime.now().year - 1911
+            sqlStr = """SELECT MAX(code) FROM signature WHERE year = {}""".format(year)
+            code = sqlInstance.execSql(sqlStr)[0][0]
+            code = int(code) + 1 if code else 1
+            sqlStr = """INSERT INTO `signature`(`user`, `category`, `type`, `date`, `department`, `title`, `detail_1`, `detail_2`,
+                       `detail_3`, `detail_4`, year, code) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}', {}, {})
+                     """.format(user, category, type, date, department, title, detail_1, detail_2, detail_3, detail_4, year, code)
+            sqlInstance.execSql(sqlStr)
+            api.portal.show_message(message='新增簽呈成功!'.decode(), request=request)
+            abs_url = api.portal.get().absolute_url()
+            request.response.redirect(abs_url + '/signature_view')
+
+        return self.template()
 
 
 class SearchOfficial(BrowserView):

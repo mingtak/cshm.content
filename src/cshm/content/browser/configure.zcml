@@ -627,11 +627,20 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--公文和簽呈 下載-->
+  <!--公文 下載-->
   <browser:page
       name="download_official_doc"
       for="*"
       class=".report.DownloadOfficialDoc"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--簽呈 下載-->
+  <browser:page
+      name="download_signature_doc"
+      for="*"
+      class=".report.DownloadSignatureDoc"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
@@ -645,11 +654,47 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--公文畫面-->
+  <!--公文搜尋-->
   <browser:page
       name="search_official"
       for="*"
       class=".official.SearchOfficial"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--簽呈列表-->
+  <browser:page
+      name="signature_view"
+      for="*"
+      class=".official.SignatureView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--新增簽呈-->
+  <browser:page
+      name="add_signature"
+      for="*"
+      class=".official.AddSignature"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--管理簽呈-->
+  <browser:page
+      name="manage_signature"
+      for="*"
+      class=".official.ManageSignature"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--修改簽呈-->
+  <browser:page
+      name="modify_signature"
+      for="*"
+      class=".official.ModifySignature"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
