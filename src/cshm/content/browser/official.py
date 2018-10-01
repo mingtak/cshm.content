@@ -21,6 +21,32 @@ class Basic(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+class SearchSignatureView(BrowserView):
+    template = ViewPageTemplateFile('template/search_signature_view.pt')
+    template2 = ViewPageTemplateFile('template/search_signature_result.pt')
+    def __call__(self):
+        request = self.request
+        year = request.get('year')
+        category = request.get('category')
+        item = request.get('item')
+        kw = request.get('kw')
+
+        sqlInstance = SqlObj()
+        if year and category:
+            sqlStr = """SELECT * FROM signature WHERE year = {} and category = '{}' ORDER BY code DESC""".format(year, category)
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template2()
+        elif item and kw:
+            sqlStr = """SELECT * FROM signature WHERE {} = '{}' ORDER BY code DESC""".format(item, kw)
+            self.result = sqlInstance.execSql(sqlStr)
+            return self.template2()
+        else:
+            sqlStr = """SELECT DISTINCT(year) FROM `signature`"""
+            self.yearList = sqlInstance.execSql(sqlStr)
+
+            return self.template()
+
+
 class SqlSignatureSample(BrowserView):
     def __call__(self):
         request = self.request

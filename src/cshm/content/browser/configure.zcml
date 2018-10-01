@@ -717,6 +717,15 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--新增範本-->
+  <browser:page
+      name="search_signature_view"
+      for="*"
+      class=".official.SearchSignatureView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"
