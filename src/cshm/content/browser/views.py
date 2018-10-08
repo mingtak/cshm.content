@@ -830,31 +830,60 @@ class TeacherAppointment(BrowserView):
         self.portal = api.portal.get()
         context = self.context
         request = self.request
-        # TODO template file path, use configlet
-        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/teacher_appointment.docx'
+        childNodes = context.getChildNodes()
 
-        # if no parameter, return template
-        if not request.form.get('appointment_no', None):
+        teacher_name = request.get('teacher_name')
+        type = request.get('type')
+        if teacher_name and type:
+            if type == 'inner':
+                filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/teacher_appointment_inner.docx'
+            elif type == 'organization':
+                filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/teacher_appointment_organization.docx'
+            elif type == 'not_organization':
+                filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/teacher_appointment_not_organization.docx'
+            doc = DocxTemplate(filePath)
+            data = []
+
+            for child in childNodes:
+                teacher = child.teacher.to_object.title
+                if teacher == teacher_name:
+                    subject = child.title
+                    hours = child.hours
+                    startDate = child.startDateTime.strftime('%m月%d日')
+                    startTime = '%s至%s' %(child.startDateTime.strftime('%H:%M'),
+                                (child.startDateTime + datetime.timedelta(hours=hours)).strftime('%H:%M'))
+                    data.append([subject, startDate, startTime, hours])
+
+            parameter = {}
+            courseStart = context.courseStart
+            trainingCenter = context.trainingCenter.to_object.title
+
+            parameter['title'] = context.getParentNode().Title()
+            parameter['courseStart'] = courseStart.strftime('%m月%d日')
+            parameter['trainingCenter'] = trainingCenter
+            parameter['data'] = data
+            parameter['now'] = datetime.datetime.now().strftime('%Y年%m月%d日')
+
+            doc.render(parameter)
+            doc.save("/tmp/temp.docx")
+
+            self.request.response.setHeader('Content-Type', 'application/docx')
+            self.request.response.setHeader(
+                'Content-Disposition',
+                'attachment; filename="%s-%s.docx"' % ("教師聘書", teacher_name)
+            )
+            with open('/tmp/temp.docx', 'rb') as file:
+                docs = file.read()
+                return docs
+        else:
+            teacherList = []
+            for child in childNodes:
+                teacher = child.teacher.to_object.title
+                if teacher not in teacherList:
+                    teacherList.append(teacher)
+            self.teacherList = teacherList
+
             return self.template()
-
-        doc = DocxTemplate(filePath)
-
-        parameter = {}
-        for key in request.form:
-            parameter[key] = safe_unicode(request.form.get(key))
-
-        parameter['memo'] = Listing(parameter['memo'])
-        doc.render(parameter)
-        doc.save("/tmp/temp.docx")
-
-        self.request.response.setHeader('Content-Type', 'application/docx')
-        self.request.response.setHeader(
-            'Content-Disposition',
-            'attachment; filename="%s-%s.docx"' % ("教師聘書", parameter.get("teacher_name").encode('utf-8'))
-        )
-        with open('/tmp/temp.docx', 'rb') as file:
-            docs = file.read()
-            return docs
 
 
 class QueryCompany(BrowserView):
