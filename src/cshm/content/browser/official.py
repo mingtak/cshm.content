@@ -21,6 +21,13 @@ class Basic(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+class CreateReceiveView(BrowserView):
+    template = ViewPageTemplateFile('template/create_receive_view.pt')
+    def __call__(self):
+        request = self.request
+        return self.template()
+
+
 class SearchSignatureView(BrowserView):
     template = ViewPageTemplateFile('template/search_signature_view.pt')
     template2 = ViewPageTemplateFile('template/search_signature_result.pt')
@@ -300,11 +307,17 @@ class OfficialView(BrowserView):
     template = ViewPageTemplateFile('template/official_view.pt')
     def __call__(self):
         request = self.request
-        uid = request.get('uid')
-        obj = api.content.get(UID=uid)
+        uid = request.get('uid') if request.get('uid') else self.context.UID()
         self.uid = uid
+        obj = api.content.get(UID=uid)
         self.title = obj.title
-        self.code = obj.docHeader + obj.docSN
+
+        header = obj.docHeader
+        sn = obj.docSN
+        for i in range(5 - len(sn)):
+            header += '0'
+        header += sn
+        self.code = header
         self.date = obj.docDate
         self.recipient = obj.recipient
         self.detail_1 = obj.detail_1

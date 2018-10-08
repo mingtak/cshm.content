@@ -44,42 +44,52 @@ class IOfficialDoc(model.Schema):
 
     detail_1 = schema.TextLine(
         title=_(u'Official Document Detail 1'),
+        required=False,
     )
 
     detail_2 = schema.TextLine(
         title=_(u'Official Document Detail 2'),
+        required=False,
     )
 
     detail_3 = schema.TextLine(
         title=_(u'Official Document Detail 3'),
+        required=False,
     )
 
     detail_4 = schema.TextLine(
         title=_(u'Official Document Detail 4'),
+        required=False,
     )
 
     detail_5 = schema.TextLine(
         title=_(u'Official Document Detail 5'),
+        required=False,
     )
 
     detail_6 = schema.TextLine(
         title=_(u'Official Document Detail 6'),
+        required=False,
     )
 
     detail_7 = schema.TextLine(
         title=_(u'Official Document Detail 7'),
+        required=False,
     )
 
     detail_8 = schema.TextLine(
         title=_(u'Official Document Detail 8'),
+        required=False,
     )
 
     detail_9 = schema.TextLine(
         title=_(u'Official Document Detail 9'),
+        required=False,
     )
 
     detail_10 = schema.TextLine(
         title=_(u'Official Document Detail 10'),
+        required=False,
     )
 
 

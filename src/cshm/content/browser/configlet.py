@@ -17,8 +17,7 @@ class IOffice(Form.Schema):
         required=False,
     )
     count_office_header = schema.Text(
-        title=_(u"Office Header"),
-        description=_(u'User Enter to separate'),
+        title=_(u"Count Header"),
         required=False,
     )
 

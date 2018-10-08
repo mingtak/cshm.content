@@ -615,6 +615,8 @@ class StudentsList(BasicBrowserView):
             temp['apply_time'] = temp['apply_time'].strftime('%Y/%m/%d %H:%M:%S')
             if temp['birthday']:
                 temp['birthday'] = temp['birthday'].strftime('%Y/%m/%d')
+            if temp['license_date']:
+                temp['license_date'] = temp['license_date'].strftime('%Y/%m/%d')
             self.admitForJS.append(temp)
         self.admitForJS = json.dumps(self.admitForJS)
 
@@ -1113,6 +1115,8 @@ class ListPrint(BrowserView):
         # page為第幾頁，gap為一頁幾個
         page = request.get('page', '')
         gap = request.get('gap', '')
+
+        self.childNodes = context.getChildNodes()
 
         if page and gap:
             page = int(page)

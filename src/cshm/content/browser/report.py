@@ -89,30 +89,29 @@ class DownloadOfficialDoc(Basic):
     def __call__(self):
         request = self.request
         uid = request.get('uid')
-        mode = request.get('mode')
         parameter = {}
-        if mode == 'official':
-            obj = api.content.get(UID=uid)
-            title = obj.title
-            recipient = obj.recipient
-            parameter['title'] = title
-            parameter['docDate'] = safe_unicode(self.getChineseBirthday(obj.docDate))
-            parameter['recipient'] = safe_unicode(obj.recipient)
-            parameter['docSN'] = safe_unicode(obj.docHeader + obj.docSN)
-            parameter['detail_1'] = safe_unicode(obj.detail_1)
-            parameter['detail_2'] = safe_unicode(obj.detail_2)
-            parameter['detail_3'] = safe_unicode(obj.detail_3)
-            parameter['detail_4'] = safe_unicode(obj.detail_4)
-            parameter['detail_5'] = safe_unicode(obj.detail_5)
-            parameter['detail_6'] = safe_unicode(obj.detail_6)
-            parameter['detail_7'] = safe_unicode(obj.detail_7)
-            parameter['detail_8'] = safe_unicode(obj.detail_8)
-            parameter['detail_9'] = safe_unicode(obj.detail_9)
-            parameter['detail_10'] = safe_unicode(obj.detail_10)
-            parameter['year'] = safe_unicode(obj.docDate.year - 1911)
-            parameter['month'] = safe_unicode(obj.docDate.month)
-            parameter['day'] = safe_unicode(obj.docDate.day)
-            filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/official_document.docx'
+        obj = api.content.get(UID=uid)
+
+        title = obj.title
+        recipient = obj.recipient
+        parameter['title'] = title
+        parameter['docDate'] = safe_unicode(self.getChineseBirthday(obj.docDate))
+        parameter['recipient'] = safe_unicode(obj.recipient)
+        parameter['docSN'] = safe_unicode(obj.docHeader + obj.docSN)
+        parameter['detail_1'] = safe_unicode(obj.detail_1)
+        parameter['detail_2'] = safe_unicode(obj.detail_2)
+        parameter['detail_3'] = safe_unicode(obj.detail_3)
+        parameter['detail_4'] = safe_unicode(obj.detail_4)
+        parameter['detail_5'] = safe_unicode(obj.detail_5)
+        parameter['detail_6'] = safe_unicode(obj.detail_6)
+        parameter['detail_7'] = safe_unicode(obj.detail_7)
+        parameter['detail_8'] = safe_unicode(obj.detail_8)
+        parameter['detail_9'] = safe_unicode(obj.detail_9)
+        parameter['detail_10'] = safe_unicode(obj.detail_10)
+        parameter['year'] = safe_unicode(obj.docDate.year - 1911)
+        parameter['month'] = safe_unicode(obj.docDate.month)
+        parameter['day'] = safe_unicode(obj.docDate.day)
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/official_document.docx'
 
         doc = DocxTemplate(filePath)
         doc.render(parameter)
@@ -193,12 +192,12 @@ class GernalReport(Basic):
         return self.downloadFile(title)
 
 
-class StudentSingInReport(Basic):
+class FireSingInReport(Basic):
     def __call__(self):
         result = self.getAllStudent()
         context = self.context
         document = Document()
-        sections = document.sections 
+        sections = document.sections
         for section in sections:
             # change orientation to landscape
             section.orientation = WD_ORIENT.LANDSCAPE
@@ -249,7 +248,42 @@ class StudentSingInReport(Basic):
             if count in [17, 33, 49, 65, 81, 97]:
                 document.add_page_break()
 
-        document.save('/tmp/%s.docx' %title)
+        document.save('/tmp/temp.docx')
+
+        return self.downloadFile(title)
+
+
+class NormalSingInReport(Basic):
+    def __call__(self):
+        request = self.request
+        result = self.getAllStudent()
+        context = self.context
+        document = Document()
+        subject = request.get('subject')
+        parameter = {}
+        course = context.getParentNode().Title()
+        period = context.id
+        title =  '第%s期%s受訓學員簽到紀錄' %(period, course)
+        trainingCenter = context.trainingCenter.to_object.title
+        start = self.getChineseBirthday(context.courseStart)
+        end = self.getChineseBirthday(context.courseEnd)
+        time = '%s~%s' %(start, end)
+
+        parameter['title'] = title
+        parameter['trainingCenter'] = trainingCenter
+        parameter['time'] = time
+        parameter['subject'] = subject
+
+        count = 1
+        for item in result:
+            parameter['seatNo%s' %count] = item[19]
+            parameter['name%s' %count] = item[4]
+            count += 1
+
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/normal_sing_in.docx'
+        doc = DocxTemplate(filePath)
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
 
         return self.downloadFile(title)
 

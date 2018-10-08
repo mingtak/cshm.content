@@ -609,11 +609,20 @@
       permission="cmf.ManagePortal"
       />
 
-  <!--簽到表 報表-->
+  <!--防火簽到表 報表-->
   <browser:page
-      name="student_sing_in_report"
+      name="fire_sing_in_report"
       for="*"
-      class=".report.StudentSingInReport"
+      class=".report.FireSingInReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--普通簽到表 報表-->
+  <browser:page
+      name="normal_sing_in_report"
+      for="*"
+      class=".report.NormalSingInReport"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
@@ -722,6 +731,15 @@
       name="search_signature_view"
       for="*"
       class=".official.SearchSignatureView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--新增收文-->
+  <browser:page
+      name="create_receive_view"
+      for="*"
+      class=".official.CreateReceiveView"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
