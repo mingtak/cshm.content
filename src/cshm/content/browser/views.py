@@ -331,6 +331,19 @@ class RegCourse(BasicBrowserView):
         if not form.get('studId', False):
             return self.template()
 
+        #import pdb; pdb.set_trace()
+        if context.courseStart:
+            courseStart = DateTime(context.courseStart.strftime('%Y-%m-%d'))
+            birthday = request.form.get('birthday')
+            byear, bmonth, bday = birthday.split('-')
+            byear = str(int(byear)+18)
+            stud_18y = DateTime('%s-%s-%s' % (byear, bmonth, bday))
+            if courseStart < stud_18y:
+                api.portal.show_message(message=_(u"Not yat 18 years old."), request=request, type='error')
+                request.response.redirect(self.portal['training']['courselist'].absolute_url())
+                return
+
+#        import pdb; pdb.set_trace()
         if self.checkAltFull():
             api.portal.show_message(message=_(u"Quota Full include Alternate."), request=request, type='error')
             request.response.redirect(self.portal['training']['courselist'].absolute_url())
