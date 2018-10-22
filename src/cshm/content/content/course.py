@@ -17,6 +17,17 @@ class ICourse(model.Schema):
     """ Marker interface and Dexterity Python Schema for Course
     """
 
+    fieldset('Counselor', fields=['counselor', 'agentCounselor'])
+    counselor = schema.Choice(
+        title=_(u"Counselor"),
+        vocabulary='plone.app.vocabularies.Users',
+    )
+
+    agentCounselor = schema.Choice(
+        title=_(u"Agent Counselor"),
+        vocabulary='plone.app.vocabularies.Users',
+    )
+
     # fieldset('CourseDetail', fields=[])
     reTrainingBaseOn = schema.TextLine(
         title=_(u'Retraining Base On'),

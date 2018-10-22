@@ -22,6 +22,16 @@ class IOfficialDoc(model.Schema):
         required=True,
     )
 
+    docWorkflow = schema.TextLine(
+        title=_(u'Official Document Workflow.'),
+        required=False,
+    )
+
+    workflowStatus = schema.TextLine(
+        title=_(u'Workflow Status.'),
+        required=False,
+    )
+
     docHeader = schema.TextLine(
         title=_(u'Official Document Header.'),
         required=True,

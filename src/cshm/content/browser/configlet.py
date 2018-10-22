@@ -11,6 +11,12 @@ from plone.directives import form as Form
 
 class IOffice(Form.Schema):
 
+    docsWorkflows = schema.Text(
+        title=_(u"Documents workflows"),
+#        description=_(u'User Enter to separate'),
+        required=False,
+    )
+
     office_header = schema.Text(
         title=_(u"Office Header"),
         description=_(u'User Enter to separate'),
