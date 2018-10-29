@@ -744,6 +744,42 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--公文簽核 / 權限未定-->
+  <browser:page
+      name="docs_workflow_listing"
+      for="*"
+      class=".official.DocsWorkflowListing"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--成績輸入-->
+  <browser:page
+      name="grade_input"
+      for="*"
+      class=".views.GradeInput"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--成績冊下載-->
+  <browser:page
+      name="download_grade"
+      for="*"
+      class=".report.DownloadGrade"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--相片冊下載-->
+  <browser:page
+      name="download_picture"
+      for="*"
+      class=".report.DownloadPicture"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"

@@ -32,6 +32,10 @@ logger = logging.getLogger("cshm.content")
 class BasicBrowserView(BrowserView):
     """ 通用method """
 
+    def sendMessage(self, cell, message):
+        url = 'https://oms.every8d.com/API21/HTTP/sendSMS.ashx'
+        requests.get('%s?UID=0939586835&PWD=zqud&SB=簡訊測試&MSG=%s&DEST=%s&ST=' % (url, message, cell))
+
     def getOnTraining(self):
         """ 取得 on_training_status 選項資訊 """
         sqlStr = "SELECT * FROM `on_training_status` WHERE 1"
@@ -266,12 +270,17 @@ class RegCourse(BasicBrowserView):
         is_print =  1 if form.get('check_print') == 'on' else 0
         sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`,\
                     `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`, \
-                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`, `is_print`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {})
-        """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
+                    `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`, `is_print`, `edu_date`,
+                    `edu_school`, `edu_major`, `home_city`, `home_zip`, `home_address`, `company_undertaker`,
+                    `company_undertaker_job`, `company_undertaker_phone`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', 
+                    '{}', '{}', '{}', '{}', {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                 """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
             form.get('company_name'), form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('phone'),
             form.get('birthday'), form.get('address'), form.get('job_title'), form.get('studId'), uid, path, isAlt, form.get('invoice_tax_no'),
-            form.get('education_id'), form.get('city'), form.get('zip'), form.get('industry'), is_print)
+            form.get('education_id'), form.get('city'), form.get('zip'), form.get('industry'), is_print, form.get('edu_date'),
+            form.get('edu_school'), form.get('edu_major'), form.get('home_city'), form.get('home_zip'), form.get('home_address'), 
+            form.get('company_undertaker'), form.get('company_undertaker_job'),form.get('company_undertaker_phone'))
         return sqlStr
 
 
@@ -364,6 +373,19 @@ class RegCourse(BasicBrowserView):
         context.reindexObject(idxs=['studentCount', 'classStatus'])
 
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
+
+        # 發送報名成功簡訊
+        courseName = '%s第%s' % (context.getParentNode().title, context.title)
+        messageStr = '%s您好，您報名的 %s 課程，已報名成功。' % (form.get('name'), courseName)
+        self.sendMessage(form.get('cellphone'), messageStr)
+
+        # 發送報名成功email
+        api.portal.send_email(
+            recipient=form.get('priv_email'),
+            sender="andyfang51@gmail.com",
+            subject="報名成功通知信-中國勞工安全衛生管理學會",
+            body=messageStr,
+        )
 
         if api.user.is_anonymous():
             api.portal.show_message(message=u"請以傳真:02-22222222或Email: service@cshm.org.tw 傳送XX/XX等證件影本(文字待確認).", request=request, type='info')
@@ -529,20 +551,33 @@ class CourseListing(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
+        request = self.request
+        location = request.get('location')
 
         self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst']
         date_range = {
             'query': DateTime(DateTime().strftime('%Y-%m-%d')),
             'range': 'min',
         }
+
+        locationDict = {'taipei'}
         self.echelonBrain = {}
         for status in self.statusList:
-            self.echelonBrain[status] = api.content.find(
-                context=self.portal['mana_course'],
-                Type='Echelon',
-                regDeadline=date_range,
-                classStatus=status
-            )
+            if location:
+                self.echelonBrain[status] = api.content.find(
+                    context=self.portal['mana_course'],
+                    Type='Echelon',
+                    regDeadline=date_range,
+                    classStatus=status,
+                    trainingCenterId=location
+                )
+            else:
+                self.echelonBrain[status] = api.content.find(
+                    context=self.portal['mana_course'],
+                    Type='Echelon',
+                    regDeadline=date_range,
+                    classStatus=status,
+                )
 
         return self.template()
 
@@ -1241,3 +1276,18 @@ class RegisterPrint(BasicBrowserView):
         return self.template_horizontal()
 
 
+class GradeInput(BasicBrowserView):
+    template = ViewPageTemplateFile('template/grade_input.pt')
+    def __call__(self):
+        request = self.request
+        context = self.context
+        data = request.get('data')
+        if data:
+            execSql = SqlObj()
+            for k,v in json.loads(data).items():
+                sqlStr = """UPDATE reg_course SET grade1 = {}, grade2 = {} WHERE id = {}""".format(v['grade1'], v['grade2'], k)
+                execSql.execSql(sqlStr)
+        uid = context.UID()
+        self.result = self.getUidCourseData(uid)
+
+        return self.template()

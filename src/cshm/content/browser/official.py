@@ -21,6 +21,16 @@ class Basic(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+
+class DocsWorkflowListing(BrowserView):
+
+    template = ViewPageTemplateFile('template/docs_workflow_listing.pt')
+
+    def __call__(self):
+
+        return self.template()
+
+
 class CreateReceiveView(BrowserView):
     template = ViewPageTemplateFile('template/create_receive_view.pt')
     def __call__(self):

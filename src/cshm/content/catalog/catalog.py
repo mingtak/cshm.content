@@ -8,6 +8,13 @@ from mingtak.ECBase.browser.views import SqlObj
 from cshm.content.content.subject import ISubject
 from cshm.content.content.officialdoc import IOfficialDoc
 
+
+@indexer(IOfficialDoc)
+def docsWorkflow_indexer(obj):
+    users = obj.workflowStatus.split(',')
+    return users
+
+
 @indexer(IOfficialDoc)
 def docHeader_indexer(obj):
     return obj.docHeader
@@ -60,3 +67,6 @@ def studentCount_indexer(obj):
 def startDateTime_indexer(obj):
     return obj.startDateTime
 
+@indexer(IEchelon)
+def trainingCenter_indexer(obj):
+    return obj.trainingCenter.to_object.id

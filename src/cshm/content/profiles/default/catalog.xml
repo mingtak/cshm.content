@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
+  <index name="docsWorkflow" meta_type="KeywordIndex">
+    <indexed_attr value="docsWorkflow" />
+  </index>
+  <column value="docsWorkflow"/>
+
   <index name="docHeader_indexer" meta_type="FieldIndex">
     <indexed_attr value="docHeader_indexer" />
   </index>
@@ -40,6 +45,11 @@
     <indexed_attr value="startDateTime" />
   </index>
   <column value="startDateTime"/>
+
+  <index name="trainingCenterId" meta_type="FieldIndex">
+    <indexed_attr value="trainingCenterId" />
+  </index>
+  <column value="trainingCenterId"/>
 
 </object>
 

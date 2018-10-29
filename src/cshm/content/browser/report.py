@@ -287,3 +287,76 @@ class NormalSingInReport(Basic):
 
         return self.downloadFile(title)
 
+
+
+class DownloadGrade(Basic):
+    def __call__(self):
+        request = self.request
+        result = self.getAllStudent()
+        context = self.context
+        document = Document()
+        subject = request.get('subject')
+        parameter = {}
+        course = context.getParentNode().Title()
+        period = context.id
+        title =  '第%s期%s受訓學員成績冊' %(period, course)
+        trainingCenter = context.trainingCenter.to_object.title
+        start = self.getChineseBirthday(context.courseStart)
+        end = self.getChineseBirthday(context.courseEnd)
+        time = '%s~%s' %(start, end)
+
+        parameter['title'] = title
+        parameter['trainingCenter'] = trainingCenter
+        parameter['time'] = time
+
+        temp = []
+        for item in result:
+            obj = dict(item)
+            obj['birthday'] = self.getChineseBirthday(obj['birthday'])
+            temp.append(obj)
+
+        data = []
+        count = 0
+        length = len(result)
+        while length > 0:
+            data.append(temp[count * 5: (count + 1) * 5])
+            length -= 5
+            count += 1
+        parameter['data'] = data
+
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/grade.docx'
+        doc = DocxTemplate(filePath)
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
+
+        return self.downloadFile(title)
+
+
+class DownloadPicture(Basic):
+    def __call__(self):
+        request = self.request
+        result = self.getAllStudent()
+        context = self.context
+        document = Document()
+        subject = request.get('subject')
+        parameter = {}
+        course = context.getParentNode().Title()
+        period = context.id
+        title =  '第%s期%s' %(period, course)
+
+        parameter['title'] = title
+
+        data = []
+        for item in result:
+            seatNo = item[19]
+            name = item[4]
+            data.append('%s號 %s' %(seatNo, name))
+
+        parameter['data'] = data
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/picture.docx'
+        doc = DocxTemplate(filePath)
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
+
+        return self.downloadFile(title)
+
