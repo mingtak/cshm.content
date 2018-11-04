@@ -138,6 +138,16 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+
+class EchelonDetail(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/echelon_detail.pt")
+
+
+    def __call__(self):
+        return self.template()
+
+
 # 仿寫自 folderListing,
 class CoverListing(BrowserView):
 
@@ -391,9 +401,9 @@ class RegCourse(BasicBrowserView):
             api.portal.show_message(message=u"請以傳真:02-22222222或Email: service@cshm.org.tw 傳送XX/XX等證件影本(文字待確認).", request=request, type='info')
 
         if api.user.is_anonymous():
-            request.response.redirect(self.portal['training']['courselist'].absolute_url())
+            request.response.redirect('%s?reg_alert=1&msg=%s' % (self.portal['training']['courselist'].absolute_url(), messageStr))
         else:
-            request.response.redirect(request['ACTUAL_URL'])
+            request.response.redirect('%s?reg_alert=1&msg=%s' % (request['ACTUAL_URL'], messageStr))
         return
 
 
@@ -560,7 +570,6 @@ class CourseListing(BrowserView):
             'range': 'min',
         }
 
-        locationDict = {'taipei'}
         self.echelonBrain = {}
         for status in self.statusList:
             if location:
@@ -571,6 +580,10 @@ class CourseListing(BrowserView):
                     classStatus=status,
                     trainingCenterId=location
                 )
+                for center in api.content.find(context=self.portal['resource']['training_center'], portal_type='TrainingCenter'):
+                    if location == center.id:
+                        obj = center.getObject()
+                        self.trainingCenter = obj
             else:
                 self.echelonBrain[status] = api.content.find(
                     context=self.portal['mana_course'],
@@ -578,7 +591,7 @@ class CourseListing(BrowserView):
                     regDeadline=date_range,
                     classStatus=status,
                 )
-
+                self.trainingCenter = False
         return self.template()
 
 
@@ -657,14 +670,19 @@ class StudentsList(BasicBrowserView):
         self.admit = sqlInstance.execSql(sqlStr)
 
         self.admitForJS = []
+        numberCount = 0
         for item in self.admit:
             temp = dict(item)
+            numberCount += 1
             temp['id'] = int(item['id'])
             temp['apply_time'] = temp['apply_time'].strftime('%Y/%m/%d %H:%M:%S')
             if temp['birthday']:
                 temp['birthday'] = temp['birthday'].strftime('%Y/%m/%d')
             if temp['license_date']:
                 temp['license_date'] = temp['license_date'].strftime('%Y/%m/%d')
+            if temp['edu_date']:
+                temp['edu_date'] = temp['edu_date'].strftime('%Y/%m/%d')
+
             self.admitForJS.append(temp)
         self.admitForJS = json.dumps(self.admitForJS)
 
@@ -674,6 +692,20 @@ class StudentsList(BasicBrowserView):
 
         # 取得受訓狀態代碼
         self.trainingStatus = self.getTrainingStatusCode()
+
+        # 計算繳費人數
+        sqlStr = """SELECT user_id,money FROM receipt WHERE uid = '{}'""".format(uid)
+        receipt = sqlInstance.execSql(sqlStr)
+        count = 0
+        totalMoney = 0
+        for item in receipt:
+            obj = dict(item)
+            # 分割字會多一個空字串
+            count += (len(obj['user_id'].split(',')) - 1)
+            totalMoney += obj['money']
+        self.count = count
+        self.totalMoney = totalMoney
+        self.numberCount = numberCount
         return self.template()
 
 
@@ -1222,6 +1254,43 @@ class ListPrint(BrowserView):
             return self.template()
 
 
+class HasExportCount(BrowserView):
+    template = ViewPageTemplateFile('template/has_export_count.pt')
+    def __call__(self):
+        request = self.request
+        context = self.context
+        execSql = SqlObj()
+        data = {}
+        for course in context.getChildNodes():
+            courseName = course.title
+            uidList = []
+            for echelon in course.getChildNodes():
+                echelonUID = echelon.UID()
+                echelonID = echelon.id
+                uidList.append(echelonUID)
+
+            execStr = """SELECT COUNT(id), uid FROM reg_course WHERE uid in {} AND isAlt != 0 AND 
+                         on_training = 3 GROUP BY uid""".format(tuple(uidList))
+            result = execSql.execSql(execStr)
+            for item in result:
+                numbers = item[0]
+                uid = str(item[1])
+                duringTime = api.content.get(UID=uid).duringTime
+                if data.has_key(courseName):
+                    if data[courseName].has_key(duringTime):
+                        data[courseName][duringTime][0] += numbers
+                        uidList = json.loads(data[courseName][duringTime][1])
+                        if uid not in uidList:
+                            uidList.append(uid)
+                            data[courseName][duringTime][1]= json.dumps(uidList)
+                    else:
+                        data[courseName][duringTime] = [numbers, json.dumps([uid])]
+                else:
+                    data[courseName] = {duringTime: [numbers, json.dumps([uid])]}
+        self.data = data
+        return self.template()
+
+
 class HasExportView(BrowserView):
     template = ViewPageTemplateFile('template/has_export_view.pt')
     def __call__(self):
@@ -1229,37 +1298,33 @@ class HasExportView(BrowserView):
         context = self.context
         execSql = SqlObj()
         data = {}
-        nowDate = datetime.datetime.now().date()
-        # 用來判斷是否要更新資料
-        period = request.get('period', '')
-        user_id = request.get('user_id', '')
-        if period and user_id:
-            path = api.content.get(UID=period).absolute_url_path()
-            execStr = """UPDATE reg_course SET isAlt = 0, on_training = 1, path = '{}', uid = '{}' WHERE id = {}
-                     """.format(path, period, user_id)
-            execSql.execSql(execStr)
-            request.response.redirect(context.absolute_url() + '/@@has_export_view')
-        # 從mana_course開始
-        for course in context.getChildNodes():
-            uidList = []
-            echelonDict = {}
-            courseName = course.title
-            # 所有的course
-            for echelon in course.getChildNodes():
-                echelonUID = echelon.UID()
-                echelonID = echelon.id
-                uidList.append(echelonUID)
-                courseStart = echelon.courseStart
-                courseEnd = echelon.courseEnd
-                if nowDate >= courseStart and nowDate <= courseEnd:
-                    echelonDict[echelonUID] = echelonID
+        temp = []
+        uidList = json.loads(request.get('uidList'))
 
-            execStr = """SELECT cellphone,name,company_name,priv_email,phone,id FROM reg_course WHERE uid in {} AND isAlt != 0 AND 
-                         on_training = 3""".format(tuple(uidList))
-            result = execSql.execSql(execStr)
-            # {uid: id}排序
-            data[courseName] = [ result, sorted(echelonDict.items(), key= lambda x: x[1]) ]
-        self.data = data
+        if len(uidList) == 1:
+            uidList.append('zzz')
+
+        for uid in uidList:
+            temp.append(str(uid))
+
+        sqlStr = """SELECT * FROM reg_course WHERE on_training = 3 and uid in {}""".format(tuple(temp))
+        result = execSql.execSql(sqlStr)
+        duringTime = api.content.get(UID=result[0][16]).duringTime
+        if duringTime == 'inDay':
+            self.time = '日間'
+        elif duringTime == 'inEvening':
+            self.time = '夜間'
+        elif duringTime == 'inWeekend':
+            self.time = '假日'
+        elif duringTime == 'inWeekendEvening':
+            self.time = '假日夜間'
+        elif duringTime == 'complex':
+            self.time = '綜合'
+        elif duringTime == 'phone':
+            self.time = '電話'
+
+        self.course_name = api.content.get(UID=result[0][16]).getParentNode().title
+        self.result = result
         return self.template()
 
 

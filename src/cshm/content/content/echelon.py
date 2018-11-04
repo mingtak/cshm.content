@@ -183,6 +183,40 @@ class IEchelon(model.Schema):
         )
     )
 
+    fieldset('EchelonDetail', fields=[
+        'qualification',
+        'reTrainingDetail',
+        'courseIntro',
+        'courseScope',
+        'testMethod',
+    ])
+
+    qualification = schema.TextLine(
+        title=_(u'Qualification'),
+        required=False,
+    )
+
+    reTrainingDetail = RichText(
+        title=_(u'ReTraining Detail'),
+        required=False,
+    )
+
+    courseIntro = RichText(
+        title=_(u'CourseIntro'),
+        required=False,
+    )
+
+    courseScope = RichText(
+        title=_(u'Course Scope'),
+        required=False,
+    )
+
+    testMethod = RichText(
+        title=_(u'Test Method'),
+        required=False,
+    )
+
+
 @implementer(IEchelon)
 class Echelon(Container):
     """

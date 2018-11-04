@@ -68,5 +68,5 @@ def startDateTime_indexer(obj):
     return obj.startDateTime
 
 @indexer(IEchelon)
-def trainingCenter_indexer(obj):
+def trainingCenterId_indexer(obj):
     return obj.trainingCenter.to_object.id

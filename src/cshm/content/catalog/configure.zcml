@@ -14,7 +14,7 @@
   <adapter name="docHeader_indexer" factory=".catalog.docHeader_indexer"/>
   <adapter name="docSN_indexer" factory=".catalog.docSN_indexer"/>
   <adapter name="docsWorkflow" factory=".catalog.docsWorkflow_indexer"/>
-  <adapter name="trainingCenterId" factory=".catalog.trainingCenter_indexer"/>
+  <adapter name="trainingCenterId" factory=".catalog.trainingCenterId_indexer"/>
 
 <!--  <adapter name="" factory=".catalog._indexer"/> -->
 

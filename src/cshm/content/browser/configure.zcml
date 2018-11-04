@@ -55,6 +55,15 @@
       permission="zope2.View"
       />
 
+  <!-- 期數詳細內容頁 -->
+  <browser:page
+      name="echelon_detail"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.EchelonDetail"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
   <!-- 課程註冊頁 -->
   <browser:page
       name="reg_course"
@@ -776,6 +785,15 @@
       name="download_picture"
       for="*"
       class=".report.DownloadPicture"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <!--轉出統計-->
+  <browser:page
+      name="has_export_count"
+      for="*"
+      class=".views.HasExportCount"
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
