@@ -179,7 +179,8 @@ class TeacherMana(BasicBrowserView):
         brain = catalog(data, sort_on='id')
         return brain
 
-    def outputCSV():
+
+    def outputCSV(self):
         request = self.request
         output = StringIO()
 
@@ -202,25 +203,10 @@ class TeacherMana(BasicBrowserView):
         request = self.request
 
         if request.form.has_key('output'):
-
-            output = StringIO()
-
-            spamwriter = csv.writer(output)
-            spamwriter.writerow(['序號', '身份證字號', '姓名'])
-            brain = self.getActivationTeachers()
-            count = 1
-            for item in brain:
-                spamwriter.writerow([count, item.idCardNo, item.Title])
-                count += 1
-            contents = output.getvalue()
-
-            request.response.setHeader('Content-Type', 'application/xlsx')
-            request.response.setHeader('Content-Disposition', 'attachment; filename="teacher_list.xlsx"')
-            return output.getvalue()
+            return self.outputCSV()
 
         if request.form.has_key('update_teacher'):
-            self.updateTeacher()
-            return
+            return self.updateTeacher()
 
         return self.template()
 
