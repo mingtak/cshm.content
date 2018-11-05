@@ -9,6 +9,16 @@ from cshm.content.content.subject import ISubject
 from cshm.content.content.officialdoc import IOfficialDoc
 
 
+@indexer(ITeacher)
+def idCardNo_indexer(obj):
+    return obj.idCardNo
+
+
+@indexer(ITeacher)
+def activation_indexer(obj):
+    return obj.activation
+
+
 @indexer(IOfficialDoc)
 def docsWorkflow_indexer(obj):
     users = obj.workflowStatus.split(',')
@@ -26,8 +36,8 @@ def docSN_indexer(obj):
 
 
 @indexer(ITeacher)
-def teacheSubjects_indexer(obj):
-    ts = obj.teacheSubjects
+def teachSubjects_indexer(obj):
+    ts = obj.teachSubjects
     tsList = []
     for item in ts:
         tsList.append(item.to_object.title)

@@ -25,6 +25,8 @@ import re
 import json
 import logging
 import datetime
+import csv
+from StringIO import StringIO
 
 logger = logging.getLogger("cshm.content")
 
@@ -138,11 +140,94 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+class TeacherMana(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/teacher_mana.pt")
+
+    def updateTeacher(self):
+        request = self.request
+        portal = api.portal.get()
+
+        uid = request.form.get('uid')
+        isMember = request.form.get('isMember')
+        cellPhone = request.form.get('cellPhone')
+        contactAddr = request.form.get('contactAddr')
+
+        teacher = api.content.find(context=portal, UID=uid)[0].getObject()
+
+        teacher.isMember = True if isMember == 'true' else False
+        teacher.cellPhone = cellPhone
+        teacher.contactAddr = contactAddr
+
+
+    def getActivationTeachers(self, activation=True):
+        request = self.request
+        portal = api.portal.get()
+        catalog = portal.portal_catalog
+
+        idCardNo = request.form.get('idCardNo')
+        title = request.form.get('title')
+        data = {
+            'Type':'Teacher',
+            'activation':activation,
+        }
+        if title:
+            data['Title'] = title
+        if idCardNo:
+            data['idCardNo'] = idCardNo
+
+        brain = catalog(data, sort_on='id')
+        return brain
+
+    def outputCSV():
+        request = self.request
+        output = StringIO()
+
+        spamwriter = csv.writer(output)
+        spamwriter.writerow(['序號', '身份證字號', '姓名'])
+        brain = self.getActivationTeachers()
+        count = 1
+        for item in brain:
+            spamwriter.writerow([count, item.idCardNo, item.Title])
+            count += 1
+        contents = output.getvalue()
+
+        request.response.setHeader('Content-Type', 'application/xlsx')
+        request.response.setHeader('Content-Disposition', 'attachment; filename="teacher_list.xlsx"')
+
+        return output.getvalue()
+
+
+    def __call__(self):
+        request = self.request
+
+        if request.form.has_key('output'):
+
+            output = StringIO()
+
+            spamwriter = csv.writer(output)
+            spamwriter.writerow(['序號', '身份證字號', '姓名'])
+            brain = self.getActivationTeachers()
+            count = 1
+            for item in brain:
+                spamwriter.writerow([count, item.idCardNo, item.Title])
+                count += 1
+            contents = output.getvalue()
+
+            request.response.setHeader('Content-Type', 'application/xlsx')
+            request.response.setHeader('Content-Disposition', 'attachment; filename="teacher_list.xlsx"')
+            return output.getvalue()
+
+        if request.form.has_key('update_teacher'):
+            self.updateTeacher()
+            return
+
+        return self.template()
+
 
 class EchelonDetail(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/echelon_detail.pt")
-
 
     def __call__(self):
         return self.template()

@@ -798,6 +798,15 @@
       permission="cmf.ManagePortal"
       />
 
+  <!--教師管理-->
+  <browser:page
+      name="teacher_mana"
+      for="*"
+      class=".views.TeacherMana"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"

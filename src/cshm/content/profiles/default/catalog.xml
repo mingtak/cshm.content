@@ -1,6 +1,16 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
+  <index name="idCardNo" meta_type="FieldIndex">
+    <indexed_attr value="idCardNo" />
+  </index>
+  <column value="idCardNo"/>
+
+  <index name="activation" meta_type="BooleanIndex">
+    <indexed_attr value="activation" />
+  </index>
+  <column value="activation"/>
+
   <index name="docsWorkflow" meta_type="KeywordIndex">
     <indexed_attr value="docsWorkflow" />
   </index>
@@ -16,10 +26,10 @@
   </index>
   <column value="docSN_indexer"/>
 
-  <index name="teacheSubjects" meta_type="KeywordIndex">
-    <indexed_attr value="teacheSubjects" />
+  <index name="teachSubjects" meta_type="KeywordIndex">
+    <indexed_attr value="teachSubjects" />
   </index>
-  <column value="teacheSubjects"/>
+  <column value="teachSubjects"/>
 
   <index name="classStatus" meta_type="FieldIndex">
     <indexed_attr value="classStatus" />

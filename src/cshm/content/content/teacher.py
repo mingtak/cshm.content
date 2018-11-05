@@ -22,6 +22,18 @@ class ITeacher(model.Schema):
         required=True,
     )
 
+    activation = schema.Bool(
+        title=_(u"Activation"),
+        default=True,
+        required=True,
+    )
+
+    isMember = schema.Bool(
+        title=_(u"Is Member"),
+        default=False,
+        required=True,
+    )
+
     idCardNo = schema.TextLine(
         title=_(u"Id Card Number."),
         required=True,
@@ -199,14 +211,24 @@ class ITeacher(model.Schema):
         required=False,
     )
 
-    fieldset(_(u'Teache Subjects'), fields=['teacheSubjects'])
-    teacheSubjects = RelationList(
-        title=_(u'Teache Subjects'),
+    fieldset(_(u'Teach Related'), fields=['teachSubjects', 'teachTrainingCenter'])
+    teachSubjects = RelationList(
+        title=_(u'Teach Subjects'),
         default=[],
         required=False,
         value_type=RelationChoice(
             title=_(u"Subject"),
             source=CatalogSource(Type='Subject', path='/cshm/resource/corese_template'),
+        )
+    )
+
+    teachTrainingCenter = RelationList(
+        title=_(u'Teach Training Center'),
+        default=[],
+        required=False,
+        value_type=RelationChoice(
+            title=_(u"Training Center"),
+            source=CatalogSource(Type='TrainingCenter', path='/cshm/resource/training_center'),
         )
     )
 
