@@ -33,6 +33,17 @@ logger = logging.getLogger("cshm.content")
 
 class BasicBrowserView(BrowserView):
     """ 通用method """
+    def twYear2Ad(self, twStr):
+        """ 民國date轉西元 """
+        year, month, day = twStr.split('/')
+        year = int(year) + 1911
+        return '%s/%s/%s' % (str(year), month, day)
+
+    def adYear2Tw(self, adStr):
+        """ 西元date轉民國 """
+        year, month, day = adStr.split('/')
+        year = int(year) - 1911
+        return '%s/%s/%s' % (str(year), month, day)
 
     def sendMessage(self, cell, message):
         url = 'https://oms.every8d.com/API21/HTTP/sendSMS.ashx'
@@ -140,6 +151,37 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+class ClassScheduling(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/class_scheduling.pt")
+
+    def __call__(self):
+        return self.template()
+
+
+class AddTeacher(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/add_teacher.pt")
+
+    def addTeahcer(self):
+
+        return
+
+    def __call__(self):
+
+        if request.form.has_key('_authenticator'):
+            try:
+                self.addTeacher()
+                api.portal.show_message(message=_(u"Add Teacher Success."), request=request, type='info')
+            except:
+                api.portal.show_message(message=_(u"Add Teacher Fail."), request=request, type='error')
+        return self.template()
+
+
+
+        return self.template()
+
+
 class TeacherMana(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/teacher_mana.pt")
@@ -208,6 +250,97 @@ class TeacherMana(BasicBrowserView):
         if request.form.has_key('update_teacher'):
             return self.updateTeacher()
 
+        return self.template()
+
+
+class NotOnTime(BasicBrowserView):
+
+    template_add = ViewPageTemplateFile("template/not_on_time_add.pt")
+    template_list = ViewPageTemplateFile("template/not_on_time_list.pt")
+
+    def getSubjects(self):
+        # TODO: 要配合排課，只捉目前有效的課程(或一周內的課程)
+        return api.content.find(Type='Subject')[0:10]
+
+
+    def getTeachers(self):
+        return api.content.find(Type='Teacher')
+
+
+    def getNotOnTimeStatus(self):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT *
+                    FROM not_on_time_status
+                    WHERE 1"""
+        return sqlInstance.execSql(sqlStr)
+
+    def insertRecord(self):
+        request = self.request
+
+        current = api.user.get_current()
+        logger = current.getProperty('fullname')
+        loggerId = current.getProperty('id')
+        subject_uid = request.form.get('subject-name')
+        subject_path = api.content.find(UID=subject_uid)[0].getPath()
+        teacher_uid = request.form.get('teacher-name')
+        teacher_name = api.content.find(UID=teacher_uid)[0].Title
+        status_code = request.form.get('status_code')
+        detail = request.form.get('detail')
+        in_scope = request.form.has_key('in_scope')
+        date = request.form.get('date')
+
+        date = self.twYear2Ad(date)
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `not_on_time_record`(`subject_uid`, `subject_path`, `teacher_uid`, `teacher_name`, `status_code`, `detail`, \
+                    `in_scope`, `date`, `logger`, `logger_id`)
+                    VALUES ('{}', '{}', '{}', '{}', {}, '{}', {}, '{}', '{}', '{}')
+                 """.format(subject_uid, subject_path, teacher_uid, teacher_name, int(status_code), detail, in_scope, date, logger, loggerId)
+
+        return sqlInstance.execSql(sqlStr)
+
+    def getLog(self):
+        current = api.user.get_current()
+        loggerId = current.getProperty('id')
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT *
+                    FROM `not_on_time_record`
+                    WHERE `logger_id` = '{}'
+                    ORDER BY `id`
+                    DESC
+                 """.format(loggerId)
+
+        return sqlInstance.execSql(sqlStr)
+
+
+    def getNotOnTimeList(self):
+        sqlStr = """INSERT INTO `not_on_time_record`(`subject_uid`, `subject_path`, `teacher_uid`, `teacher_name`, `status_code`, `detail`, \
+                    `in_scope`, `date`, `logger`)
+                    VALUES ('{}', '{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
+                 """.format(subject_uid, subject_path, teacher_uid, teacher_name, int(status_code), detail, in_scope, date, logger)
+
+    def __call__(self):
+        request = self.request
+
+        if request.form.has_key('list'):
+            return self.template_list()
+
+        if request.form.has_key('_authenticator'):
+            try:
+                self.insertRecord()
+                api.portal.show_message(message=_(u"Insert Not On Time Record Success."), request=request, type='info')
+            except:
+                api.portal.show_message(message=_(u"Insert Not On Time Fail."), request=request, type='error')
+        return self.template_add()
+
+
+
+class TeacherView(BrowserView):
+
+    template = ViewPageTemplateFile("template/teacher_view.pt")
+
+    def __call__(self):
         return self.template()
 
 

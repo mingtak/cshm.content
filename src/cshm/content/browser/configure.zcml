@@ -146,6 +146,34 @@
       />
 
   <browser:page
+      name="teacher_view"
+      for="cshm.content.content.teacher.ITeacher"
+      class=".views.TeacherView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
+  <!-- 新增講師 -->
+  <browser:page
+      name="add_teacher"
+      for="*"
+      class=".views.AddTeacher"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
+  <!-- 講師調課/遲到/早退登記系統 -->
+  <browser:page
+      name="not_on_time"
+      for="*"
+      class=".views.NotOnTime"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未明 -->
+
+  <browser:page
       name="teacher_appointment"
       for="cshm.content.content.echelon.IEchelon"
       class=".views.TeacherAppointment"
@@ -806,6 +834,17 @@
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
+  <!-- 權限未定 -->
+
+  <!-- 排課系統 -->
+  <browser:page
+      name="class_scheduling"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.ClassScheduling"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
 
   <!-- configlet -->
   <browser:page
