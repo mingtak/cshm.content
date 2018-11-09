@@ -163,22 +163,42 @@ class AddTeacher(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/add_teacher.pt")
 
-    def addTeahcer(self):
+    def addTeacher(self):
+        request = self.request
+        portal = api.portal.get()
 
-        return
+        name = safe_unicode(request.form.get('teacher-name'))
+        idCardNo = request.form.get('id-card-no')
+        birthday = request.form.get('birthday')
+        birthday = self.twYear2Ad(birthday)
+        year, month, day = birthday.split('/')
+
+        homePhone = request.form.get('contact-phone')
+        cellPhone = request.form.get('cell-phone')
+        contactAddr = safe_unicode(request.form.get('contact-addr'))
+
+        obj = api.content.create(
+            type='Teacher',
+            title=name,
+            container=portal['resource']['mana_teacher'],
+            idCardNo = idCardNo,
+            birthday = datetime.datetime(int(year), int(month), int(day)),
+            homePhone = homePhone,
+            cellPhone = cellPhone,
+            contactAddr = contactAddr
+        )
+        return obj
 
     def __call__(self):
+        request = self.request
 
-        if request.form.has_key('_authenticator'):
+        if request.form.has_key('add-teacher'):
             try:
-                self.addTeacher()
+                obj = self.addTeacher()
+                api.content.transition(obj=obj, transition='publish')
                 api.portal.show_message(message=_(u"Add Teacher Success."), request=request, type='info')
             except:
                 api.portal.show_message(message=_(u"Add Teacher Fail."), request=request, type='error')
-        return self.template()
-
-
-
         return self.template()
 
 
