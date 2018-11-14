@@ -155,7 +155,115 @@ class ClassScheduling(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/class_scheduling.pt")
 
+    def alreadyScheduling(self, uid):
+        sqlStr = """SELECT *
+                    FROM class_scheduling
+                    WHERE uid = '{}'
+                    """.format(uid)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+    def addClassScheduling(self):
+        request = self.request
+        uid = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        obj = api.content.find(UID=uid)[0].getObject()
+        subject_code = obj.id
+        subject_name = obj.title
+        teacher = obj.teacher
+        if teacher:
+            teacher_name = teacher.to_object.title
+        hours = obj.hours
+
+        date = self.twYear2Ad(date)
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`, `start`, `end`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}')
+                 """.format(uid, subject_code, subject_name, '%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]))
+        try:
+            sqlInstance.execSql(sqlStr)
+            return _(u'Class Scheduling Success.')
+        except:
+            return _(u'Fail, Please check data format!!')
+
+
+    def updateClassScheduling(self):
+        request = self.request
+        id = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        date = self.twYear2Ad(date)
+
+        sqlInstance = SqlObj()
+        sqlStr = """UPDATE `class_scheduling`
+                  SET `start`='{}',
+                      `end`='{}'
+                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]), id)
+        try:
+            sqlInstance.execSql(sqlStr)
+            return _(u'Class Scheduling Success.')
+        except:
+            return _(u'Fail, Please check data format!!')
+
+    def checkOverTime(self):
+        """ 檢查是否有時間重疊 """
+        request = self.request
+
+        id = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        date = self.twYear2Ad(date)
+
+        start = '%s %s:%s' % (date, start[0:2], start[2:])
+        end = '%s %s:%s' % (date, end[0:2], end[2:])
+
+        if not id.isdigit():
+            id = '0'
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id
+                    FROM `class_scheduling`
+                    WHERE (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
+                      AND id != {}""".format(start, end, start, end, id)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def checkFitHours(self):
+        """ 檢查是否超時, return 0:剛好符合, 1:不足時數, 2:超過時數 """
+
     def __call__(self):
+        request = self.request
+        uid = request.form.get('uid')
+        if request.form.has_key('update_class_scheduling'):
+
+            otResult = self.checkOverTime()
+            if otResult:
+                return 'overtime:tr-%s' % otResult[0]['id']
+
+            if uid.isdigit():
+                result = self.updateClassScheduling()
+                return result
+            else:
+                result = self.addClassScheduling()
+                return result
+
         return self.template()
 
 
@@ -255,8 +363,8 @@ class TeacherMana(BasicBrowserView):
             count += 1
         contents = output.getvalue()
 
-        request.response.setHeader('Content-Type', 'application/xlsx')
-        request.response.setHeader('Content-Disposition', 'attachment; filename="teacher_list.xlsx"')
+        request.response.setHeader('Content-Type', 'application/csv')
+        request.response.setHeader('Content-Disposition', 'attachment; filename="teacher_list.csv"')
 
         return output.getvalue()
 
