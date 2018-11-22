@@ -199,6 +199,12 @@ class ClassScheduling(BasicBrowserView):
         end = request.form.get('end')
         classroom = request.form.get('classroom')
         classroomId = api.content.find(UID=classroom)[0].id
+        # traning center
+        trainingCenter = api.content.find(UID=classroom)[0].getObject().getParentNode().title
+        classroomName = '%s-%s' % (trainingCenter, classroomId)
+
+#        trainingCenter = api.content.find(UID=uid)[0].getObject().trainingCenter.to_object.title
+#        classroomName = '%s-%s' % (trainingCenter, classroomId)
 
         if not (date and start and end):
             return _(u'Data lost, please fill all field')
@@ -218,7 +224,7 @@ class ClassScheduling(BasicBrowserView):
                     VALUES ('{}', '{}', '{}', '{}', '{}', '{}')
                  """.format(uid, subject_code, subject_name,
                             '%s %s:%s' % (date, start[0:2], start[2:]),
-                            '%s %s:%s' % (date, end[0:2], end[2:]), classroomId)
+                            '%s %s:%s' % (date, end[0:2], end[2:]), classroomName)
         try:
             sqlInstance.execSql(sqlStr)
             return _(u'Class Scheduling Success.')
@@ -227,6 +233,7 @@ class ClassScheduling(BasicBrowserView):
 
 
     def updateClassScheduling(self):
+        sqlInstance = SqlObj()
         request = self.request
         id = request.form.get('uid')
         date = request.form.get('date')
@@ -234,18 +241,24 @@ class ClassScheduling(BasicBrowserView):
         end = request.form.get('end')
         classroom = request.form.get('classroom')
         classroomId = api.content.find(UID=classroom)[0].id
+        # traning center
+
+#        sqlStr = """SELECT uid FROM class_scheduling WHERE id={}""".format(id)
+#        result = sqlInstance.execSql(sqlStr)[0]['uid']
+
+        trainingCenter = api.content.find(UID=classroom)[0].getObject().getParentNode().title
+        classroomName = '%s-%s' % (trainingCenter, classroomId)
 
         if not (date and start and end):
             return _(u'Data lost, please fill all field')
 
         date = self.twYear2Ad(date)
 
-        sqlInstance = SqlObj()
         sqlStr = """UPDATE `class_scheduling`
                   SET `start`='{}',
                       `end`='{}',
                       `classroom`='{}'
-                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]), classroomId, id)
+                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]), classroomName, id)
         try:
             sqlInstance.execSql(sqlStr)
             return _(u'Class Scheduling Success.')
@@ -302,20 +315,61 @@ class ClassScheduling(BasicBrowserView):
         e_hour = end[0:2]
         e_minute = end[2:]
 
-        timedelta = datetime.datetime(e_year, e_month, e_day, e_hour, e_minute) - datetime.datetime(s_year, s_month, s_day, s_hour, s_minute)
+        timedelta = datetime.datetime(
+            int(e_year), int(e_month), int(e_day), int(e_hour), int(e_minute)) - datetime.datetime(int(s_year), int(s_month), int(s_day), int(s_hour), int(s_minute)
+        )
         timedeltaSec = timedelta.seconds
 
 # TODO TODO TODO
-        import pdb;pdb.set_trace()
         sqlInstance = SqlObj()
         sqlStr = """SELECT id
                     FROM `class_scheduling`
                     WHERE (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
                       AND id != {}""".format(start, end, start, end, id)
 
+
+    def deleteRow(self):
+        """ 刪除一列 """
+        request = self.request
+        uid = request.form.get('uid')
+
+        sqlInstance = SqlObj()
+        sqlStr = """DELETE FROM `class_scheduling`
+                    WHERE id={}""".format(uid)
+
+        sqlInstance.execSql(sqlStr)
+
+
+    def addRow(self):
+        """ 增加一列 """
+        request = self.request
+        uid = request.form.get('uid')
+
+        obj = api.content.find(UID=uid)[0].getObject()
+        subject_code = obj.id
+        subject_name = obj.title
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`)
+                    VALUES ('{}', '{}', '{}')""".format(uid, subject_code, subject_name)
+
+        sqlInstance.execSql(sqlStr)
+
+
     def __call__(self):
         request = self.request
         uid = request.form.get('uid')
+
+        # 新增一列
+        if request.form.has_key('addrow'):
+            self.addRow()
+            return
+
+        # 刪除一列
+        if request.form.has_key('deleterow'):
+            self.deleteRow()
+            return
+
         if request.form.has_key('update_class_scheduling'):
 
             # 檢查時間是否重疊
@@ -325,7 +379,7 @@ class ClassScheduling(BasicBrowserView):
 
             # 檢查時數
             fitHours = self.checkFitHours()
-            if fitHouts == 2: #超時
+            if fitHours == 2: #超時
                 return 'overhours'
 
             if uid.isdigit():
