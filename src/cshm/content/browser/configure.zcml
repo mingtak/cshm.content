@@ -836,6 +836,16 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 開課系統 -->
+  <browser:page
+      name="create_class"
+      for="*"
+      class=".views.CreateClass"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <!-- 排課系統 -->
   <browser:page
       name="class_scheduling"

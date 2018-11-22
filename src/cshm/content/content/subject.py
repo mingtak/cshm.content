@@ -17,14 +17,14 @@ class ISubject(model.Schema):
     """ Marker interface and Dexterity Python Schema for Subject
     """
 
-    hours = schema.Int(
+    hours = schema.Float(
         title=_(u"Subject Hours"),
         required=True,
     )
 
     startDateTime = schema.Datetime(
         title=_(u"Start time"),
-        required=True
+        required=False
     )
 
     notes = schema.Text(
@@ -46,6 +46,11 @@ class ISubject(model.Schema):
         title=_(u"Teacher"),
         required=False,
         source=CatalogSource(Type='Teacher')
+    )
+
+    ignoreSchedule = schema.Bool(
+        title=_(u'Ignore Schedule'),
+        default=False,
     )
 
     # directives.widget(level=RadioFieldWidget)

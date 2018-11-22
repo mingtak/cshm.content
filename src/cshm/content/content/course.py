@@ -21,11 +21,13 @@ class ICourse(model.Schema):
     counselor = schema.Choice(
         title=_(u"Counselor"),
         vocabulary='plone.app.vocabularies.Users',
+        required=False,
     )
 
     agentCounselor = schema.Choice(
         title=_(u"Agent Counselor"),
         vocabulary='plone.app.vocabularies.Users',
+        required=False,
     )
 
     # fieldset('CourseDetail', fields=[])
@@ -45,7 +47,7 @@ class ICourse(model.Schema):
 
     handbookTitle = schema.TextLine(
         title=_(u'Handbook Title'),
-        required=True,
+        required=False,
     )
 
     """
@@ -53,7 +55,7 @@ class ICourse(model.Schema):
         title=_(u"Course Hours"),
         default=0,
         description=_(u"If 0, asking for phone"),
-        required=True,
+        required=False,
     )
 
     # 考量學費可能調整，這個欄位可能要放到期別
@@ -61,7 +63,7 @@ class ICourse(model.Schema):
         title=_(u"Course Fee"),
         default=0,
         description=_(u"If 0, asking for phone"),
-        required=True,
+        required=False,
     ) """
 
     courseRequired = RichText(
@@ -113,7 +115,7 @@ class ICourse(model.Schema):
 
     licenseType = schema.TextLine(
         title=_(u"License Type"),
-        required=True,
+        required=False,
     )
 
     # directives.widget(level=RadioFieldWidget)

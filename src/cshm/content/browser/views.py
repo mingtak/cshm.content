@@ -151,6 +151,34 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+# 開課
+class CreateClass(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/create_class.pt")
+
+    def __call__(self):
+        request = self.request
+        portal = api.portal.get()
+
+        courseUID = request.form.get('course')
+        if not courseUID:
+            return self.template()
+
+        obj = api.content.find(UID=courseUID)[0].getObject() # 課程模版
+        courseId = obj.id
+        if portal['mana_course'].has_key(courseId):
+            container = api.content.create(type='Echelon', title='New Course', container=portal['mana_course'][courseId])
+            childNodes = obj.getChildNodes()
+            for item in childNodes:
+                api.content.copy(source=item, target=container)
+        else:
+            newCourse = api.content.copy(source=obj, target=portal['mana_course'])
+            childNodes = newCourse.getChildNodes()
+            container = api.content.create(type='Echelon', title='New Course', container=newCourse)
+            for item in childNodes:
+                api.content.move(source=item, target=container)
+
+
 class ClassScheduling(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/class_scheduling.pt")
@@ -169,6 +197,8 @@ class ClassScheduling(BasicBrowserView):
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
+        classroom = request.form.get('classroom')
+        classroomId = api.content.find(UID=classroom)[0].id
 
         if not (date and start and end):
             return _(u'Data lost, please fill all field')
@@ -184,9 +214,11 @@ class ClassScheduling(BasicBrowserView):
         date = self.twYear2Ad(date)
 
         sqlInstance = SqlObj()
-        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`, `start`, `end`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}')
-                 """.format(uid, subject_code, subject_name, '%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]))
+        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`, `start`, `end`, `classroom`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}')
+                 """.format(uid, subject_code, subject_name,
+                            '%s %s:%s' % (date, start[0:2], start[2:]),
+                            '%s %s:%s' % (date, end[0:2], end[2:]), classroomId)
         try:
             sqlInstance.execSql(sqlStr)
             return _(u'Class Scheduling Success.')
@@ -200,6 +232,8 @@ class ClassScheduling(BasicBrowserView):
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
+        classroom = request.form.get('classroom')
+        classroomId = api.content.find(UID=classroom)[0].id
 
         if not (date and start and end):
             return _(u'Data lost, please fill all field')
@@ -209,8 +243,9 @@ class ClassScheduling(BasicBrowserView):
         sqlInstance = SqlObj()
         sqlStr = """UPDATE `class_scheduling`
                   SET `start`='{}',
-                      `end`='{}'
-                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]), id)
+                      `end`='{}',
+                      `classroom`='{}'
+                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]), classroomId, id)
         try:
             sqlInstance.execSql(sqlStr)
             return _(u'Class Scheduling Success.')
@@ -247,15 +282,51 @@ class ClassScheduling(BasicBrowserView):
 
     def checkFitHours(self):
         """ 檢查是否超時, return 0:剛好符合, 1:不足時數, 2:超過時數 """
+        request = self.request
+
+        id = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        date = self.twYear2Ad(date)
+
+        s_year, s_month, s_day = date.split('/')
+        s_hour = start[0:2]
+        s_minute = start[2:]
+
+        e_year, e_month, e_day = date.split('/')
+        e_hour = end[0:2]
+        e_minute = end[2:]
+
+        timedelta = datetime.datetime(e_year, e_month, e_day, e_hour, e_minute) - datetime.datetime(s_year, s_month, s_day, s_hour, s_minute)
+        timedeltaSec = timedelta.seconds
+
+# TODO TODO TODO
+        import pdb;pdb.set_trace()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id
+                    FROM `class_scheduling`
+                    WHERE (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
+                      AND id != {}""".format(start, end, start, end, id)
 
     def __call__(self):
         request = self.request
         uid = request.form.get('uid')
         if request.form.has_key('update_class_scheduling'):
 
+            # 檢查時間是否重疊
             otResult = self.checkOverTime()
             if otResult:
                 return 'overtime:tr-%s' % otResult[0]['id']
+
+            # 檢查時數
+            fitHours = self.checkFitHours()
+            if fitHouts == 2: #超時
+                return 'overhours'
 
             if uid.isdigit():
                 result = self.updateClassScheduling()
@@ -542,6 +613,26 @@ class ExportEmailCell(BasicBrowserView):
         portal = api.portal.get()
         context = self.context
         request = self.request
+
+        if request.form.has_key('sendmsg'):
+            message = request.form.get('message')
+            for item in request.form.get('cell').split(','):
+                if item:
+                    self.sendMessage(item, message)
+            api.portal.show_message(message=_(u"Send cell message success."), request=request, type='info')
+
+        if request.form.has_key('sendmail'):
+            title = request.form.get('title')
+            message = request.form.get('message')
+            for item in request.form.get('email').split(';'):
+                if item:
+                    api.portal.send_email(
+                        recipient=item,
+                        sender="andyfang51@gmail.com",
+                        subject=title,
+                        body=message,
+                    )
+            api.portal.show_message(message=_(u"Send mail success."), request=request, type='info')
 
         uid = context.UID()
 
