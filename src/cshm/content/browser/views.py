@@ -197,6 +197,8 @@ class ClassScheduling(BasicBrowserView):
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
+        teacher_fee = request.form.get('teacher_fee')
+        traffic_fee = request.form.get('traffic_fee')
         classroom = request.form.get('classroom')
         classroomId = api.content.find(UID=classroom)[0].id
         # traning center
@@ -220,11 +222,11 @@ class ClassScheduling(BasicBrowserView):
         date = self.twYear2Ad(date)
 
         sqlInstance = SqlObj()
-        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`, `start`, `end`, `classroom`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}')
+        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`, `start`, `end`, `classroom`, `teacher_fee`, `traffic_fee`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', {}, {})
                  """.format(uid, subject_code, subject_name,
                             '%s %s:%s' % (date, start[0:2], start[2:]),
-                            '%s %s:%s' % (date, end[0:2], end[2:]), classroomName)
+                            '%s %s:%s' % (date, end[0:2], end[2:]), classroomName, teacher_fee, traffic_fee)
         try:
             sqlInstance.execSql(sqlStr)
             return _(u'Class Scheduling Success.')
@@ -239,6 +241,8 @@ class ClassScheduling(BasicBrowserView):
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
+        teacher_fee = request.form.get('teacher_fee')
+        traffic_fee = request.form.get('traffic_fee')
         classroom = request.form.get('classroom')
         classroomId = api.content.find(UID=classroom)[0].id
         # traning center
@@ -257,13 +261,18 @@ class ClassScheduling(BasicBrowserView):
         sqlStr = """UPDATE `class_scheduling`
                   SET `start`='{}',
                       `end`='{}',
-                      `classroom`='{}'
-                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]), '%s %s:%s' % (date, end[0:2], end[2:]), classroomName, id)
+                      `classroom`='{}',
+                      `teacher_fee`={},
+                      `traffic_fee`={}
+                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]),
+                                        '%s %s:%s' % (date, end[0:2], end[2:]),
+                                        classroomName, teacher_fee, traffic_fee, id)
         try:
             sqlInstance.execSql(sqlStr)
             return _(u'Class Scheduling Success.')
         except:
             return _(u'Fail, Please check data format!!')
+
 
     def checkOverTime(self):
         """ 檢查是否有時間重疊 """
@@ -273,6 +282,12 @@ class ClassScheduling(BasicBrowserView):
         date = request.form.get('date')
         start = request.form.get('start')
         end = request.form.get('end')
+
+        classroom = request.form.get('classroom')
+        classroomId = api.content.find(UID=classroom)[0].id
+
+        trainingCenter = api.content.find(UID=classroom)[0].getObject().getParentNode().title
+        classroomName = '%s-%s' % (trainingCenter, classroomId)
 
         if not (date and start and end):
             return _(u'Data lost, please fill all field')
@@ -288,8 +303,9 @@ class ClassScheduling(BasicBrowserView):
         sqlInstance = SqlObj()
         sqlStr = """SELECT id
                     FROM `class_scheduling`
-                    WHERE (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
-                      AND id != {}""".format(start, end, start, end, id)
+                    WHERE classroom='{}'
+                      AND (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
+                      AND id != {}""".format(classroomName, start, end, start, end, id)
         return sqlInstance.execSql(sqlStr)
 
 
