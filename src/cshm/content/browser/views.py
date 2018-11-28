@@ -276,6 +276,7 @@ class ClassScheduling(BasicBrowserView):
 
     def checkOverTime(self):
         """ 檢查是否有時間重疊 """
+        context = self.context
         request = self.request
 
         id = request.form.get('uid')
@@ -301,11 +302,27 @@ class ClassScheduling(BasicBrowserView):
             id = '0'
 
         sqlInstance = SqlObj()
-        sqlStr = """SELECT id
+        # 查詢教室時間衝突
+        sqlStr = """SELECT id, uid, start, subject_name
                     FROM `class_scheduling`
                     WHERE classroom='{}'
-                      AND (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
-                      AND id != {}""".format(classroomName, start, end, start, end, id)
+                      AND ( (end > '{}') AND (start < '{}') )
+                      AND id != {}""".format(classroomName, start, end, id)
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return sqlInstance.execSql(sqlStr)
+
+        # 同課程時間衝突
+        uids = []
+        for item in context.getChildNodes():
+            uids.append(item.UID())
+        uidString = "'%s'" % "', '".join(uids)
+
+        sqlStr = """SELECT id, uid, start, subject_name
+                    FROM class_scheduling
+                    WHERE uid in ({})
+                      AND ( (end > '{}') AND (start < '{}') )
+                      AND id != {}""".format(uidString, start, end, id)
         return sqlInstance.execSql(sqlStr)
 
 
@@ -333,6 +350,10 @@ class ClassScheduling(BasicBrowserView):
             uid = result[0]['uid']
         else:
             uid = id
+
+        # check ignoreSchedule
+        if api.content.find(UID=uid)[0].getObject().ignoreSchedule:
+            return
 
         # 開始時間
         s_year, s_month, s_day = date.split('/')
@@ -423,7 +444,11 @@ class ClassScheduling(BasicBrowserView):
         result = {}
         for item in sqlResult:
             if item['uid'] not in result:
-                hours = api.content.find(UID=item['uid'])[0].getObject().hours
+                obj = api.content.find(UID=item['uid'])[0].getObject()
+                ignoreSchedule = obj.ignoreSchedule
+                hours = obj.hours
+                if ignoreSchedule:
+                    continue
                 result[item['uid']] = [hours, 0]
 
             if item['end'] and item['start']:
@@ -432,15 +457,72 @@ class ClassScheduling(BasicBrowserView):
         return json.dumps(result)
 
 
+    def download(self):
+        context = self.context
+        request = self.request
 
-#0:符合, 1:不足
-#{ 'b053b55c5ec049ca8d3d3f9a4f762c30': (4,3, 2,4,12,22),   /* [所需時數, 累加時數, id....] */
-#  'b053b55c5ec049ca8d3d3f9a4f762c30': (3,0, 2,4,12,22),
-#}
+        sqlInstance = SqlObj()
+        # 檢查是否可以下載
+        childNodes = context.getChildNodes()
+        for item in childNodes:
+            if item.ignoreSchedule:
+                continue
+            hours = item.hours
+            sqlStr = """SELECT start, end
+                    FROM class_scheduling
+                    WHERE uid = '{}'""".format(item.UID())
+            result = sqlInstance.execSql(sqlStr)
+
+            if not result:
+                return _(u'Download not Allowed')
+
+            totalHours = 0
+            for row in result:
+                if row['start'] is None or row['end'] is None:
+                    return _(u'Download not Allowed')
+                totalHours += float( (row['end']-row['start']).seconds ) / 3600
+
+            if totalHours != hours:
+                return _(u'Download not Allowed')
+
+        uids = []
+        for item in context.getChildNodes():
+            uids.append(item.UID())
+        uidString = "'%s'" % "', '".join(uids)
+
+        sqlStr = """SELECT *
+                    FROM class_scheduling
+                    WHERE uid in ({})""".format(uidString)
+        result = sqlInstance.execSql(sqlStr)
+
+        output = StringIO()
+        spamwriter = csv.writer(output)
+        spamwriter.writerow(['科目編號', '科目名稱', '教室', '講師', '排課', '講酬', '車馬費'])
+
+        for item in result:
+            obj = api.content.find(UID=item['uid'])[0].getObject()
+            startYear = item['start'].strftime('%Y/%m/%d')
+            endYear = item['end'].strftime('%Y/%m/%d')
+            spamwriter.writerow([item['subject_code'],
+                item['subject_name'], item['classroom'], obj.teacher.to_object.title,
+                '%s %s~%s' % (startYear, item['start'].strftime('%H%M'), item['end'].strftime('%H%M')),
+                item['teacher_fee'], item['traffic_fee'],
+            ])
+        contents = output.getvalue()
+
+        request.response.setHeader('Content-Type', 'application/csv')
+        request.response.setHeader('Content-Disposition', 'attachment; filename="course_schedule.csv"')
+
+        return output.getvalue()
+
 
     def __call__(self):
         request = self.request
         uid = request.form.get('uid')
+
+        # download
+        if request.form.has_key('download'):
+            return self.download()
 
         # Check HOurs
         if request.form.has_key('checkhours'):
@@ -459,9 +541,14 @@ class ClassScheduling(BasicBrowserView):
         if request.form.has_key('update_class_scheduling'):
 
             # 檢查時間是否重疊
-            otResult = self.checkOverTime()
-            if otResult:
-                return 'overtime:tr-%s' % otResult[0]['id']
+            overtimeResult = self.checkOverTime()
+            if overtimeResult:
+                course = api.content.find(UID=overtimeResult[0]['uid'])[0].getObject().getParentNode().getParentNode().title
+                return 'overtime:tr-%s:%s %s(%s/%s)' % (overtimeResult[0]['id'],
+                   course, overtimeResult[0]['subject_name'],
+                   int(overtimeResult[0]['start'].strftime('%m')),
+                   int(overtimeResult[0]['start'].strftime('%d'))
+                )
 
             # 檢查時數
             fitHours = self.checkFitHours()
