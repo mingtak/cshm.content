@@ -312,6 +312,7 @@ class ClassScheduling(BasicBrowserView):
     def checkFitHours(self):
         """ 檢查是否超時, return 0:剛好符合, 1:不足時數, 2:超過時數 """
         request = self.request
+        sqlInstance = SqlObj()
 
         id = request.form.get('uid')
         date = request.form.get('date')
@@ -323,10 +324,22 @@ class ClassScheduling(BasicBrowserView):
 
         date = self.twYear2Ad(date)
 
+        # 確認uid
+        if id.isdigit():
+            sqlStr = """SELECT uid
+                        FROM class_scheduling
+                        WHERE id = '{}'""".format(id)
+            result = sqlInstance.execSql(sqlStr)
+            uid = result[0]['uid']
+        else:
+            uid = id
+
+        # 開始時間
         s_year, s_month, s_day = date.split('/')
         s_hour = start[0:2]
         s_minute = start[2:]
 
+        # 結束時間
         e_year, e_month, e_day = date.split('/')
         e_hour = end[0:2]
         e_minute = end[2:]
@@ -336,12 +349,31 @@ class ClassScheduling(BasicBrowserView):
         )
         timedeltaSec = timedelta.seconds
 
-# TODO TODO TODO
+        # 計算現有時數
         sqlInstance = SqlObj()
-        sqlStr = """SELECT id
-                    FROM `class_scheduling`
-                    WHERE (start BETWEEN '{}' AND '{}' OR end BETWEEN '{}' AND '{}')
-                      AND id != {}""".format(start, end, start, end, id)
+        sqlStr = """SELECT id, uid, start, end
+                    FROM class_scheduling
+                    WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+
+        totalHours = 0
+        for item in result:
+            if int(id) == item['id']:
+                continue
+            if item['end'] and item['start']:
+                totalHours += float( (item['end']-item['start']).seconds ) / 3600
+
+        totalHours += float(timedeltaSec) / 3600
+
+        hours = api.content.find(UID=uid)[0].getObject().hours
+
+        # 檢查是否超時, return 0:剛好符合, 1:不足時數, 2:超過時數
+        if totalHours == hours:
+            return 0
+        elif totalHours < hours:
+            return 1
+        else:
+            return 2
 
 
     def deleteRow(self):
@@ -372,9 +404,47 @@ class ClassScheduling(BasicBrowserView):
         sqlInstance.execSql(sqlStr)
 
 
+    def checkHours(self):
+        context = self.context
+        request = self.request
+        sqlInstance = SqlObj()
+
+        uids = []
+        for item in context.getChildNodes():
+#            if item.UID() not in uids:
+            uids.append(item.UID())
+        uidString = "'%s'" % "', '".join(uids)
+
+        sqlStr = """SELECT *
+                    FROM class_scheduling
+                    WHERE uid in ({})""".format(uidString)
+        sqlResult = sqlInstance.execSql(sqlStr)
+
+        result = {}
+        for item in sqlResult:
+            if item['uid'] not in result:
+                hours = api.content.find(UID=item['uid'])[0].getObject().hours
+                result[item['uid']] = [hours, 0]
+
+            if item['end'] and item['start']:
+                result[item['uid']][1] += float( (item['end']-item['start']).seconds ) / 3600
+                result[item['uid']].append(item['id'])
+        return json.dumps(result)
+
+
+
+#0:符合, 1:不足
+#{ 'b053b55c5ec049ca8d3d3f9a4f762c30': (4,3, 2,4,12,22),   /* [所需時數, 累加時數, id....] */
+#  'b053b55c5ec049ca8d3d3f9a4f762c30': (3,0, 2,4,12,22),
+#}
+
     def __call__(self):
         request = self.request
         uid = request.form.get('uid')
+
+        # Check HOurs
+        if request.form.has_key('checkhours'):
+            return self.checkHours()
 
         # 新增一列
         if request.form.has_key('addrow'):
@@ -395,8 +465,8 @@ class ClassScheduling(BasicBrowserView):
 
             # 檢查時數
             fitHours = self.checkFitHours()
-            if fitHours == 2: #超時
-                return 'overhours'
+            if fitHours == 2: # 超時
+                return _(u'Over Hours')
 
             if uid.isdigit():
                 result = self.updateClassScheduling()
@@ -527,13 +597,21 @@ class NotOnTime(BasicBrowserView):
     template_add = ViewPageTemplateFile("template/not_on_time_add.pt")
     template_list = ViewPageTemplateFile("template/not_on_time_list.pt")
 
-    def getSubjects(self):
-        # TODO: 要配合排課，只捉目前有效的課程(或一周內的課程)
-        return api.content.find(Type='Subject')[0:10]
+    def getSubjects(self, uid):
+
+        teachSubjects = api.content.find(UID=uid)[0].getObject().teachSubjects
+        result = []
+        for item in teachSubjects:
+            obj = item.to_object
+            course = obj.getParentNode()
+            uid = obj.UID()
+            result.append([uid, str('%s-%s') % (course.title.encode('utf-8'), obj.title.encode('utf-8'))])
+
+        return json.dumps(result)
 
 
     def getTeachers(self):
-        return api.content.find(Type='Teacher')
+        return api.content.find(portal_type='Teacher')
 
 
     def getNotOnTimeStatus(self):
@@ -591,6 +669,9 @@ class NotOnTime(BasicBrowserView):
 
     def __call__(self):
         request = self.request
+
+        if request.form.has_key('getSubject'):
+            return self.getSubjects(request.form.get('uid'))
 
         if request.form.has_key('list'):
             return self.template_list()
