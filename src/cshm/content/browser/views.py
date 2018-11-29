@@ -179,6 +179,28 @@ class CreateClass(BasicBrowserView):
                 api.content.move(source=item, target=container)
 
 
+class ClassroomOverview(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/classroom_overview.pt")
+
+    def getScheduling(self, centerName):
+        request = self.request
+        date = request.form.get('date', DateTime().strftime('%Y-%m-%d'))
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM class_scheduling
+                    WHERE start LIKE '{}%%' AND classroom LIKE '{}%%'
+                 """.format(date, centerName)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def __call__(self):
+        context = self.context
+        request = self.request
+
+        return self.template()
+
+
 class ClassScheduling(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/class_scheduling.pt")

@@ -856,6 +856,16 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 教室表 -->
+  <browser:page
+      name="classroom_overview"
+      for="*"
+      class=".views.ClassroomOverview"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"
