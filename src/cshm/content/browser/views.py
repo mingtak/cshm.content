@@ -151,6 +151,17 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+# 報價請求(企業內訓)
+class QuoteRequest(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/quote_request.pt")
+
+    def __call__(self):
+        context = self.context
+        request = self.request
+        return self.template()
+
+
 # 開課
 class CreateClass(BasicBrowserView):
 
