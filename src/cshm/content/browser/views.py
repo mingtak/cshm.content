@@ -214,6 +214,7 @@ class ClassScheduling(BasicBrowserView):
         return sqlInstance.execSql(sqlStr)
 
     def addClassScheduling(self):
+        context = self.context
         request = self.request
         uid = request.form.get('uid')
         date = request.form.get('date')
@@ -222,13 +223,13 @@ class ClassScheduling(BasicBrowserView):
         teacher_fee = request.form.get('teacher_fee')
         traffic_fee = request.form.get('traffic_fee')
         classroom = request.form.get('classroom')
-        classroomId = api.content.find(UID=classroom)[0].id
-        # traning center
-        trainingCenter = api.content.find(UID=classroom)[0].getObject().getParentNode().title
+        if classroom in ['other', 'special']:
+            classroomId = classroom
+        else:
+            classroomId = api.content.find(UID=classroom)[0].id
+            # traning center
+        trainingCenter = context.trainingCenter.to_object.title
         classroomName = '%s-%s' % (trainingCenter, classroomId)
-
-#        trainingCenter = api.content.find(UID=uid)[0].getObject().trainingCenter.to_object.title
-#        classroomName = '%s-%s' % (trainingCenter, classroomId)
 
         if not (date and start and end):
             return _(u'Data lost, please fill all field')
@@ -258,6 +259,7 @@ class ClassScheduling(BasicBrowserView):
 
     def updateClassScheduling(self):
         sqlInstance = SqlObj()
+        context = self.context
         request = self.request
         id = request.form.get('uid')
         date = request.form.get('date')
@@ -265,14 +267,15 @@ class ClassScheduling(BasicBrowserView):
         end = request.form.get('end')
         teacher_fee = request.form.get('teacher_fee')
         traffic_fee = request.form.get('traffic_fee')
+
         classroom = request.form.get('classroom')
-        classroomId = api.content.find(UID=classroom)[0].id
+        if classroom in ['other', 'special']:
+            classroomId = classroom
+        else:
+            classroomId = api.content.find(UID=classroom)[0].id
+
         # traning center
-
-#        sqlStr = """SELECT uid FROM class_scheduling WHERE id={}""".format(id)
-#        result = sqlInstance.execSql(sqlStr)[0]['uid']
-
-        trainingCenter = api.content.find(UID=classroom)[0].getObject().getParentNode().title
+        trainingCenter = context.trainingCenter.to_object.title
         classroomName = '%s-%s' % (trainingCenter, classroomId)
 
         if not (date and start and end):
@@ -307,9 +310,12 @@ class ClassScheduling(BasicBrowserView):
         end = request.form.get('end')
 
         classroom = request.form.get('classroom')
-        classroomId = api.content.find(UID=classroom)[0].id
+        if classroom in ['other', 'special']:
+            classroomId = classroom
+        else:
+            classroomId = api.content.find(UID=classroom)[0].id
 
-        trainingCenter = api.content.find(UID=classroom)[0].getObject().getParentNode().title
+        trainingCenter = context.trainingCenter.to_object.title
         classroomName = '%s-%s' % (trainingCenter, classroomId)
 
         if not (date and start and end):
@@ -325,14 +331,15 @@ class ClassScheduling(BasicBrowserView):
 
         sqlInstance = SqlObj()
         # 查詢教室時間衝突
-        sqlStr = """SELECT id, uid, start, subject_name
-                    FROM `class_scheduling`
-                    WHERE classroom='{}'
-                      AND ( (end > '{}') AND (start < '{}') )
-                      AND id != {}""".format(classroomName, start, end, id)
-        result = sqlInstance.execSql(sqlStr)
-        if result:
-            return sqlInstance.execSql(sqlStr)
+        if classroom not in ['other', 'special']:
+            sqlStr = """SELECT id, uid, start, subject_name
+                        FROM `class_scheduling`
+                        WHERE classroom='{}'
+                          AND ( (end > '{}') AND (start < '{}') )
+                          AND id != {}""".format(classroomName, start, end, id)
+            result = sqlInstance.execSql(sqlStr)
+            if result:
+                return sqlInstance.execSql(sqlStr)
 
         # 同課程時間衝突
         uids = []

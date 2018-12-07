@@ -866,6 +866,15 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 報價請求(企業內訓) -->
+  <browser:page
+      name="quote_request"
+      for="*"
+      class=".views.QuoteRequest"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="zope2.View"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"
