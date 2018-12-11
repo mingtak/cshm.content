@@ -159,6 +159,10 @@ class QuoteRequest(BasicBrowserView):
     def __call__(self):
         context = self.context
         request = self.request
+
+        if request.form.has_key('course-name'):
+            import pdb; pdb.set_trace()
+
         return self.template()
 
 
