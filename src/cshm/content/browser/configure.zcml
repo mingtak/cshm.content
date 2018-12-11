@@ -875,6 +875,15 @@
       permission="zope2.View"
       />
 
+  <!-- 報價列表 -->
+  <browser:page
+      name="quotation_list"
+      for="*"
+      class=".views.QuotationList"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"

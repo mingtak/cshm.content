@@ -151,17 +151,80 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+
+# 報價列表
+class QuotationList(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/quotation_list.pt")
+
+    def getStatus(self, status):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_status` WHERE id = {}""".format(status)
+        return sqlInstance.execSql(sqlStr)
+
+    def getList(self):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_record` WHERE 1 ORDER BY id DESC"""
+        return sqlInstance.execSql(sqlStr)
+
+    def __call__(self):
+
+        return self.template()
+
+
 # 報價請求(企業內訓)
 class QuoteRequest(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/quote_request.pt")
+
+    def addQuoteRequestByUID(self, courseUID):
+        context = self.context
+        request = self.request
+
+        people_number = request.form.get('people-number')
+        fax = request.form.get('fax')
+        tax_no = request.form.get('tax-no')
+        address = request.form.get('address')
+        # use courseUID
+        course_uid = courseUID
+#        import pdb; pdb.set_trace()
+        course_name = api.content.find(UID=course_uid)[0].Title
+        contact = request.form.get('contact')
+        cell = request.form.get('cell')
+        phone = request.form.get('phone')
+        training_center = request.form.get('training-center')
+        company_name = request.form.get('company-name')
+        email = request.form.get('email')
+        capital = request.form.get('capital')
+        owner = request.form.get('owner')
+        main_product = request.form.get('main-product')
+        staff_amount = request.form.get('staff-amount')
+        dep_title = request.form.get('dep_title')
+        turnover = request.form.get('turnover')
+        created = DateTime().strftime('%Y-%m-%d')
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `quote_record`
+                        (`company_name`, `owner`, `address`, `tax_no`, `people_number`,
+                         `main_product`, `capital`, `staff_amount`, `turnover`, `phone`, `fax`,
+                         `contact`, `cell`, `email`, `dep_title`, `training_center`, `course_name`, `course_uid`, `created`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                 """.format(company_name, owner, address, tax_no, people_number, main_product,
+                            capital, staff_amount, turnover, phone, fax, contact, cell, email,
+                            dep_title, training_center, course_name, course_uid, created)
+        return sqlInstance.execSql(sqlStr)
+
 
     def __call__(self):
         context = self.context
         request = self.request
 
         if request.form.has_key('course-name'):
-            import pdb; pdb.set_trace()
+            for course in request.form.get('course-name'):
+#                import pdb; pdb.set_trace()
+                self.addQuoteRequestByUID(course)
+#            import pdb; pdb.set_trace()
+            api.portal.show_message(message=_('Send Quote Request Finish!'), request=request)
 
         return self.template()
 
