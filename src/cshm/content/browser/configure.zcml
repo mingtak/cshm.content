@@ -883,6 +883,28 @@
       layer="cshm.content.interfaces.ICshmContentLayer"
       permission="cmf.ManagePortal"
       />
+  <!-- 權限未定 -->
+
+  <!-- 報價管理 -->
+  <browser:page
+      name="quotation_manage"
+      for="*"
+      class=".views.QuotationManage"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
+  <!-- 報價管理 -->
+  <browser:page
+      name="create_quotation"
+      for="*"
+      class=".views.CreateQuotation"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
 
   <!-- configlet -->
   <browser:page

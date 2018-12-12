@@ -41,7 +41,7 @@ class ICourse(model.Schema):
         required=False,
         value_type=RelationChoice(
             title=_(u"Course"),
-            source=CatalogSource(Type='Course', path='/cshm/resource/corese_template'),
+            source=CatalogSource(Type='Course', path='/cshm/resource/course_template'),
         )
     )
 

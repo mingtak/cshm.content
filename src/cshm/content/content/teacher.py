@@ -218,7 +218,7 @@ class ITeacher(model.Schema):
         required=False,
         value_type=RelationChoice(
             title=_(u"Subject"),
-            source=CatalogSource(Type='Subject', path='/cshm/resource/corese_template'),
+            source=CatalogSource(Type='Subject', path='/cshm/resource/course_template'),
         )
     )
 

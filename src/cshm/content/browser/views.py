@@ -151,6 +151,84 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+# 建立報價單
+class CreateQuotation(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/create_quotation.pt")
+
+    def __call__(self):
+
+        return self.template()
+
+
+
+# 報價管理
+class QuotationManage(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/quotation_manage.pt")
+
+    def getStatus(self, status):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_status` WHERE id = {}""".format(status)
+        return sqlInstance.execSql(sqlStr)
+
+    def updateQuotation(self):
+        context = self.context
+        request = self.request
+
+        id = request.form.get('id')
+        people_number = request.form.get('people_number')
+        fax = request.form.get('fax')
+        tax_no = request.form.get('tax_no')
+        address = request.form.get('address')
+        # use courseUID
+        course_uid = request.form.get('course_uid')
+        course_name = api.content.find(UID=course_uid)[0].Title
+        contact = request.form.get('contact')
+        cell = request.form.get('cell')
+        phone = request.form.get('phone')
+        training_center = request.form.get('training_center')
+        company_name = request.form.get('company_name')
+        email = request.form.get('email')
+        capital = request.form.get('capital')
+        owner = request.form.get('owner')
+        main_product = request.form.get('main_product')
+        staff_amount = request.form.get('staff_amount')
+        dep_title = request.form.get('dep_title')
+        turnover = request.form.get('turnover')
+        contactLog = request.form.get('contactLog')
+        status = request.form.get('status')
+
+        sqlInstance = SqlObj()
+        sqlStr = """UPDATE `quote_record`
+                    SET `company_name`='{}', `owner`='{}', `address`='{}', `tax_no`='{}',
+                        `main_product`='{}', `capital`='{}', `staff_amount`='{}', `turnover`='{}',
+                        `phone`='{}', `fax`='{}', `contact`='{}', `cell`='{}', `email`='{}',
+                        `dep_title`='{}', `training_center`='{}', `course_name`='{}', `course_uid`='{}',
+                        `people_number`='{}', `contactLog`='{}', `status`={} WHERE id={}
+                 """.format(company_name, owner, address, tax_no, main_product, capital, staff_amount, turnover,
+                            phone, fax, contact, cell, email, dep_title, training_center, course_name, course_uid,
+                            people_number, contactLog, status, id)
+
+        return sqlInstance.execSql(sqlStr)
+
+    def __call__(self):
+        request = self.request
+        portal = api.portal.get()
+
+        if not request.form.has_key('id'):
+            request.response.redirect('%s/quotation_list' % portal.absolute_url())
+            return
+
+        if request.form.has_key('update'):
+            self.updateQuotation()
+
+        id = request.form.get('id')
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_record` WHERE id = {}""".format(id)
+        self.result = sqlInstance.execSql(sqlStr)
+        return self.template()
+
 
 # 報價列表
 class QuotationList(BasicBrowserView):
