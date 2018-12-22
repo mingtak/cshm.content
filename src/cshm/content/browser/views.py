@@ -156,8 +156,6 @@ class MakeUpDetail(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/make_up_detail.pt")
 
-    # TODO 選定要補課的期別，將報名資料寫入 reg_course, 並設定補課狀態及候補
-
     def addMakeUpDetail(self, subject, id, origin_reg_id):
         sqlInstance = SqlObj()
         sqlStr = """INSERT INTO `make_up_detail`(`make_up_id`, `origin_reg_id`, `subject_name`) VALUES ({}, {}, '{}')
@@ -172,11 +170,41 @@ class MakeUpDetail(BasicBrowserView):
         sqlInstance.execSql(sqlStr)
 
 
-    def regMakeUp(self, uid):
+    def regMakeUp(self, uid, origin_reg_id):
         sqlInstance = SqlObj()
-        #sqlStr = """DELETE FROM `make_up_detail` WHERE id={}
-        #         """.format(make_up_detail_id)
+        sqlStr ="""
+                INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`,
+                    `company_name`, `industry`, `invoice_title`, `company_address`, `priv_email`,
+                    `phone`, `birthday`, `address`, `job_title`, `studId`, `uid`, `path`, `isAlt`,
+                    `seatNo`, `contactLog`, `training_status`, `isReserve`, `invoice_tax_no`,
+                    `education_id`, `edu_school`, `edu_major`, `edu_date`, `city`, `zip`, `home_city`,
+                    `home_zip`, `home_address`, `company_city`, `company_zip`, `company_undertaker`,
+                    `company_undertaker_job`, `company_undertaker_phone`, `retraining_from`,
+                    `on_training`, `is_print`, `reTrainingCat`, `reTrainingCode`, `reTrainingHour`,
+                    `training_hour`, `license_unit`, `license_date`, `license_code`, `grade1`, `grade2`, `apply_time`)
+                SELECT `cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`, `industry`,
+                    `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`,
+                    `job_title`, `studId`, `uid`, `path`, `isAlt`, `seatNo`, `contactLog`, `training_status`,
+                    `isReserve`, `invoice_tax_no`, `education_id`, `edu_school`, `edu_major`, `edu_date`,
+                    `city`, `zip`, `home_city`, `home_zip`, `home_address`, `company_city`, `company_zip`,
+                    `company_undertaker`, `company_undertaker_job`, `company_undertaker_phone`, `retraining_from`,
+                    `on_training`, `is_print`, `reTrainingCat`, `reTrainingCode`, `reTrainingHour`, `training_hour`,
+                    `license_unit`, `license_date`, `license_code`, `grade1`, `grade2`, `apply_time`
+                FROM `reg_course`
+                WHERE id = {};""".format(origin_reg_id)
         sqlInstance.execSql(sqlStr)
+
+        sqlStr = """SELECT MAX(id) AS 'id' FROM reg_course;"""
+        result = sqlInstance.execSql(sqlStr)
+        insertId = result[0]['id']
+
+        path = api.content.find(UID=uid)[0].getPath()
+        sqlStr = """UPDATE `reg_course`
+                    SET `uid`='{}',`isAlt`=99,`path`='{}',`seatNo`=null, training_status=3
+                    WHERE `id`={}
+                 """.format(uid, path, insertId)
+        sqlInstance.execSql(sqlStr)
+        return
 
 
     def getSubjects(self, title):
@@ -235,7 +263,9 @@ class MakeUpDetail(BasicBrowserView):
             return
         elif request.form.has_key('reg_make_up'):
             uid = request.form.get('uid')
-            self.regMakeUp(uid)
+            origin_reg_id = request.form.get('origin_reg_id')
+            self.regMakeUp(uid, origin_reg_id)
+            api.portal.show_message(message='Set Make up is Finish!', request=request)
             request.response.redirect('%s?id=%s' % (request.URL, id))
             return
 
