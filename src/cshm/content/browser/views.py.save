@@ -1,0 +1,785 @@
+# -*- coding: utf-8 -*-
+from cshm.content import _
+from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone import api
+from Products.CMFPlone.utils import safe_unicode
+from Products.CMFPlone.PloneBatch import Batch
+from Acquisition import aq_inner
+from plone.app.contenttypes.browser.folder import FolderView
+
+from plone.app.contentlisting.interfaces import IContentListing
+from Products.CMFCore.utils import getToolByName
+
+from mingtak.ECBase.browser.views import SqlObj
+from docxtpl import DocxTemplate, Listing
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
+from DateTime import DateTime
+
+import xlwt, xlrd
+from xlutils.copy import copy
+import base64
+import requests
+import re
+import json
+import logging
+import datetime
+import csv
+from StringIO import StringIO
+
+logger = logging.getLogger("cshm.content")
+
+
+class BasicBrowserView(BrowserView):
+    """ 通用method """
+    def twYear2Ad(self, twStr):
+        """ 民國date轉西元 """
+        year, month, day = twStr.split('/')
+        year = int(year) + 1911
+        return '%s/%s/%s' % (str(year), month, day)
+
+    def adYear2Tw(self, adStr):
+        """ 西元date轉民國 """
+        year, month, day = adStr.split('/')
+        year = int(year) - 1911
+        return '%s/%s/%s' % (str(year), month, day)
+
+    def sendMessage(self, cell, message):
+        url = 'https://oms.every8d.com/API21/HTTP/sendSMS.ashx'
+        requests.get('%s?UID=0939586835&PWD=zqud&SB=簡訊測試&MSG=%s&DEST=%s&ST=' % (url, message, cell))
+
+    def getOnTraining(self):
+        """ 取得 on_training_status 選項資訊 """
+        sqlStr = "SELECT * FROM `on_training_status` WHERE 1"
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+    def getRegCourse(self, id):
+        """ 取得報名表詳細資訊 """
+        uid = self.context.UID()
+
+        sqlStr = "SELECT * FROM `reg_course` WHERE uid = '%s' and id = %s" % (uid, id)
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]
+
+    def updateContactLog(self, regCourse, text):
+        """ 更新聯絡記錄 """
+        currentName = self.currentName()
+        if regCourse['contactLog']:
+            logData = '%s\n%s / %s / %s' % \
+                (regCourse['contactLog'], currentName, DateTime().strftime('%Y-%m-%d %H:%M'), safe_unicode(text))
+        else:
+            logData = '%s / %s / %s' % (currentName, DateTime().strftime('%Y-%m-%d %H:%M'), safe_unicode(text))
+
+        sqlInstance = SqlObj()
+        sqlStr = "update reg_course set contactLog = '%s' where id = %s" % (logData, regCourse['id'])
+        sqlInstance.execSql(sqlStr)
+
+    def currentName(self):
+        """ 取得登入者名稱 """
+        current = api.user.get_current()
+        return current.getProperty('fullname')
+
+    def getTrainingStatusCode(self):
+        """ 取得受訓狀態碼 """
+        sqlStr = """SELECT * FROM training_status_code WHERE 1 ORDER BY id"""
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+    def getCityList(self):
+        """ 取得縣市列表 """
+        return api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.citySorted')
+
+    def getDistList(self):
+        """ 取得鄉鎮市區列表及區碼 """
+        return api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.distList')
+
+    def isFrontend(self):
+        """ 檢查是否前端頁面 """
+        isFrontendView = api.content.get_view(name='is_frontend', context=self.portal, request=self.request)
+        return isFrontendView(self)
+
+    def checkCell(self, value):
+        """ 檢查手機號碼是否09開頭 """
+        if value.isdigit() and value.startswith('09'):
+            return True
+        else:
+            return False
+
+    def checkEmail(self, value):
+        """ 檢查email格式 """
+        pattern = re.compile(r"[^@\s]+@[^@\s]+\.[a-zA-Z0-9]+$")
+        try:
+            if bool(re.match(pattern, value)):
+                return True
+            else:
+                return False
+        except:
+            return False
+
+    def getEducation(self):
+        """ 取得學歷代碼 """
+        sqlStr = "SELECT * FROM `education_code` WHERE 1"
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+    def insertOldStudent(self, form):
+        """ 新增舊學員資料 """
+        portal = api.portal.get()
+        context = self.context
+        request = self.request
+
+        sqlStr = "INSERT INTO `old_student`(`studId`, `name`, `birthday`, `phone`, `cellphone`, `fax`, `priv_email`, `priv_email2`, `address`) \
+                  VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
+                  ( form.get('studId').upper(), form.get('name'), form.get('birthday'), form.get('phone'), form.get('cellphone'),
+                    form.get('fax'), form.get('priv_email'), form.get('priv_email2'), form.get('address') )
+        sqlInstance = SqlObj()
+        try:
+            sqlInstance.execSql(sqlStr)
+        except:pass
+
+    def getUidCourseData(self, uid):
+        """抓符合UID的reg_course資料"""
+        sqlStr = """SELECT reg_course.*,training_status_code.status,education_code.degree FROM reg_course,training_status_code,
+                    education_code WHERE uid = '{}' and reg_course.training_status = training_status_code.id AND
+                    reg_course.education_id = education_code.id
+                    """.format(uid)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+
+# 補課Detail
+class MakeUpDetail(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/make_up_detail.pt")
+
+    # TODO 選定要補課的期別，將報名資料寫入 reg_course, 並設定補課狀態及候補
+    def __call__(self):
+
+        request = self.request
+        sqlInstance = SqlObj()
+
+        id = request.form.get('id')
+        sqlStr = """SELECT * FROM wait_make_up WHERE id = {}""".format(id)
+        waitMakeUpData = sqlInstance.execSql(sqlStr)[0]
+
+        
+        originRegId = waitMakeUpData
+
+        waitMakeUpData = 
+
+
+
+        return self.template()
+
+
+# 補課清單
+class MakeUpList(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/make_up_list.pt")
+
+    def get_course(self, uid):
+        return api.content.find(UID=uid)
+
+    def get_training_status(self, id):
+        sqlStr = """SELECT * FROM `training_status_code` WHERE id = {}""".format(id)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+    def get_reg_data(self, origin_reg_id):
+        sqlStr = """SELECT * FROM `reg_course` WHERE id = {}""".format(origin_reg_id)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+    def __call__(self):
+
+        context = self.context
+        request = self.request
+
+        sqlStr = """SELECT * FROM `wait_make_up` WHERE 1"""
+        sqlInstance = SqlObj()
+        self.result = sqlInstance.execSql(sqlStr)
+
+        return self.template()
+
+
+# 建立報價單
+class CreateQuotation(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/create_quotation.pt")
+
+    def getQuote(self):
+        request = self.request
+
+        id = request.form.get('id')
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_record` WHERE id = {}""".format(id)
+        return sqlInstance.execSql(sqlStr)
+
+    def __call__(self):
+
+        self.quote = self.getQuote()
+
+        courseUID = self.quote[0]['course_uid']
+        self.course = api.content.find(UID=courseUID)
+
+        return self.template()
+
+
+
+# 報價管理
+class QuotationManage(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/quotation_manage.pt")
+
+    def getStatus(self, status):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_status` WHERE id = {}""".format(status)
+        return sqlInstance.execSql(sqlStr)
+
+    def updateQuotation(self):
+        context = self.context
+        request = self.request
+
+        id = request.form.get('id')
+        people_number = request.form.get('people_number')
+        fax = request.form.get('fax')
+        tax_no = request.form.get('tax_no')
+        address = request.form.get('address')
+        # use courseUID
+        course_uid = request.form.get('course_uid')
+        course_name = api.content.find(UID=course_uid)[0].Title
+        contact = request.form.get('contact')
+        cell = request.form.get('cell')
+        phone = request.form.get('phone')
+        training_center = request.form.get('training_center')
+        company_name = request.form.get('company_name')
+        email = request.form.get('email')
+        capital = request.form.get('capital')
+        owner = request.form.get('owner')
+        main_product = request.form.get('main_product')
+        staff_amount = request.form.get('staff_amount')
+        dep_title = request.form.get('dep_title')
+        turnover = request.form.get('turnover')
+        contactLog = request.form.get('contactLog')
+        status = request.form.get('status')
+
+        sqlInstance = SqlObj()
+        sqlStr = """UPDATE `quote_record`
+                    SET `company_name`='{}', `owner`='{}', `address`='{}', `tax_no`='{}',
+                        `main_product`='{}', `capital`='{}', `staff_amount`='{}', `turnover`='{}',
+                        `phone`='{}', `fax`='{}', `contact`='{}', `cell`='{}', `email`='{}',
+                        `dep_title`='{}', `training_center`='{}', `course_name`='{}', `course_uid`='{}',
+                        `people_number`='{}', `contactLog`='{}', `status`={} WHERE id={}
+                 """.format(company_name, owner, address, tax_no, main_product, capital, staff_amount, turnover,
+                            phone, fax, contact, cell, email, dep_title, training_center, course_name, course_uid,
+                            people_number, contactLog, status, id)
+
+        return sqlInstance.execSql(sqlStr)
+
+    def __call__(self):
+        request = self.request
+        portal = api.portal.get()
+
+        if not request.form.has_key('id'):
+            request.response.redirect('%s/quotation_list' % portal.absolute_url())
+            return
+
+        if request.form.has_key('update'):
+            self.updateQuotation()
+
+        id = request.form.get('id')
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_record` WHERE id = {}""".format(id)
+        self.result = sqlInstance.execSql(sqlStr)
+        return self.template()
+
+
+# 報價列表
+class QuotationList(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/quotation_list.pt")
+
+    def getStatus(self, status):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_status` WHERE id = {}""".format(status)
+        return sqlInstance.execSql(sqlStr)
+
+    def getList(self):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `quote_record` WHERE 1 ORDER BY id DESC"""
+        return sqlInstance.execSql(sqlStr)
+
+    def __call__(self):
+
+        return self.template()
+
+
+# 報價請求(企業內訓)
+class QuoteRequest(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/quote_request.pt")
+
+    def addQuoteRequestByUID(self, courseUID):
+        context = self.context
+        request = self.request
+
+        people_number = request.form.get('people-number')
+        fax = request.form.get('fax')
+        tax_no = request.form.get('tax-no')
+        address = request.form.get('address')
+        # use courseUID
+        course_uid = courseUID
+#        import pdb; pdb.set_trace()
+        course_name = api.content.find(UID=course_uid)[0].Title
+        contact = request.form.get('contact')
+        cell = request.form.get('cell')
+        phone = request.form.get('phone')
+        training_center = request.form.get('training-center')
+        company_name = request.form.get('company-name')
+        email = request.form.get('email')
+        capital = request.form.get('capital')
+        owner = request.form.get('owner')
+        main_product = request.form.get('main-product')
+        staff_amount = request.form.get('staff-amount')
+        dep_title = request.form.get('dep_title')
+        turnover = request.form.get('turnover')
+        created = DateTime().strftime('%Y-%m-%d')
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `quote_record`
+                        (`company_name`, `owner`, `address`, `tax_no`, `people_number`,
+                         `main_product`, `capital`, `staff_amount`, `turnover`, `phone`, `fax`,
+                         `contact`, `cell`, `email`, `dep_title`, `training_center`, `course_name`, `course_uid`, `created`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                 """.format(company_name, owner, address, tax_no, people_number, main_product,
+                            capital, staff_amount, turnover, phone, fax, contact, cell, email,
+                            dep_title, training_center, course_name, course_uid, created)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def __call__(self):
+        context = self.context
+        request = self.request
+
+        if request.form.has_key('course-name'):
+            for course in request.form.get('course-name'):
+#                import pdb; pdb.set_trace()
+                self.addQuoteRequestByUID(course)
+#            import pdb; pdb.set_trace()
+            api.portal.show_message(message=_('Send Quote Request Finish!'), request=request)
+
+        return self.template()
+
+
+# 開課
+class CreateClass(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/create_class.pt")
+
+    def __call__(self):
+        request = self.request
+        portal = api.portal.get()
+
+        courseUID = request.form.get('course')
+        if not courseUID:
+            return self.template()
+
+        obj = api.content.find(UID=courseUID)[0].getObject() # 課程模版
+        courseId = obj.id
+        if portal['mana_course'].has_key(courseId):
+            container = api.content.create(type='Echelon', title='New Course', container=portal['mana_course'][courseId])
+            childNodes = obj.getChildNodes()
+            for item in childNodes:
+                api.content.copy(source=item, target=container)
+        else:
+            newCourse = api.content.copy(source=obj, target=portal['mana_course'])
+            childNodes = newCourse.getChildNodes()
+            container = api.content.create(type='Echelon', title='New Course', container=newCourse)
+            for item in childNodes:
+                api.content.move(source=item, target=container)
+
+
+class ClassroomOverview(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/classroom_overview.pt")
+
+    def getScheduling(self, centerName):
+        request = self.request
+        date = request.form.get('date', DateTime().strftime('%Y-%m-%d'))
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM class_scheduling
+                    WHERE start LIKE '{}%%' AND classroom LIKE '{}%%'
+                 """.format(date, centerName)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def __call__(self):
+        context = self.context
+        request = self.request
+
+        return self.template()
+
+
+class ClassScheduling(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/class_scheduling.pt")
+
+    def alreadyScheduling(self, uid):
+        sqlStr = """SELECT *
+                    FROM class_scheduling
+                    WHERE uid = '{}'
+                    """.format(uid)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+    def addClassScheduling(self):
+        context = self.context
+        request = self.request
+        uid = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+        teacher_fee = request.form.get('teacher_fee')
+        traffic_fee = request.form.get('traffic_fee')
+        classroom = request.form.get('classroom')
+        if classroom in ['other', 'special']:
+            classroomId = classroom
+        else:
+            classroomId = api.content.find(UID=classroom)[0].id
+            # traning center
+        trainingCenter = context.trainingCenter.to_object.title
+        classroomName = '%s-%s' % (trainingCenter, classroomId)
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        obj = api.content.find(UID=uid)[0].getObject()
+        subject_code = obj.id
+        subject_name = obj.title
+        teacher = obj.teacher
+        if teacher:
+            teacher_name = teacher.to_object.title
+        hours = obj.hours
+
+        date = self.twYear2Ad(date)
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`, `start`, `end`, `classroom`, `teacher_fee`, `traffic_fee`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', {}, {})
+                 """.format(uid, subject_code, subject_name,
+                            '%s %s:%s' % (date, start[0:2], start[2:]),
+                            '%s %s:%s' % (date, end[0:2], end[2:]), classroomName, teacher_fee, traffic_fee)
+        try:
+            sqlInstance.execSql(sqlStr)
+            return _(u'Class Scheduling Success.')
+        except:
+            return _(u'Fail, Please check data format!!')
+
+
+    def updateClassScheduling(self):
+        sqlInstance = SqlObj()
+        context = self.context
+        request = self.request
+        id = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+        teacher_fee = request.form.get('teacher_fee')
+        traffic_fee = request.form.get('traffic_fee')
+
+        classroom = request.form.get('classroom')
+        if classroom in ['other', 'special']:
+            classroomId = classroom
+        else:
+            classroomId = api.content.find(UID=classroom)[0].id
+
+        # traning center
+        trainingCenter = context.trainingCenter.to_object.title
+        classroomName = '%s-%s' % (trainingCenter, classroomId)
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        date = self.twYear2Ad(date)
+
+        sqlStr = """UPDATE `class_scheduling`
+                  SET `start`='{}',
+                      `end`='{}',
+                      `classroom`='{}',
+                      `teacher_fee`={},
+                      `traffic_fee`={}
+                  WHERE id={}""".format('%s %s:%s' % (date, start[0:2], start[2:]),
+                                        '%s %s:%s' % (date, end[0:2], end[2:]),
+                                        classroomName, teacher_fee, traffic_fee, id)
+        try:
+            sqlInstance.execSql(sqlStr)
+            return _(u'Class Scheduling Success.')
+        except:
+            return _(u'Fail, Please check data format!!')
+
+
+    def checkOverTime(self):
+        """ 檢查是否有時間重疊 """
+        context = self.context
+        request = self.request
+
+        id = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        classroom = request.form.get('classroom')
+        if classroom in ['other', 'special']:
+            classroomId = classroom
+        else:
+            classroomId = api.content.find(UID=classroom)[0].id
+
+        trainingCenter = context.trainingCenter.to_object.title
+        classroomName = '%s-%s' % (trainingCenter, classroomId)
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        date = self.twYear2Ad(date)
+
+        start = '%s %s:%s' % (date, start[0:2], start[2:])
+        end = '%s %s:%s' % (date, end[0:2], end[2:])
+
+        if not id.isdigit():
+            id = '0'
+
+        sqlInstance = SqlObj()
+        # 查詢教室時間衝突
+        if classroom not in ['other', 'special']:
+            sqlStr = """SELECT id, uid, start, subject_name
+                        FROM `class_scheduling`
+                        WHERE classroom='{}'
+                          AND ( (end > '{}') AND (start < '{}') )
+                          AND id != {}""".format(classroomName, start, end, id)
+            result = sqlInstance.execSql(sqlStr)
+            if result:
+                return sqlInstance.execSql(sqlStr)
+
+        # 同課程時間衝突
+        uids = []
+        for item in context.getChildNodes():
+            uids.append(item.UID())
+        uidString = "'%s'" % "', '".join(uids)
+
+        sqlStr = """SELECT id, uid, start, subject_name
+                    FROM class_scheduling
+                    WHERE uid in ({})
+                      AND ( (end > '{}') AND (start < '{}') )
+                      AND id != {}""".format(uidString, start, end, id)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def checkFitHours(self):
+        """ 檢查是否超時, return 0:剛好符合, 1:不足時數, 2:超過時數 """
+        request = self.request
+        sqlInstance = SqlObj()
+
+        id = request.form.get('uid')
+        date = request.form.get('date')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        if not (date and start and end):
+            return _(u'Data lost, please fill all field')
+
+        date = self.twYear2Ad(date)
+
+        # 確認uid
+        if id.isdigit():
+            sqlStr = """SELECT uid
+                        FROM class_scheduling
+                        WHERE id = '{}'""".format(id)
+            result = sqlInstance.execSql(sqlStr)
+            uid = result[0]['uid']
+        else:
+            uid = id
+
+        # check ignoreSchedule
+        if api.content.find(UID=uid)[0].getObject().ignoreSchedule:
+            return
+
+        # 開始時間
+        s_year, s_month, s_day = date.split('/')
+        s_hour = start[0:2]
+        s_minute = start[2:]
+
+        # 結束時間
+        e_year, e_month, e_day = date.split('/')
+        e_hour = end[0:2]
+        e_minute = end[2:]
+
+        timedelta = datetime.datetime(
+            int(e_year), int(e_month), int(e_day), int(e_hour), int(e_minute)) - datetime.datetime(int(s_year), int(s_month), int(s_day), int(s_hour), int(s_minute)
+        )
+        timedeltaSec = timedelta.seconds
+
+        # 計算現有時數
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id, uid, start, end
+                    FROM class_scheduling
+                    WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+
+        totalHours = 0
+        for item in result:
+            if int(id) == item['id']:
+                continue
+            if item['end'] and item['start']:
+                totalHours += float( (item['end']-item['start']).seconds ) / 3600
+
+        totalHours += float(timedeltaSec) / 3600
+
+        hours = api.content.find(UID=uid)[0].getObject().hours
+
+        # 檢查是否超時, return 0:剛好符合, 1:不足時數, 2:超過時數
+        if totalHours == hours:
+            return 0
+        elif totalHours < hours:
+            return 1
+        else:
+            return 2
+
+
+    def deleteRow(self):
+        """ 刪除一列 """
+        request = self.request
+        uid = request.form.get('uid')
+
+        sqlInstance = SqlObj()
+        sqlStr = """DELETE FROM `class_scheduling`
+                    WHERE id={}""".format(uid)
+
+        sqlInstance.execSql(sqlStr)
+
+
+    def addRow(self):
+        """ 增加一列 """
+        request = self.request
+        uid = request.form.get('uid')
+
+        obj = api.content.find(UID=uid)[0].getObject()
+        subject_code = obj.id
+        subject_name = obj.title
+
+        sqlInstance = SqlObj()
+        sqlStr = """INSERT INTO `class_scheduling`(`uid`, `subject_code`, `subject_name`)
+                    VALUES ('{}', '{}', '{}')""".format(uid, subject_code, subject_name)
+
+        sqlInstance.execSql(sqlStr)
+
+
+    def checkHours(self):
+        context = self.context
+        request = self.request
+        sqlInstance = SqlObj()
+
+        uids = []
+        for item in context.getChildNodes():
+#            if item.UID() not in uids:
+            uids.append(item.UID())
+        uidString = "'%s'" % "', '".join(uids)
+
+        sqlStr = """SELECT *
+                    FROM class_scheduling
+                    WHERE uid in ({})""".format(uidString)
+        sqlResult = sqlInstance.execSql(sqlStr)
+
+        result = {}
+        for item in sqlResult:
+            if item['uid'] not in result:
+                obj = api.content.find(UID=item['uid'])[0].getObject()
+                ignoreSchedule = obj.ignoreSchedule
+                hours = obj.hours
+                if ignoreSchedule:
+                    continue
+                result[item['uid']] = [hours, 0]
+
+            if item['end'] and item['start']:
+                result[item['uid']][1] += float( (item['end']-item['start']).seconds ) / 3600
+                result[item['uid']].append(item['id'])
+        return json.dumps(result)
+
+
+    def download(self):
+        context = self.context
+        request = self.request
+
+        sqlInstance = SqlObj()
+        # 檢查是否可以下載
+        childNodes = context.getChildNodes()
+        for item in childNodes:
+            if item.ignoreSchedule:
+                continue
+            hours = item.hours
+            sqlStr = """SELECT start, end
+                    FROM class_scheduling
+                    WHERE uid = '{}'""".format(item.UID())
+            result = sqlInstance.execSql(sqlStr)
+
+            if not result:
+                return _(u'Download not Allowed')
+
+            totalHours = 0
+            for row in result:
+                if row['start'] is None or row['end'] is None:
+                    return _(u'Download not Allowed')
+                totalHours += float( (row['end']-row['start']).seconds ) / 3600
+
+            if totalHours != hours:
+                return _(u'Download not Allowed')
+
+        uids = []
+        for item in context.getChildNodes():
+            uids.append(item.UID())
+        uidString = "'%s'" % "', '".join(uids)
+
+        sqlStr = """SELECT *
+                    FROM class_scheduling
+                    WHERE uid in ({})""".format(uidString)
+        result = sqlInstance.execSql(sqlStr)
+
+        output = StringIO()
+        spamwriter = csv.writer(output)
+        spamwriter.writerow(['科目編號', '科目名稱', '教室', '講師', '排課', '講酬', '車馬費'])
+
+        for item in result:
+            obj = api.content.find(UID=item['uid'])[0].getObject()
+            startYear = item['start'].strftime('%Y/%m/%d')
+            endYear = item['end'].strftime('%Y/%m/%d')
+            spamwriter.writerow([item['subject_code'],
+                item['subject_name'], item['classroom'], obj.teacher.to_object.title,
+                '%s %s~%s' % (startYear, item['start'].strftime('%H%M'), item['end'].strftime('%H%M')),
+                item['teacher_fee'], item['traffic_fee'],
+            ])
+        contents = output.getvalue()
+
+        request.response.setHeader('Content-Type', 'application/csv')
+        request.response.setHeader('Content-Disposition', 'attachment; filename="course_schedule.csv"')
+
+        return output.getvalue()
+
+
+    def __call__(self):
+        request = self.request
+        uid = request.form.get('uid')
+
+        # download
+        if request.form.has_key('download'):
+            return self.download()
+
+        # Check HOurs
+        if request.form.has_key('checkhours'):
+            return self.checkHours()
+
+        # 新增一列
+        if request.form.has_key('addrow'):

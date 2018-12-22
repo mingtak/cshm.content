@@ -905,6 +905,25 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 補課清單 -->
+  <browser:page
+      name="make_up_list"
+      for="*"
+      class=".views.MakeUpList"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
+  <!-- 補課detail -->
+  <browser:page
+      name="make_up_detail"
+      for="*"
+      class=".views.MakeUpDetail"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
 
   <!-- configlet -->
   <browser:page

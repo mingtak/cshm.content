@@ -157,94 +157,21 @@ class MakeUpDetail(BasicBrowserView):
     template = ViewPageTemplateFile("template/make_up_detail.pt")
 
     # TODO 選定要補課的期別，將報名資料寫入 reg_course, 並設定補課狀態及候補
-
-    def addMakeUpDetail(self, subject, id, origin_reg_id):
-        sqlInstance = SqlObj()
-        sqlStr = """INSERT INTO `make_up_detail`(`make_up_id`, `origin_reg_id`, `subject_name`) VALUES ({}, {}, '{}')
-                 """.format(id, origin_reg_id, subject)
-        sqlInstance.execSql(sqlStr)
-
-
-    def delMakeUpDetail(self, make_up_detail_id):
-        sqlInstance = SqlObj()
-        sqlStr = """DELETE FROM `make_up_detail` WHERE id={}
-                 """.format(make_up_detail_id)
-        sqlInstance.execSql(sqlStr)
-
-
-    def regMakeUp(self, uid):
-        sqlInstance = SqlObj()
-        #sqlStr = """DELETE FROM `make_up_detail` WHERE id={}
-        #         """.format(make_up_detail_id)
-        sqlInstance.execSql(sqlStr)
-
-
-    def getSubjects(self, title):
-        # 取得同名課程的所有科目名稱
-        portal = api.portal.get()
-        brain = api.content.find(Title=title, context=portal['resource']['course_template'])
-        for item in brain:
-            if safe_unicode(title) == safe_unicode(item.Title):
-                course = item.getObject()
-                break
-        subjects = course.getChildNodes()
-        return subjects
-
-
-    def getSameNameCourse(self, title): # 取得可補課列表
-        portal = api.portal.get()
-        brain = api.content.find(Title=title, context=portal['mana_course'])
-
-        for item in brain:
-            if safe_unicode(title) == safe_unicode(item.Title):
-                course = item.getObject()
-                break
-        return course.getChildNodes() #回傳各期 TODO 要判斷可用期數
-
-
-    def getCourse(self, uid): #取得當期
-        return api.content.find(UID=uid)
-
-
-    def getMakeUpList(self):
-        # 取得補課清單
-        request = self.request
-
-        id = request.get('id')
-        sqlInstance = SqlObj()
-        sqlStr = """SELECT * FROM `make_up_detail` WHERE make_up_id = {}""".format(id)
-        return sqlInstance.execSql(sqlStr)
-
-
     def __call__(self):
 
         request = self.request
         sqlInstance = SqlObj()
 
         id = request.form.get('id')
+        sqlStr = """SELECT * FROM wait_make_up WHERE id = {}""".format(id)
+        waitMakeUpData = sqlInstance.execSql(sqlStr)[0]
 
-        if request.form.has_key('add_make_up'):
-            origin_reg_id = request.form.get('origin_reg_id')
-            self.addMakeUpDetail(request.form.get('subject'), id, origin_reg_id)
-            request.response.redirect('%s?id=%s' % (request.URL, id))
-            return
-        elif request.form.has_key('del_make_up'):
-            make_up_detail_id = request.form.get('make_up_detail_id')
-            self.delMakeUpDetail(make_up_detail_id)
-            request.response.redirect('%s?id=%s' % (request.URL, id))
-            return
-        elif request.form.has_key('reg_make_up'):
-            uid = request.form.get('uid')
-            self.regMakeUp(uid)
-            request.response.redirect('%s?id=%s' % (request.URL, id))
-            return
+        
+        originRegId = waitMakeUpData
 
-        sqlStr = """SELECT *, wait_make_up.id AS wait_make_up_id, reg_course.id AS reg_course_id
-                    FROM `wait_make_up`, `reg_course`
-                    WHERE reg_course.id = wait_make_up.origin_reg_id
-                        AND wait_make_up.id = {}
-                 """.format(id)
-        self.result = sqlInstance.execSql(sqlStr)
+        waitMakeUpData = 
+
+
 
         return self.template()
 
