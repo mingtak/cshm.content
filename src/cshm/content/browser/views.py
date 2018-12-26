@@ -45,8 +45,13 @@ class BasicBrowserView(BrowserView):
         year = int(year) - 1911
         return '%s/%s/%s' % (str(year), month, day)
 
-    def sendMessage(self, cell, message):
+    def sendMessage(self, cell, message): # TODO: 改掉message 改 reg_ok_message
         url = 'https://oms.every8d.com/API21/HTTP/sendSMS.ashx'
+
+        reg_ok_message = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.reg_ok_message')
+        if reg_ok_message:
+            message = reg_ok_message
+
         requests.get('%s?UID=0939586835&PWD=zqud&SB=簡訊測試&MSG=%s&DEST=%s&ST=' % (url, message, cell))
 
     def getOnTraining(self):
@@ -149,6 +154,109 @@ class BasicBrowserView(BrowserView):
                     """.format(uid)
         sqlInstance = SqlObj()
         return sqlInstance.execSql(sqlStr)
+
+
+# 成績追蹤管理系統
+class GradeManage(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/grade_manage.pt")
+
+    def checkAddNew(self):
+        request = self.request
+
+        status = [0, 0]
+        for item in request.form.items():
+            if item[0].startswith('new'):
+                logger.info('key:%s, value:%s' % (item[0], item[1]))
+                status[0] += 1
+                if item[1]:
+                    status[1] += 1
+        if status[1] == 0:
+            return True
+        elif status[0] == status[1] and status[0] > 1:
+            return True
+        else:
+            return False
+
+
+    def AddNewGrade(self):
+        """ 新增一梯次 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+
+        sqlStr = """SELECT MAX(exam_step) AS max_step FROM grade_mana WHERE uid = '{}'""".format(context.UID())
+        result = sqlInstance.execSql(sqlStr)
+        step = result[0]['max_step'] + 1 if result[0]['max_step'] else 1
+        newdate = request.form.get('newdate')
+
+        for item in request.form.keys():
+            if item.startswith('new-'):
+                sqlStr = """INSERT INTO grade_mana (exam_date, exam_step, reg_id, `status`, uid)
+                            VALUES ('{}', {}, {}, {}, '{}')
+                         """.format(newdate, step, item.split('-')[1], request.form.get(item), context.UID())
+                sqlInstance.execSql(sqlStr)
+
+
+    def getStep(self):
+        """ 取得梯次數 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+
+        uid = context.UID()
+        sqlStr = """SELECT DISTINCT `exam_step` FROM grade_mana WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+
+    def getExamDate(self, exam_step):
+        """ 取得各梯次日期 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT exam_date FROM grade_mana WHERE exam_step = {}""".format(exam_step)
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+
+    def getGrade(self, exam_step, reg_id):
+        """ 取得學員梯次成績 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT status FROM grade_mana WHERE exam_step = {} and reg_id = {}""".format(exam_step, reg_id)
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+
+    def getGrade2(self, reg_id):
+        """ 取得學員梯次成績 v2 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT exam_step, status FROM grade_mana WHERE reg_id = {}""".format(reg_id)
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+
+    def __call__(self):
+        request = self.request
+
+        if request.form.has_key('update'):
+            if self.checkAddNew():
+                self.AddNewGrade()
+                api.portal.show_message(message='Add Now Grade Complete!', request=request)
+                return self.template()
+            else:
+                return '新增資料輸入有誤，請回上一頁'
+
+        return self.template()
 
 
 # 補課Detail
@@ -1592,7 +1700,7 @@ class CourseListing(BrowserView):
             if location:
                 self.echelonBrain[status] = api.content.find(
                     context=self.portal['mana_course'],
-                    Type='Echelon',
+                    portal_type='Echelon',
                     regDeadline=date_range,
                     classStatus=status,
                     trainingCenterId=location
@@ -1604,7 +1712,7 @@ class CourseListing(BrowserView):
             else:
                 self.echelonBrain[status] = api.content.find(
                     context=self.portal['mana_course'],
-                    Type='Echelon',
+                    portal_ype='Echelon',
                     regDeadline=date_range,
                     classStatus=status,
                 )

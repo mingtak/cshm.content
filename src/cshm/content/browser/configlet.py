@@ -27,6 +27,12 @@ class IOffice(Form.Schema):
         required=False,
     )
 
+    reg_ok_message = schema.Text(
+        title=_(u'Registry OK Auto Message'),
+        required=False,
+    )
+
+
 class OfficeControlPanelForm(RegistryEditForm):
     form.extends(RegistryEditForm)
     schema = IOffice
