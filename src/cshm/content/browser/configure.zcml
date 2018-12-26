@@ -856,6 +856,26 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 成績追蹤管理系統 匯出表格(一般) -->
+  <browser:page
+      name="grade_manage_export_normal"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.GradeManageExportNormal"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
+  <!-- 成績追蹤管理系統 匯出表格(操作類) -->
+  <browser:page
+      name="grade_manage_export_operator"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.GradeManageExportOperator"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <!-- 排課系統 -->
   <browser:page
       name="class_scheduling"

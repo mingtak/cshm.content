@@ -179,7 +179,7 @@ class GradeManage(BasicBrowserView):
             return False
 
 
-    def AddNewGrade(self):
+    def addNewGrade(self):
         """ 新增一梯次 """
         request = self.request
         context = self.context
@@ -196,6 +196,35 @@ class GradeManage(BasicBrowserView):
                 sqlStr = """INSERT INTO grade_mana (exam_date, exam_step, reg_id, `status`, uid)
                             VALUES ('{}', {}, {}, {}, '{}')
                          """.format(newdate, step, item.split('-')[1], request.form.get(item), context.UID())
+                sqlInstance.execSql(sqlStr)
+
+
+    def updateGrade(self):
+        """ 更新梯次表 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+
+        for item in request.form.keys():
+            if item.startswith('old-'):
+                step = item.split('-')[1]
+                reg_id = item.split('-')[2]
+                id = item.split('-')[3]
+                exam_date = request.form.get('olddate-%s' % step)
+                status = request.form.get(item)
+
+                if not id:
+                    sqlStr = """INSERT INTO grade_mana (exam_date, exam_step, reg_id, `status`, uid)
+                                 VALUES ('{}', {}, {}, {}, '{}')
+                             """.format(exam_date, step, reg_id, status, context.UID())
+                    sqlInstance.execSql(sqlStr)
+                    continue
+
+                sqlStr = """UPDATE `grade_mana`
+                            SET `reg_id`={}, `exam_step`={}, `exam_date`='{}', `status`={}, `uid`='{}'
+                            WHERE id={}
+                         """.format(reg_id, step, exam_date, request.form.get(item), context.UID(), id)
                 sqlInstance.execSql(sqlStr)
 
 
@@ -223,26 +252,19 @@ class GradeManage(BasicBrowserView):
         return result
 
 
-    def getGrade(self, exam_step, reg_id):
+    def getGrade(self, reg_id):
         """ 取得學員梯次成績 """
         request = self.request
         context = self.context
 
         sqlInstance = SqlObj()
-        sqlStr = """SELECT status FROM grade_mana WHERE exam_step = {} and reg_id = {}""".format(exam_step, reg_id)
+        sqlStr = """SELECT exam_step, status, id FROM grade_mana WHERE reg_id = {}""".format(reg_id)
         result = sqlInstance.execSql(sqlStr)
-        return result
 
-
-    def getGrade2(self, reg_id):
-        """ 取得學員梯次成績 v2 """
-        request = self.request
-        context = self.context
-
-        sqlInstance = SqlObj()
-        sqlStr = """SELECT exam_step, status FROM grade_mana WHERE reg_id = {}""".format(reg_id)
-        result = sqlInstance.execSql(sqlStr)
-        return result
+        value = {}
+        for item in result:
+            value[item['exam_step']] = [item['id'], item['status']]
+        return value
 
 
     def __call__(self):
@@ -250,13 +272,38 @@ class GradeManage(BasicBrowserView):
 
         if request.form.has_key('update'):
             if self.checkAddNew():
-                self.AddNewGrade()
-                api.portal.show_message(message='Add Now Grade Complete!', request=request)
+                self.addNewGrade()
+                self.updateGrade()
+                api.portal.show_message(message='Update Grade Complete!', request=request)
                 return self.template()
             else:
                 return '新增資料輸入有誤，請回上一頁'
 
         return self.template()
+
+
+# 成績追蹤管理系統-匯出表格(一般)
+class GradeManageExportNormal(GradeManage):
+
+    template = ViewPageTemplateFile("template/grade_manage_export_normal.pt")
+
+    def getSum(self, step):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT status FROM grade_mana WHERE uid='{}' and exam_step={}""".format(self.context.UID(), step)
+        result = sqlInstance.execSql(sqlStr)
+        value = {1:0, 2:0, 3:0}
+        for item in result:
+            value[item['status']] += 1
+        return value
+
+
+    def __call__(self):
+        return self.template()
+
+# 成績追蹤管理系統-匯出表格(操作類)
+class GradeManageExportOperator(GradeManageExportNormal):
+
+    template = ViewPageTemplateFile("template/grade_manage_export_operator.pt")
 
 
 # 補課Detail
