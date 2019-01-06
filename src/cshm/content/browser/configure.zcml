@@ -886,6 +886,16 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 成績追蹤管理系統2 匯出學員成績通知單 -->
+  <browser:page
+      name="grade_manage2_export"
+      for="cshm.content.content.echelon.IEchelon"
+      class=".views.GradeManage2Export"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <!-- 排課系統 -->
   <browser:page
       name="class_scheduling"

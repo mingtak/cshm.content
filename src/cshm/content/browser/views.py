@@ -392,7 +392,6 @@ class GradeManage2(GradeManage):
         for item in request.form.keys():
             logger.info('%s: %s' % (item, str(request.form.get(item))))
             if item.startswith('new-'):
-                # TODO: 缺 STATUS
                 score_1 = request.form.get(item)[0] if request.form.get(item)[0] else 'null'
                 score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
                 score_3 = request.form.get(item)[2] if request.form.get(item)[2] else 'null'
@@ -405,7 +404,7 @@ class GradeManage2(GradeManage):
                     continue
 
                 sqlStr = """INSERT INTO grade_mana2 (exam_date, exam_step, reg_id, score_1, score_2, score_3, uid, status)
-                            VALUES ('{}', {}, {}, {}, {}, {}, '{}', status)
+                            VALUES ('{}', {}, {}, {}, {}, {}, '{}', {})
                          """.format(newdate, step, reg_id, score_1, score_2, score_3, context.UID(), status)
                 sqlInstance.execSql(sqlStr)
 
@@ -426,13 +425,14 @@ class GradeManage2(GradeManage):
                 score_1 = request.form.get(item)[0] if request.form.get(item)[0] else 'null'
                 score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
                 score_3 = request.form.get(item)[2] if request.form.get(item)[2] else 'null'
+                status = request.form.get('status-%s' % reg_id)
 
                 if not id:
                     if score_1 == 'null' and score_2 == 'null' and score_3 == 'null':
                         continue
-                    sqlStr = """INSERT INTO grade_mana2 (exam_date, exam_step, reg_id, score_1, score_2, score_3, uid)
-                                 VALUES ('{}', {}, {}, {}, {}, {}, '{}')
-                             """.format(exam_date, step, reg_id, score_1, score_2, score_3, context.UID())
+                    sqlStr = """INSERT INTO grade_mana2 (exam_date, exam_step, reg_id, score_1, score_2, score_3, uid, status)
+                                 VALUES ('{}', {}, {}, {}, {}, {}, '{}', {})
+                             """.format(exam_date, step, reg_id, score_1, score_2, score_3, context.UID(), status)
                     sqlInstance.execSql(sqlStr)
                     continue
 
@@ -440,12 +440,11 @@ class GradeManage2(GradeManage):
                     sqlStr = """DELETE FROM `grade_mana2`
                                 WHERE id={}
                              """.format(id)
-#                    import pdb; pdb.set_trace()
                 else:
                     sqlStr = """UPDATE `grade_mana2`
-                                SET `reg_id`={}, `exam_step`={}, `exam_date`='{}', `score_1`={}, `score_2`={}, `score_3`={}, `uid`='{}'
+                                SET `reg_id`={}, `exam_step`={}, `exam_date`='{}', `score_1`={}, `score_2`={}, `score_3`={}, `uid`='{}', `status`={}
                                 WHERE id={}
-                             """.format(reg_id, step, exam_date, score_1, score_2, score_3, context.UID(), id)
+                             """.format(reg_id, step, exam_date, score_1, score_2, score_3, context.UID(), status, id)
                 sqlInstance.execSql(sqlStr)
 
 
@@ -473,6 +472,18 @@ class GradeManage2(GradeManage):
             return True
         else:
             return False
+
+
+# 成績追蹤管理系統2-匯出 學員成績通知單
+class GradeManage2Export(GradeManage2):
+
+    def __call__(self):
+
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/grade_mana2_export.docx'
+
+        doc = DocxTemplate(filePath)
+
+
 
 
 # 補課Detail
