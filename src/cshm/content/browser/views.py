@@ -351,6 +351,32 @@ class GradeManage2(GradeManage):
         return value
 
 
+    def getStatus(self, reg_id):
+        """ 取得學員考試追蹤狀態 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT MAX(exam_step) as max_exam_step FROM grade_mana2 WHERE reg_id = {}""".format(reg_id)
+        result = sqlInstance.execSql(sqlStr)
+
+        max_exam_step = result[0]['max_exam_step']
+        sqlStr = """SELECT grade_mana2.id, grade_mana2.status AS value, grade_mana2_status.status AS status
+                    FROM grade_mana2, grade_mana2_status
+                    WHERE grade_mana2.reg_id = {} and grade_mana2.status = grade_mana2_status.id
+                    ORDER BY grade_mana2.id DESC""".format(reg_id)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def getStatusList(self):
+        """ 取得狀態列表 """
+        request = self.request
+        context = self.context
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id, status FROM grade_mana2_status"""
+        return sqlInstance.execSql(sqlStr)
+
+
     def addNewGrade(self):
         """ 新增一梯次 """
         request = self.request
@@ -371,13 +397,16 @@ class GradeManage2(GradeManage):
                 score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
                 score_3 = request.form.get(item)[2] if request.form.get(item)[2] else 'null'
 
+                reg_id = item.split('-')[1]
+                status = request.form.get('status-%s' % reg_id)
+
                 logger.info('%s: %s, %s, %s' % (item, score_1, score_2, score_3))
                 if score_1 == 'null' and score_2 == 'null' and score_3 == 'null':
                     continue
 
-                sqlStr = """INSERT INTO grade_mana2 (exam_date, exam_step, reg_id, score_1, score_2, score_3, uid)
-                            VALUES ('{}', {}, {}, {}, {}, {}, '{}')
-                         """.format(newdate, step, item.split('-')[1], score_1, score_2, score_3, context.UID())
+                sqlStr = """INSERT INTO grade_mana2 (exam_date, exam_step, reg_id, score_1, score_2, score_3, uid, status)
+                            VALUES ('{}', {}, {}, {}, {}, {}, '{}', status)
+                         """.format(newdate, step, reg_id, score_1, score_2, score_3, context.UID(), status)
                 sqlInstance.execSql(sqlStr)
 
 
