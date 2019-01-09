@@ -312,6 +312,16 @@ class GradeManageExportOperator(GradeManageExportNormal):
 class GradeManage2(GradeManage):
     template = ViewPageTemplateFile("template/grade_manage2.pt")
 
+    def getScore(self, id):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `grade_mana2` WHERE reg_id={} order by id desc""".format(id)
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return [result[0]['status'], result[0]['score_1'], result[0]['score_2'], result[0]['score_3'], result[0]['exam_date']]
+        else:
+            return [1, 0, 0, 0, None]
+
+
     def getStep(self):
         """ 取得梯次數 """
         request = self.request
@@ -479,10 +489,41 @@ class GradeManage2Export(GradeManage2):
 
     def __call__(self):
 
-        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/grade_mana2_export.docx'
+        request = self.request
+        context = self.context
 
+        filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/grade_mana2_export.docx'
         doc = DocxTemplate(filePath)
 
+        parameter = {}
+        name = request.form.get('name')
+        parameter['notify_date'] = DateTime().strftime('%Y年%m月%d日')
+        parameter['start_date'] = context.courseStart.strftime('%Y年%m月%d日')
+        parameter['end_date'] = context.courseEnd.strftime('%Y年%m月%d日')
+        parameter['step'] = context.id
+        parameter['exam_date'] = request.form.get('exam_date')
+        parameter['siteno'] = request.form.get('siteno')
+        parameter['name'] = name
+        parameter['pass'] = 'V' if request.form.get('status') == '2' else '□'
+        parameter['nopass'] = 'V' if request.form.get('status') in ['3', '4', '5', '6'] else '□'
+        parameter['nopass_1'] = 'V' if request.form.get('status') in ['4', '5'] else '□'
+        parameter['nopass_2'] = 'V' if request.form.get('status') in ['3', '6'] else '□'
+        parameter['score_1'] = request.form.get('score_1')
+        parameter['score_2'] = request.form.get('score_2')
+        parameter['score_3'] = request.form.get('score_3')
+
+        doc.render(parameter)
+        doc.save("/tmp/temp.docx")
+
+        self.request.response.setHeader('Content-Type', 'application/docx')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            'attachment; filename="notify_%s.docx"' % (name)
+        )
+
+        with open('/tmp/temp.docx', 'rb') as file:
+            docs = file.read()
+            return docs
 
 
 
