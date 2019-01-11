@@ -866,6 +866,16 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 成績追蹤管理系統: 工地主任220小時 -->
+  <browser:page
+      name="grade_manage3"
+      for="*"
+      class=".views.GradeManage3"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <!-- 成績追蹤管理系統 匯出表格(一般) -->
   <browser:page
       name="grade_manage_export_normal"

@@ -485,7 +485,7 @@ class GradeManage2(GradeManage):
 
 
 # 成績追蹤管理系統2-匯出 學員成績通知單
-class GradeManage2Export(GradeManage2):
+class GradeManage2Export(BasicBrowserView):
 
     def __call__(self):
 
@@ -525,6 +525,226 @@ class GradeManage2Export(GradeManage2):
             docs = file.read()
             return docs
 
+
+# 成績追蹤管理系統3: 工地主任220小時
+# TODO: 三年期限未處理
+class GradeManage3(GradeManage):
+    template = ViewPageTemplateFile("template/grade_manage3.pt")
+
+    def getScore(self, id):
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT * FROM `grade_mana3` WHERE reg_id={} order by id desc""".format(id)
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return [result[0]['status'], result[0]['score_1'], result[0]['score_2'], result[0]['exam_date']]
+        else:
+            return [1, 0, 0, None]
+
+
+    def getStep(self):
+        """ 取得梯次數 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+
+        uid = context.UID()
+        sqlStr = """SELECT DISTINCT `exam_step` FROM grade_mana3 WHERE uid = '{}'""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+
+    def getExamDate(self, exam_step):
+        """ 取得各梯次日期 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT exam_date FROM grade_mana3 WHERE exam_step = {}""".format(exam_step)
+        result = sqlInstance.execSql(sqlStr)
+        return result
+
+
+    def getGrade(self, reg_id):
+        """ 取得學員梯次成績 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT exam_step, status, score_1, score_2, id FROM grade_mana3 WHERE reg_id = {}""".format(reg_id)
+        result = sqlInstance.execSql(sqlStr)
+
+        value = {}
+        for item in result:
+            value[item['exam_step']] = [item['id'], item['score_1'], item['score_2'], item['status']]
+        return value
+
+
+    def getStatus(self, reg_id):
+        """ 取得學員考試追蹤狀態 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT MAX(exam_step) as max_exam_step FROM grade_mana3 WHERE reg_id = {}""".format(reg_id)
+        result = sqlInstance.execSql(sqlStr)
+
+        max_exam_step = result[0]['max_exam_step']
+        sqlStr = """SELECT grade_mana3.id, grade_mana3.status AS value, grade_mana3_status.status AS status
+                    FROM grade_mana3, grade_mana3_status
+                    WHERE grade_mana3.reg_id = {} and grade_mana3.status = grade_mana3_status.id
+                    ORDER BY grade_mana3.id DESC""".format(reg_id)
+        return sqlInstance.execSql(sqlStr)
+
+
+    def getStatusList(self):
+        """ 取得狀態列表 """
+        request = self.request
+        context = self.context
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT id, status FROM grade_mana3_status"""
+        return sqlInstance.execSql(sqlStr)
+
+
+    def addNewGrade(self):
+        """ 新增一梯次 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+
+        sqlStr = """SELECT MAX(exam_step) AS max_step FROM grade_mana3"""
+        result = sqlInstance.execSql(sqlStr)
+        step = result[0]['max_step'] + 1 if result[0]['max_step'] else 1
+        newdate = request.form.get('newdate')
+
+        for item in request.form.keys():
+            logger.info('%s: %s' % (item, str(request.form.get(item))))
+            if item.startswith('new-'):
+                reg_id = item.split('-')[1]
+                score_1 = request.form.get(item)[0] if request.form.get(item)[0] else 'null'
+                score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
+                study_no = request.form.get('study_no-%s' % reg_id)
+                first_exam_sn = request.form.get('first_exam_sn-%s' % reg_id)
+                exam_sn = request.form.get('exam_sn-%s' % reg_id)
+                status = request.form.get('status-%s' % reg_id)
+
+                sqlStr = """select id, uid from reg_course where id={}""".format(reg_id)
+                result = sqlInstance.execSql(sqlStr)
+                # 求考區
+                course_uid = result[0]['uid']
+                exam_area = api.content.find(UID=course_uid)[0].getObject().trainingCenter.to_object.title
+
+                # 求首考日期
+#                reg_id = result[0]['id']
+                sqlStr = """select first_exam_date from grade_mana3 where reg_id={}""".format(reg_id)
+                result = sqlInstance.execSql(sqlStr)
+                if result:
+                    first_exam_date = sqlInstance.execSql(sqlStr)[0]['first_exam_date']
+                else:
+                    first_exam_date = newdate
+
+                logger.info('%s: %s, %s' % (item, score_1, score_2))
+                if score_1 == 'null' and score_2 == 'null':
+                    continue
+
+                sqlStr = """INSERT INTO grade_mana3 (first_exam_date, exam_date, exam_step, reg_id, score_1, score_2,
+                                                     uid, status, exam_area, study_no, first_exam_sn, exam_sn)
+                            VALUES ('{}', '{}', {}, {}, {}, {}, '{}', {}, '{}', '{}', '{}', '{}')
+                         """.format(first_exam_date, newdate, step, reg_id, score_1, score_2, context.UID(),
+                                    status, exam_area, study_no, first_exam_sn, exam_sn)
+                sqlInstance.execSql(sqlStr)
+
+
+    def updateGrade(self):
+        """ 更新梯次表 """
+        request = self.request
+        context = self.context
+
+        sqlInstance = SqlObj()
+
+        for item in request.form.keys():
+            if item.startswith('old-'):
+                step = item.split('-')[1]
+                reg_id = item.split('-')[2]
+                id = item.split('-')[3]
+                exam_date = request.form.get('olddate-%s' % step)
+                score_1 = request.form.get(item)[0] if request.form.get(item)[0] else 'null'
+                score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
+                status = request.form.get('status-%s' % reg_id)
+
+                if not id:
+                    if score_1 == 'null' and score_2 == 'null':
+                        continue
+                    sqlStr = """INSERT INTO grade_mana3 (exam_date, exam_step, reg_id, score_1, score_2, uid, status)
+                                 VALUES ('{}', {}, {}, {}, {}, '{}', {})
+                             """.format(exam_date, step, reg_id, score_1, score_2, context.UID(), status)
+                    sqlInstance.execSql(sqlStr)
+                    continue
+
+                if score_1 == 'null' and score_2 == 'null':
+                    sqlStr = """DELETE FROM `grade_mana3`
+                                WHERE id={}
+                             """.format(id)
+                else:
+                    sqlStr = """UPDATE `grade_mana3`
+                                SET `reg_id`={}, `exam_step`={}, `exam_date`='{}', `score_1`={}, `score_2`={}, `uid`='{}', `status`={}
+                                WHERE id={}
+                             """.format(reg_id, step, exam_date, score_1, score_2, context.UID(), status, id)
+                sqlInstance.execSql(sqlStr)
+
+
+    def checkAddNew(self):
+        request = self.request
+
+        status = [0, 0]
+        for item in request.form.items():
+            if item[0].startswith('new'):
+                logger.info('key:%s, value:%s' % (item[0], item[1]))
+
+                if type(item[1]) == type([]) and (item[1][0] or item[1][1]):
+                    status[0] += 1
+                    status[1] += 1
+
+                if type(item[1]) == type(''):
+                    status[0] += 1
+                    if item[1]:
+                        status[1] += 1
+
+        logger.info(str(status))
+        if status[1] == 0:
+            return True
+        elif status[0] == status[1] and status[0] > 1:
+            return True
+        else:
+            return False
+
+    def getUidCourseData(self):
+        """抓所有 k005 的資料"""
+        sqlStr = """SELECT reg_course.*, training_status_code.status, education_code.degree
+                    FROM reg_course, training_status_code, education_code
+                    WHERE path LIKE 'cshm/mana_course/k005%%'
+                      AND reg_course.training_status = training_status_code.id
+                      AND reg_course.education_id = education_code.id
+                 """
+        sqlInstance = SqlObj()
+#        import pdb; pdb.set_trace()
+        return sqlInstance.execSql(sqlStr)
+
+
+    def __call__(self):
+        request = self.request
+
+        if request.form.has_key('update'):
+            if self.checkAddNew():
+                self.addNewGrade()
+                self.updateGrade()
+                api.portal.show_message(message='Update Grade Complete!', request=request)
+                return self.template()
+            else:
+                return '新增資料輸入有誤，請回上一頁'
+
+        return self.template()
 
 
 # 補課Detail
