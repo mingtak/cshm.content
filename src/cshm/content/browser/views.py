@@ -548,8 +548,8 @@ class GradeManage3(GradeManage):
 
         sqlInstance = SqlObj()
 
-        uid = context.UID()
-        sqlStr = """SELECT DISTINCT `exam_step` FROM grade_mana3 WHERE uid = '{}'""".format(uid)
+#        uid = context.UID()
+        sqlStr = """SELECT DISTINCT `exam_step` FROM grade_mana3"""
         result = sqlInstance.execSql(sqlStr)
         return result
 
@@ -636,7 +636,6 @@ class GradeManage3(GradeManage):
                 exam_area = api.content.find(UID=course_uid)[0].getObject().trainingCenter.to_object.title
 
                 # 求首考日期
-#                reg_id = result[0]['id']
                 sqlStr = """select first_exam_date from grade_mana3 where reg_id={}""".format(reg_id)
                 result = sqlInstance.execSql(sqlStr)
                 if result:
@@ -669,16 +668,37 @@ class GradeManage3(GradeManage):
                 reg_id = item.split('-')[2]
                 id = item.split('-')[3]
                 exam_date = request.form.get('olddate-%s' % step)
+                study_no = request.form.get('study_no-%s' % reg_id)
+                first_exam_sn = request.form.get('first_exam_sn-%s' % reg_id)
+                exam_sn = request.form.get('exam_sn-%s' % reg_id)
+
                 score_1 = request.form.get(item)[0] if request.form.get(item)[0] else 'null'
                 score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
                 status = request.form.get('status-%s' % reg_id)
 
+                sqlStr = """select id, uid from reg_course where id={}""".format(reg_id)
+                result = sqlInstance.execSql(sqlStr)
+
+                # 求考區
+                course_uid = result[0]['uid']
+                exam_area = api.content.find(UID=course_uid)[0].getObject().trainingCenter.to_object.title
+
+                # 求首考日期
+                sqlStr = """select first_exam_date from grade_mana3 where reg_id={}""".format(reg_id)
+                result = sqlInstance.execSql(sqlStr)
+                if result:
+                    first_exam_date = sqlInstance.execSql(sqlStr)[0]['first_exam_date']
+                else:
+                    first_exam_date = exam_date
+
                 if not id:
                     if score_1 == 'null' and score_2 == 'null':
                         continue
-                    sqlStr = """INSERT INTO grade_mana3 (exam_date, exam_step, reg_id, score_1, score_2, uid, status)
-                                 VALUES ('{}', {}, {}, {}, {}, '{}', {})
-                             """.format(exam_date, step, reg_id, score_1, score_2, context.UID(), status)
+                    sqlStr = """INSERT INTO grade_mana3 (first_exam_date, exam_date, exam_step, reg_id, score_1, score_2,
+                                                         uid, status, study_no, first_exam_sn, exam_sn, exam_area)
+                                 VALUES ('{}', '{}', {}, {}, {}, {}, '{}', {}, '{}', '{}', '{}', '{}')
+                             """.format(first_exam_date, exam_date, step, reg_id, score_1, score_2, course_uid,
+                                        status, study_no, first_exam_sn, exam_sn, exam_area)
                     sqlInstance.execSql(sqlStr)
                     continue
 
@@ -687,10 +707,12 @@ class GradeManage3(GradeManage):
                                 WHERE id={}
                              """.format(id)
                 else:
-                    sqlStr = """UPDATE `grade_mana3`
-                                SET `reg_id`={}, `exam_step`={}, `exam_date`='{}', `score_1`={}, `score_2`={}, `uid`='{}', `status`={}
+                    sqlStr = """UPDATE grade_mana3
+                                SET reg_id={}, exam_step={}, exam_date='{}', score_1={}, score_2={}, uid='{}', status={},
+                                    first_exam_date='{}', study_no='{}', first_exam_sn='{}', exam_sn='{}'
                                 WHERE id={}
-                             """.format(reg_id, step, exam_date, score_1, score_2, context.UID(), status, id)
+                             """.format(reg_id, step, exam_date, score_1, score_2, course_uid, status,
+                                        first_exam_date, study_no, first_exam_sn, exam_sn, id)
                 sqlInstance.execSql(sqlStr)
 
 
@@ -728,8 +750,22 @@ class GradeManage3(GradeManage):
                       AND reg_course.education_id = education_code.id
                  """
         sqlInstance = SqlObj()
-#        import pdb; pdb.set_trace()
         return sqlInstance.execSql(sqlStr)
+
+
+    def getGradeInfo(self, reg_id):
+        """ 抓考生基本資料, study_no, first_exam_sn, exam_sn """
+        sqlStr = """SELECT study_no, first_exam_sn, exam_sn
+                    FROM grade_mana3
+                    WHERE reg_id = {}
+                    ORDER BY id DESC
+                 """.format(reg_id)
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return result[0]
+        else:
+            return {'study_no': '', 'first_exam_sn':'', 'exam_sn':''}
 
 
     def __call__(self):
