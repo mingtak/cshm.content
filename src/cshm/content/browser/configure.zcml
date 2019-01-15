@@ -906,6 +906,16 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 工地主任220小時 匯出 -->
+  <browser:page
+      name="grade_manage3_export"
+      for="*"
+      class=".views.GradeManage3Export"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+  <!-- 權限未定 -->
+
   <!-- 排課系統 -->
   <browser:page
       name="class_scheduling"

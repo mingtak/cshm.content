@@ -548,8 +548,8 @@ class GradeManage3(GradeManage):
 
         sqlInstance = SqlObj()
 
-#        uid = context.UID()
-        sqlStr = """SELECT DISTINCT `exam_step` FROM grade_mana3"""
+        uid = context.UID()
+        sqlStr = """SELECT DISTINCT `exam_step` FROM grade_mana3 WHERE uid = '{}'""".format(uid)
         result = sqlInstance.execSql(sqlStr)
         return result
 
@@ -636,6 +636,7 @@ class GradeManage3(GradeManage):
                 exam_area = api.content.find(UID=course_uid)[0].getObject().trainingCenter.to_object.title
 
                 # 求首考日期
+#                reg_id = result[0]['id']
                 sqlStr = """select first_exam_date from grade_mana3 where reg_id={}""".format(reg_id)
                 result = sqlInstance.execSql(sqlStr)
                 if result:
@@ -656,7 +657,7 @@ class GradeManage3(GradeManage):
 
 
     def updateGrade(self):
-        """ 更新梯次表 """
+        """ 更新梯次表 TODO """
         request = self.request
         context = self.context
 
@@ -668,37 +669,24 @@ class GradeManage3(GradeManage):
                 reg_id = item.split('-')[2]
                 id = item.split('-')[3]
                 exam_date = request.form.get('olddate-%s' % step)
-                study_no = request.form.get('study_no-%s' % reg_id)
-                first_exam_sn = request.form.get('first_exam_sn-%s' % reg_id)
-                exam_sn = request.form.get('exam_sn-%s' % reg_id)
-
                 score_1 = request.form.get(item)[0] if request.form.get(item)[0] else 'null'
                 score_2 = request.form.get(item)[1] if request.form.get(item)[1] else 'null'
                 status = request.form.get('status-%s' % reg_id)
 
-                sqlStr = """select id, uid from reg_course where id={}""".format(reg_id)
-                result = sqlInstance.execSql(sqlStr)
+                first_exam_date
+                study_no
+                first_exam_sn
+                exam_sn
 
-                # 求考區
-                course_uid = result[0]['uid']
-                exam_area = api.content.find(UID=course_uid)[0].getObject().trainingCenter.to_object.title
-
-                # 求首考日期
-                sqlStr = """select first_exam_date from grade_mana3 where reg_id={}""".format(reg_id)
-                result = sqlInstance.execSql(sqlStr)
-                if result:
-                    first_exam_date = sqlInstance.execSql(sqlStr)[0]['first_exam_date']
-                else:
-                    first_exam_date = exam_date
 
                 if not id:
                     if score_1 == 'null' and score_2 == 'null':
                         continue
                     sqlStr = """INSERT INTO grade_mana3 (first_exam_date, exam_date, exam_step, reg_id, score_1, score_2,
-                                                         uid, status, study_no, first_exam_sn, exam_sn, exam_area)
-                                 VALUES ('{}', '{}', {}, {}, {}, {}, '{}', {}, '{}', '{}', '{}', '{}')
-                             """.format(first_exam_date, exam_date, step, reg_id, score_1, score_2, course_uid,
-                                        status, study_no, first_exam_sn, exam_sn, exam_area)
+                                                         uid, status, study_no, first_exam_sn, exam_sn)
+                                 VALUES ('{}', '{}', {}, {}, {}, {}, '{}', {}, '{}', '{}', '{}')
+                             """.format(first_exam_daet, exam_date, step, reg_id, score_1, score_2, context.UID(),
+                                        status, study_no, first_exam_sn, exam_sn)
                     sqlInstance.execSql(sqlStr)
                     continue
 
@@ -707,12 +695,10 @@ class GradeManage3(GradeManage):
                                 WHERE id={}
                              """.format(id)
                 else:
-                    sqlStr = """UPDATE grade_mana3
-                                SET reg_id={}, exam_step={}, exam_date='{}', score_1={}, score_2={}, uid='{}', status={},
-                                    first_exam_date='{}', study_no='{}', first_exam_sn='{}', exam_sn='{}'
+                    sqlStr = """UPDATE `grade_mana3`
+                                SET `reg_id`={}, `exam_step`={}, `exam_date`='{}', `score_1`={}, `score_2`={}, `uid`='{}', `status`={}
                                 WHERE id={}
-                             """.format(reg_id, step, exam_date, score_1, score_2, course_uid, status,
-                                        first_exam_date, study_no, first_exam_sn, exam_sn, id)
+                             """.format(reg_id, step, exam_date, score_1, score_2, context.UID(), status, id)
                 sqlInstance.execSql(sqlStr)
 
 
@@ -781,28 +767,6 @@ class GradeManage3(GradeManage):
                 return '新增資料輸入有誤，請回上一頁'
 
         return self.template()
-
-
-# 工地主任220小時-匯出
-class GradeManage3Export(BasicBrowserView):
-
-    template = ViewPageTemplateFile("template/grade_manage3_export.pt")
-    def __call__(self):
-
-        request = self.request
-        exam_date = request.form.get('exam_date')
-
-        self.result = None
-        if exam_date:
-            sqlStr = """select *, reg_course.id as reg_course_id, grade_mana3.id as grade_mana3_id
-                        from reg_course, grade_mana3
-                        where reg_course.id = grade_mana3.reg_id
-                            and exam_date = '{}'""".format(exam_date)
-            sqlInstance = SqlObj()
-            self.result = sqlInstance.execSql(sqlStr)
-
-        return self.template()
-
 
 
 # 補課Detail
