@@ -51,7 +51,7 @@
   </index>
   <column value="studentCount"/>
 
-  <index name="startDateTime" meta_type="FieldIndex">
+  <index name="startDateTime" meta_type="DateIndex">
     <indexed_attr value="startDateTime" />
   </index>
   <column value="startDateTime"/>
@@ -60,6 +60,16 @@
     <indexed_attr value="trainingCenterId" />
   </index>
   <column value="trainingCenterId"/>
+
+  <index name="courseStart" meta_type="DateIndex">
+    <indexed_attr value="courseStart" />
+  </index>
+  <column value="courseStart"/>
+
+  <index name="courseEnd" meta_type="DateIndex">
+    <indexed_attr value="courseEnd" />
+  </index>
+  <column value="courseEnd"/>
 
 </object>
 

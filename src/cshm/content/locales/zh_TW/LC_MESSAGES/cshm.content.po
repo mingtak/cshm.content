@@ -346,7 +346,7 @@ msgid "Retraining Years"
 msgstr "回訓年限"
 
 #: ./content/course.py:89
-msgid "Sample Title"
+msgid "Simple Title"
 msgstr "簡稱"
 
 #: ./content/classroom.py:19

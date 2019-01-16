@@ -527,7 +527,7 @@ class GradeManage2Export(BasicBrowserView):
 
 
 # 成績追蹤管理系統3: 工地主任220小時
-# TODO: 三年期限未處理
+# TODO: 三年期限未 全部 處理
 class GradeManage3(GradeManage):
     template = ViewPageTemplateFile("template/grade_manage3.pt")
 
@@ -743,12 +743,38 @@ class GradeManage3(GradeManage):
 
     def getUidCourseData(self):
         """抓所有 k005 的資料"""
+        portal = api.portal.get()
+
+        courseStart = {
+            'query': DateTime()-1096, # 3年含潤年
+            'range': 'min',
+        }
+        courseEnd = {
+            'query': DateTime(),
+            'range': 'max',
+        }
+
+        k005_course = api.content.find(
+            context=portal['mana_course']['k005'],
+            portal_type='Echelon',
+            courseStart=courseStart,
+            courseEnd= courseEnd,
+        )
+
+        uidStr = ''
+        for item in k005_course:
+            uidStr += "'%s'," % item.UID
+        uidStr = uidStr[:-1]
+
+        # 3年前開始的課，today之前結束
         sqlStr = """SELECT reg_course.*, training_status_code.status, education_code.degree
                     FROM reg_course, training_status_code, education_code
                     WHERE path LIKE 'cshm/mana_course/k005%%'
                       AND reg_course.training_status = training_status_code.id
                       AND reg_course.education_id = education_code.id
-                 """
+                      AND reg_course.isAlt = 0
+                      AND reg_course.uid IN ({})
+                 """.format(uidStr)
         sqlInstance = SqlObj()
         return sqlInstance.execSql(sqlStr)
 
@@ -3069,3 +3095,11 @@ class GradeInput(BasicBrowserView):
         self.result = self.getUidCourseData(uid)
 
         return self.template()
+
+
+class TestView(BrowserView):
+
+    def __call__(self):
+        request = self.request
+        alsoProvides(request, IDisableCSRFProtection)
+#        import pdb; pdb.set_trace()

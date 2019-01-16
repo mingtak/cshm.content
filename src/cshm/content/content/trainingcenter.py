@@ -32,7 +32,12 @@ class ITrainingcenter(model.Schema):
 
     code = schema.TextLine(
         title=_(u"Training Center Code."),
-        required=True,
+        required=False,
+    )
+
+    simpleTitle = schema.TextLine(
+        title=_(u"Simple Title"),
+        required=False,
     )
 
     # directives.widget(level=RadioFieldWidget)

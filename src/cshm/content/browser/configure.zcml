@@ -995,6 +995,15 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 測試 -->
+  <browser:page
+      name="testview"
+      for="*"
+      class=".views.TestView"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- configlet -->
   <browser:page
     name="officeControlPanel"

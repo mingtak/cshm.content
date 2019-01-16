@@ -17,6 +17,8 @@
   <adapter name="trainingCenterId" factory=".catalog.trainingCenterId_indexer"/>
   <adapter name="activation" factory=".catalog.activation_indexer"/>
   <adapter name="idCardNo" factory=".catalog.idCardNo_indexer"/>
+  <adapter name="courseStart" factory=".catalog.courseStart_indexer"/>
+  <adapter name="courseEnd" factory=".catalog.courseEnd_indexer"/>
 
 <!--  <adapter name="XXX" factory=".catalog.XXX_indexer"/> -->
 

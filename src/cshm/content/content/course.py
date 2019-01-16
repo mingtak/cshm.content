@@ -101,8 +101,8 @@ class ICourse(model.Schema):
         required=False,
     )
 
-    sampleTitle = schema.TextLine(
-        title=_(u"Sample Title"),
+    simpleTitle = schema.TextLine(
+        title=_(u"Simple Title"),
         required=False,
     )
 

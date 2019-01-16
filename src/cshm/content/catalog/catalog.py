@@ -80,3 +80,12 @@ def startDateTime_indexer(obj):
 @indexer(IEchelon)
 def trainingCenterId_indexer(obj):
     return obj.trainingCenter.to_object.id
+
+
+@indexer(IEchelon)
+def courseStart_indexer(obj):
+    return obj.courseStart
+
+@indexer(IEchelon)
+def courseEnd_indexer(obj):
+    return obj.courseEnd
