@@ -527,7 +527,6 @@ class GradeManage2Export(BasicBrowserView):
 
 
 # 成績追蹤管理系統3: 工地主任220小時
-# TODO: 三年期限未 全部 處理
 class GradeManage3(GradeManage):
     template = ViewPageTemplateFile("template/grade_manage3.pt")
 
@@ -813,6 +812,15 @@ class GradeManage3(GradeManage):
 class GradeManage3Export(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/grade_manage3_export.pt")
+
+    def getHighestsocre(self, reg_id):
+        sqlStr = """SELECT max(score_1) as score_1, max(score_2) as score_2
+                    FROM `grade_mana3`
+                    WHERE reg_id={}""".format(reg_id)
+        sqlInstance = SqlObj()
+        return sqlInstance.execSql(sqlStr)
+
+
     def __call__(self):
 
         request = self.request
