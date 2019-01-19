@@ -2216,6 +2216,10 @@ class GroupRegCourse(RegCourse):
                 errorMsg.append('編號 %s 報名失敗:資料缺漏' % int(st.col(1)[index].value))
                 continue
 
+            # 檢查身份證號
+            if studId error:
+                errorMsg.append('編號 %s 報名失敗:身份證號錯誤' % int(st.col(1)[index].value))
+
             # 報名寫入 DB
             sqlInstance = SqlObj()
             sqlStr = self.makeSqlStr(form)
