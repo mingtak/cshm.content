@@ -45,8 +45,14 @@ class IOffice(Form.Schema):
         required=True,
     )
 
-    popular_messages = schema.Text(
-        title=_(u'Popular Messages'),
+    email_template = schema.Text(
+        title=_(u'Email Template'),
+        description=_(u'One line one record'),
+        required=False
+    )
+
+    msg_template = schema.Text(
+        title=_(u'Msg Template'),
         description=_(u'One line one record'),
         required=False
     )

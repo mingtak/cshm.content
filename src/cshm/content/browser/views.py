@@ -84,7 +84,7 @@ class BasicBrowserView(BrowserView):
         return '%s/%s/%s' % (str(year), month, day)
 
     def sendMessage(self, cell, message):
-        settingStr = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.cell_msg_url')
+        settingStr = api.portal.get_registry_record('cshm.content.browser.configlet.IOffice.cell_msg_url')
         uid, pwd, url = settingStr.split(',')
         requests.get('%s?UID=%s&PWD=%s&SB=簡訊測試&MSG=%s&DEST=%s&ST=' % (url, uid, pwd, message, cell))
 
@@ -1973,7 +1973,8 @@ class ExportEmailCell(BasicBrowserView):
             else:
                 self.wrongCells.append([item['name'], item['cellphone']])
 
-        self.popular_messages = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.popular_messages')
+        self.email_template = api.portal.get_registry_record('cshm.content.browser.configlet.IOffice.email_template')
+        self.msg_template = api.portal.get_registry_record('cshm.content.browser.configlet.IOffice.msg_template')
         return self.template()
 
 
@@ -2129,7 +2130,7 @@ class RegCourse(BasicBrowserView):
         messageStr = '%s您好，您報名的 %s 課程，已報名成功。' % (form.get('name'), courseName)
 
         # 客製化內容
-        reg_ok_message = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.reg_ok_message')
+        reg_ok_message = api.portal.get_registry_record('cshm.content.browser.configlet.IOffice.reg_ok_message')
         if reg_ok_message:
             messageStr = reg_ok_message.replace('name', form.get('name')).replace('course', courseName)
 
@@ -2144,7 +2145,7 @@ class RegCourse(BasicBrowserView):
         )
 
         if api.user.is_anonymous():
-            reg_finish_alert_message = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.reg_finish_alert_message')
+            reg_finish_alert_message = api.portal.get_registry_record('cshm.content.browser.configlet.IOffice.reg_finish_alert_message')
             api.portal.show_message(message=reg_finish_alert_message, request=request, type='info')
 
         if api.user.is_anonymous():
