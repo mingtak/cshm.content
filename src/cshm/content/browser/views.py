@@ -83,14 +83,10 @@ class BasicBrowserView(BrowserView):
         year = int(year) - 1911
         return '%s/%s/%s' % (str(year), month, day)
 
-    def sendMessage(self, cell, message): # TODO: 改掉message 改 reg_ok_message
-        url = 'https://oms.every8d.com/API21/HTTP/sendSMS.ashx'
-
-        reg_ok_message = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.reg_ok_message')
-        if reg_ok_message:
-            message = reg_ok_message
-
-        requests.get('%s?UID=0939586835&PWD=zqud&SB=簡訊測試&MSG=%s&DEST=%s&ST=' % (url, message, cell))
+    def sendMessage(self, cell, message):
+        settingStr = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.cell_msg_url')
+        uid, pwd, url = settingStr.split(',')
+        requests.get('%s?UID=%s&PWD=%s&SB=簡訊測試&MSG=%s&DEST=%s&ST=' % (url, uid, pwd, message, cell))
 
     def getOnTraining(self):
         """ 取得 on_training_status 選項資訊 """
@@ -2128,8 +2124,14 @@ class RegCourse(BasicBrowserView):
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
 
         # 發送報名成功簡訊
-        courseName = '%s第%s' % (context.getParentNode().title, context.title)
+        courseName = context.getParentNode().title
         messageStr = '%s您好，您報名的 %s 課程，已報名成功。' % (form.get('name'), courseName)
+
+        # 客製化內容
+        reg_ok_message = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.reg_ok_message')
+        if reg_ok_message:
+            messageStr = reg_ok_message.replace('name', form.get('name')).replace('course', courseName)
+
         self.sendMessage(form.get('cellphone'), messageStr)
 
         # 發送報名成功email
@@ -2141,7 +2143,8 @@ class RegCourse(BasicBrowserView):
         )
 
         if api.user.is_anonymous():
-            api.portal.show_message(message=u"請以傳真:02-22222222或Email: service@cshm.org.tw 傳送XX/XX等證件影本(文字待確認).", request=request, type='info')
+            reg_finish_alert_message = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.reg_finish_alert_message')
+            api.portal.show_message(message=reg_finish_alert_message, request=request, type='info')
 
         if api.user.is_anonymous():
             request.response.redirect('%s?reg_alert=1&msg=%s' % (self.portal['training']['courselist'].absolute_url(), messageStr))

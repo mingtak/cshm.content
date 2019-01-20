@@ -27,9 +27,22 @@ class IOffice(Form.Schema):
         required=False,
     )
 
+    cell_msg_url = schema.TextLine(
+        title=_(u'Cell Message Provider URL'),
+        description=_(u'format: id,password,url'),
+        required=True,
+    )
+
     reg_ok_message = schema.Text(
         title=_(u'Registry OK Auto Message'),
+        description=_(u"'name' for Student Name, 'course' for Course Name"),
         required=False,
+    )
+
+    reg_finish_alert_message = schema.Text(
+        title=_(u'Registry Finish Alert Message'),
+        description=_(u"Show in Registry Finish Page."),
+        required=True,
     )
 
 
