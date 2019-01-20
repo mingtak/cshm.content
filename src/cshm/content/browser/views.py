@@ -34,6 +34,26 @@ logger = logging.getLogger("cshm.content")
 class BasicBrowserView(BrowserView):
     """ 通用method """
 
+    no_permission_template = ViewPageTemplateFile('template/no_permission_template.pt')
+
+    def checkPermission(self):
+        """ 檢查權限: 配合 mingtak.viewPermissions 使用 """
+
+        userId = api.user.get_current().id
+        viewName = self.__name__
+
+        if userId == 'admin': #TODO: admin or role 有 Manager 即可？
+            return True
+
+        permissions_table = api.portal.get_registry_record('mingtak.viewPermissions.browser.configlet.IViewPermissions.permissions_table')
+        permissions_table = json.loads(permissions_table)
+        userList = permissions_table.get(viewName, [])
+        if userId in userList:
+            return True
+        else:
+            return False
+
+
     def checkIDCard(self, ID):
         """ 檢查身份證正確性 """
 
@@ -303,6 +323,9 @@ class GradeManage(BasicBrowserView):
 
     def __call__(self):
         request = self.request
+
+        if not self.checkPermission():
+            return self.no_permission_template()
 
         if request.form.has_key('update'):
             if self.checkAddNew():
@@ -830,6 +853,9 @@ class GradeManage3(GradeManage):
     def __call__(self):
         request = self.request
 
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         if request.form.has_key('update'):
             if self.checkAddNew():
                 self.addNewGrade()
@@ -968,6 +994,9 @@ class MakeUpDetail(BasicBrowserView):
 
     def __call__(self):
 
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
         sqlInstance = SqlObj()
 
@@ -1021,6 +1050,9 @@ class MakeUpList(BasicBrowserView):
 
     def __call__(self):
 
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         context = self.context
         request = self.request
 
@@ -1045,6 +1077,9 @@ class CreateQuotation(BasicBrowserView):
         return sqlInstance.execSql(sqlStr)
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
 
         self.quote = self.getQuote()
 
@@ -1106,6 +1141,10 @@ class QuotationManage(BasicBrowserView):
         return sqlInstance.execSql(sqlStr)
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
         portal = api.portal.get()
 
@@ -1139,6 +1178,9 @@ class QuotationList(BasicBrowserView):
         return sqlInstance.execSql(sqlStr)
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
 
         return self.template()
 
@@ -1187,6 +1229,10 @@ class QuoteRequest(BasicBrowserView):
 
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         context = self.context
         request = self.request
 
@@ -1200,12 +1246,16 @@ class QuoteRequest(BasicBrowserView):
         return self.template()
 
 
-# 開課
+# 開新班
 class CreateClass(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/create_class.pt")
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
         portal = api.portal.get()
 
@@ -1250,6 +1300,7 @@ class ClassroomOverview(BasicBrowserView):
         return self.template()
 
 
+# 排課管理
 class ClassScheduling(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/class_scheduling.pt")
@@ -1595,6 +1646,10 @@ class ClassScheduling(BasicBrowserView):
 
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
         uid = request.form.get('uid')
 
@@ -1643,6 +1698,7 @@ class ClassScheduling(BasicBrowserView):
         return self.template()
 
 
+# 新增教師
 class AddTeacher(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/add_teacher.pt")
@@ -1674,6 +1730,10 @@ class AddTeacher(BasicBrowserView):
         return obj
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
 
         if request.form.has_key('add-teacher'):
@@ -1686,6 +1746,7 @@ class AddTeacher(BasicBrowserView):
         return self.template()
 
 
+# 教師管理
 class TeacherMana(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/teacher_mana.pt")
@@ -1746,6 +1807,10 @@ class TeacherMana(BasicBrowserView):
 
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
 
         if request.form.has_key('output'):
@@ -1833,6 +1898,10 @@ class NotOnTime(BasicBrowserView):
                  """.format(subject_uid, subject_path, teacher_uid, teacher_name, int(status_code), detail, in_scope, date, logger)
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         request = self.request
 
         if request.form.has_key('getSubject'):
@@ -1859,11 +1928,16 @@ class TeacherView(BrowserView):
         return self.template()
 
 
+# 期別管理(詳細)
 class EchelonDetail(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/echelon_detail.pt")
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         return self.template()
 
 
@@ -1926,6 +2000,10 @@ class ExportEmailCell(BasicBrowserView):
     template = ViewPageTemplateFile("template/export_email_cell.pt")
 
     def __call__(self):
+
+        if not self.checkPermission():
+            return self.no_permission_template()
+
         portal = api.portal.get()
         context = self.context
         request = self.request
