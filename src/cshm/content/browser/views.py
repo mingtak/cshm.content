@@ -1973,6 +1973,7 @@ class ExportEmailCell(BasicBrowserView):
             else:
                 self.wrongCells.append([item['name'], item['cellphone']])
 
+        self.popular_messages = api.portal.get_registry_record('mingtak.ECBase.browser.configlet.ICustom.popular_messages')
         return self.template()
 
 

@@ -45,6 +45,12 @@ class IOffice(Form.Schema):
         required=True,
     )
 
+    popular_messages = schema.Text(
+        title=_(u'Popular Messages'),
+        description=_(u'One line one record'),
+        required=False
+    )
+
 
 class OfficeControlPanelForm(RegistryEditForm):
     form.extends(RegistryEditForm)
