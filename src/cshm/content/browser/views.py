@@ -27,6 +27,7 @@ import logging
 import datetime
 import csv
 from StringIO import StringIO
+import random
 
 logger = logging.getLogger("cshm.content")
 
@@ -2090,9 +2091,9 @@ class RegCourse(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/reg_course.pt")
 
-    def makeSqlStr(self):
+    def makeSqlStr(self, idCard_filename, document_1_filename, document_2_filename, document_3_filename):
         form = self.request.form
-
+#        import pdb; pdb.set_trace()
         uid = self.context.UID()
         path = self.context.virtual_url_path()
         isAlt = self.isAlt()
@@ -2101,15 +2102,16 @@ class RegCourse(BasicBrowserView):
                     `invoice_title`, `company_address`, `priv_email`, `phone`, `birthday`, `address`, `job_title`, \
                     `studId`, `uid`, `path`, `isAlt`, `invoice_tax_no`, `education_id`, `city`, `zip`, `industry`, `is_print`, `edu_date`,
                     `edu_school`, `edu_major`, `home_city`, `home_zip`, `home_address`, `company_undertaker`,
-                    `company_undertaker_job`, `company_undertaker_phone`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', 
-                    '{}', '{}', '{}', '{}', {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+                    `company_undertaker_job`, `company_undertaker_phone`, `idCard_filename`, `document_1_filename`, `document_2_filename`, `document_3_filename`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}',
+                    '{}', '{}', '{}', '{}', {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
                  """.format(form.get('cellphone'), form.get('fax'), form.get('tax_no'), form.get('name'), form.get('com_email'),
             form.get('company_name'), form.get('invoice_title'), form.get('company_address'), form.get('priv_email'), form.get('phone'),
             form.get('birthday'), form.get('address'), form.get('job_title'), form.get('studId'), uid, path, isAlt, form.get('invoice_tax_no'),
             form.get('education_id'), form.get('city'), form.get('zip'), form.get('industry'), is_print, form.get('edu_date'),
-            form.get('edu_school'), form.get('edu_major'), form.get('home_city'), form.get('home_zip'), form.get('home_address'), 
-            form.get('company_undertaker'), form.get('company_undertaker_job'),form.get('company_undertaker_phone'))
+            form.get('edu_school'), form.get('edu_major'), form.get('home_city'), form.get('home_zip'), form.get('home_address'),
+            form.get('company_undertaker'), form.get('company_undertaker_job'),form.get('company_undertaker_phone'),
+            idCard_filename, document_1_filename, document_2_filename, document_3_filename)
         return sqlStr
 
 
@@ -2169,7 +2171,6 @@ class RegCourse(BasicBrowserView):
         if not form.get('studId', False):
             return self.template()
 
-        #import pdb; pdb.set_trace()
         if context.courseStart:
             courseStart = DateTime(context.courseStart.strftime('%Y-%m-%d'))
             birthday = request.form.get('birthday')
@@ -2181,15 +2182,35 @@ class RegCourse(BasicBrowserView):
                 request.response.redirect(self.portal['training']['courselist'].absolute_url())
                 return
 
-#        import pdb; pdb.set_trace()
         if self.checkAltFull():
             api.portal.show_message(message=_(u"Quota Full include Alternate."), request=request, type='error')
             request.response.redirect(self.portal['training']['courselist'].absolute_url())
             return
 
+
+        # 證件照存檔
+        idCard = request.form.get('idCard').read()
+        idCard_filename = 'id_%s%s.%s' % (DateTime().strftime('%Y%m%d%H%M%S'), random.randint(100, 999), request.form.get('idCard').filename.split('.')[-1])
+        document_1 = request.form.get('document_1').read()
+        document_1_filename = 'doc1_%s%s.%s' % (DateTime().strftime('%Y%m%d%H%M%S'), random.randint(100, 999), request.form.get('document_1').filename.split('.')[-1])
+        document_2 = request.form.get('document_2').read()
+        document_2_filename = 'doc2_%s%s.%s' % (DateTime().strftime('%Y%m%d%H%M%S'), random.randint(100, 999), request.form.get('document_2').filename.split('.')[-1])
+        document_3 = request.form.get('document_3').read()
+        document_3_filename = 'doc3_%s%s.%s' % (DateTime().strftime('%Y%m%d%H%M%S'), random.randint(100, 999), request.form.get('document_3').filename.split('.')[-1])
+
+        images_folder_path = api.portal.get_registry_record('cshm.content.browser.configlet.IOffice.images_folder_path')
+        with open('%s/%s' % (images_folder_path, idCard_filename), 'w') as file:
+            file.write(idCard)
+        with open('%s/%s' % (images_folder_path, document_1_filename), 'w') as file:
+            file.write(document_1)
+        with open('%s/%s' % (images_folder_path, document_2_filename), 'w') as file:
+            file.write(document_2)
+        with open('%s/%s' % (images_folder_path, document_3_filename), 'w') as file:
+            file.write(document_3)
+
         # 報名寫入 DB
         sqlInstance = SqlObj()
-        sqlStr = self.makeSqlStr()
+        sqlStr = self.makeSqlStr(idCard_filename, document_1_filename, document_2_filename, document_3_filename)
         sqlInstance.execSql(sqlStr)
 
         # 寫入舊學員名單
@@ -2202,6 +2223,7 @@ class RegCourse(BasicBrowserView):
         context.reindexObject(idxs=['studentCount', 'classStatus'])
 
         api.portal.show_message(message=_(u"Registry success."), request=request, type='info')
+
 
         # 發送報名成功簡訊
         courseName = context.getParentNode().title

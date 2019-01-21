@@ -57,6 +57,11 @@ class IOffice(Form.Schema):
         required=False
     )
 
+    images_folder_path = schema.TextLine(
+        title=_(u'Images Folder Path'),
+        required=True,
+    )
+
 
 class OfficeControlPanelForm(RegistryEditForm):
     form.extends(RegistryEditForm)
