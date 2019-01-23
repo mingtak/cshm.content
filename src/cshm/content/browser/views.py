@@ -211,6 +211,49 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+
+# 證照費用核銷狀態追蹤
+class LicenseFeeTrace(BasicBrowserView):
+
+    template = ViewPageTemplateFile("template/license_fee_trace.pt")
+
+    def getDetail(self, reg_id):
+
+        sqlInstance = SqlObj()
+        # 找最近一次考試狀態
+        sqlStr = """SELECT *, reg_course.id AS reg_course_id, grade_mana.id AS grade_mana_id
+                    FROM reg_course, grade_mana
+                    WHERE reg_course.id = grade_mana.reg_id
+                    AND reg_course.id = {}
+                    ORDER BY grade_mana.id DESC""".format(reg_id)
+# TODO:要確認是否只會有一開始會有「未報考」的狀態？
+        return sqlInstance.execSql(sqlStr)
+
+
+    def __call__(self):
+
+        sqlInstance = SqlObj()
+        # 找到要被追蹤的學生名單
+        sqlStr = """SELECT reg_course.id
+                    FROM reg_course, grade_mana
+                    WHERE (path LIKE 'cshm/mana_course/a005%%'
+                      OR path LIKE 'cshm/mana_course/a007%%'
+                      OR path LIKE 'cshm/mana_course/a008%%'
+                      OR path LIKE 'cshm/mana_course/a009%%'
+                      OR path LIKE 'cshm/mana_course/a011%%'
+                      OR path LIKE 'cshm/mana_course/a012%%'
+                      OR path LIKE 'cshm/mana_course/a013%%'
+                      OR path LIKE 'cshm/mana_course/d001%%'
+                      OR path LIKE 'cshm/mana_course/d003%%'
+                      OR path LIKE 'cshm/mana_course/a001%%')
+                      AND reg_course.id = grade_mana.reg_id
+                    GROUP BY reg_course.id""" #a001是測試用的
+
+        self.students = sqlInstance.execSql(sqlStr)
+
+        return self.template()
+
+
 # 成績追蹤管理系統
 class GradeManage(BasicBrowserView):
 
