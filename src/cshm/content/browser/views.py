@@ -217,6 +217,20 @@ class LicenseFeeTrace(BasicBrowserView):
 
     template = ViewPageTemplateFile("template/license_fee_trace.pt")
 
+    def everExam(self, reg_id):
+        sqlInstance = SqlObj()
+        # 找最近一次考試狀態
+        sqlStr = """SELECT id
+                    FROM grade_mana
+                    WHERE reg_id = {}
+                      AND status in (2, 3)""".format(reg_id)
+        result = sqlInstance.execSql(sqlStr)
+        if result:
+            return True
+        else:
+            return False
+
+
     def getDetail(self, reg_id):
 
         sqlInstance = SqlObj()
