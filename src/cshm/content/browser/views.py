@@ -2542,7 +2542,18 @@ class RegisterDetail(BrowserView):
 
     template = ViewPageTemplateFile("template/register_detail.pt")
 
+    def licenseDate(self):
+        """ 發證日期 """
+        context = self.context
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT license_date FROM reg_course WHERE uid = '{}'  ORDER BY license_date DESC""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]['license_date']
+
     def regAmount(self):
+        """ 報名人數 """
         context = self.context
 
         uid = context.UID()
@@ -2551,6 +2562,19 @@ class RegisterDetail(BrowserView):
         result = sqlInstance.execSql(sqlStr)
         return result[0]['COUNT(id)']
 
+    def finishAmount(self):
+        """ 結訓人數, training_status in [1,2,3,4] """
+        context = self.context
+
+        today = datetime.date.today()
+        if not context.courseEnd or today < context.courseEnd:
+            return ''
+
+        uid = context.UID()
+        sqlInstance = SqlObj()
+        sqlStr = """SELECT COUNT(id) FROM reg_course WHERE uid = '{}' and training_status in (1, 2, 3, 4)""".format(uid)
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]['COUNT(id)']
 
     def __call__(self):
         self.portal = api.portal.get()

@@ -216,6 +216,32 @@ class IEchelon(model.Schema):
         required=False,
     )
 
+    fieldset(_(u'Other'), fields=[
+        'trainingCenterAgent',
+        'specialCourse',
+        'manageOrg',
+        'docSN',
+    ])
+
+    trainingCenterAgent = schema.TextLine(
+        title=_(u'Training Center Agent'),
+        required=False,
+    )
+
+    specialCourse = schema.TextLine(
+        title=_(u"Special Course"),
+        required=False,
+    )
+
+    manageOrg = schema.TextLine(
+        title=_(u"Manage Org"),
+        required=False
+    )
+
+    docSN = schema.TextLine(
+        title=_(u"Document SN"),
+        required=False,
+    )
 
 @implementer(IEchelon)
 class Echelon(Container):
