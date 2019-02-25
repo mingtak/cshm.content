@@ -2456,6 +2456,18 @@ class AdminGroupRegCourse(GroupRegCourse):
         return False
 
 
+class AdminCourseListing(BrowserView):
+
+    template = ViewPageTemplateFile("template/admin_course_listing.pt")
+
+    def __call__(self):
+        portal = api.portal.get()
+        request = self.request
+        context = self.context
+        self.children = portal['mana_course'].getChildNodes()
+        return self.template()
+
+
 class CourseInfo(BrowserView):
 
     template = ViewPageTemplateFile('template/course_info.pt')

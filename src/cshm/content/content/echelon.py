@@ -216,11 +216,81 @@ class IEchelon(model.Schema):
         required=False,
     )
 
+    fieldset(_(u'CourseStatus'), fields=[
+        'studDataSendDate',
+        'finishCourseSendDate',
+        'receivedDate',
+        'giveLicenseStatus',
+        'checkNote',
+        'preFee',
+        'feeDetail',
+        'manageFee',
+        'finishCourseStatus',
+        'cashierNote',
+        'statusNote',
+    ])
+
+    studDataSendDate = schema.Date(
+        title=_(u"studDataSendDate"),
+        required=False,
+    )
+
+    finishCourseSendDate = schema.Date(
+        title=_(u"finishCourseSendDate"),
+        required=False,
+    )
+
+    receivedDate = schema.Date(
+        title=_(u"receivedDate"),
+        required=False,
+    )
+
+    giveLicenseStatus = schema.TextLine(
+        title=_(u"Give License Status"),
+        required=False,
+    )
+
+    checkNote = schema.TextLine(
+        title=_(u"checkNote"),
+        required=False,
+    )
+
+    preFee = schema.TextLine(
+        title=_(u"preFee"),
+        required=False,
+    )
+
+    feeDetail = schema.TextLine(
+        title=_(u"feeDetail"),
+        required=False,
+    )
+
+    manageFee = schema.TextLine(
+        title=_(u"manageFee"),
+        required=False,
+    )
+
+    finishCourseStatus = schema.TextLine(
+        title=_(u"finishCourseStatus"),
+        required=False,
+    )
+
+    cashierNote = schema.TextLine(
+        title=_(u"cashierNote"),
+        required=False,
+    )
+
+    statusNote = schema.TextLine(
+        title=_(u"statusNote"),
+        required=False,
+    )
+
     fieldset(_(u'Other'), fields=[
         'trainingCenterAgent',
         'specialCourse',
         'manageOrg',
         'docSN',
+        'docDate',
     ])
 
     trainingCenterAgent = schema.TextLine(
@@ -240,6 +310,11 @@ class IEchelon(model.Schema):
 
     docSN = schema.TextLine(
         title=_(u"Document SN"),
+        required=False,
+    )
+
+    docDate = schema.Date(
+        title=_(u"Document Date"),
         required=False,
     )
 

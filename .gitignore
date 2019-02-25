@@ -4,6 +4,8 @@
 *.mo
 *.py?
 *.swp
+*.save
+*.save.*
 # dirs
 bin/
 buildout-cache/

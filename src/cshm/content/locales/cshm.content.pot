@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-02-12 03:30+0000\n"
+"POT-Creation-Date: 2019-02-20 08:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,6 +177,10 @@ msgstr ""
 msgid "CourseIntro"
 msgstr ""
 
+#: ./content/echelon.py:219
+msgid "CourseStatus"
+msgstr ""
+
 #: ./content/material.py:48
 msgid "Cover"
 msgstr ""
@@ -249,6 +253,14 @@ msgstr ""
 msgid "Discount Start Date"
 msgstr ""
 
+#: ./content/echelon.py:323
+msgid "Document Date"
+msgstr ""
+
+#: ./content/echelon.py:318
+msgid "Document SN"
+msgstr ""
+
 #: ./browser/configlet.py:15
 msgid "Documents workflows"
 msgstr ""
@@ -310,6 +322,10 @@ msgstr ""
 
 #: ./content/classroom.py:27
 msgid "For example, 3|4|3 or 4|3|3 ext."
+msgstr ""
+
+#: ./content/echelon.py:255
+msgid "Give License Status"
 msgstr ""
 
 #: ./content/teacher.py:105
@@ -406,6 +422,10 @@ msgstr ""
 
 #: ./content/course.py:117
 msgid "License Type"
+msgstr ""
+
+#: ./content/echelon.py:313
+msgid "Manage Org"
 msgstr ""
 
 #: ./content/echelon.py:112
@@ -509,6 +529,10 @@ msgstr ""
 msgid "One line one record"
 msgstr ""
 
+#: ./content/echelon.py:294
+msgid "Other"
+msgstr ""
+
 #: ./content/course.py:95
 msgid "Other Note"
 msgstr ""
@@ -577,7 +601,7 @@ msgstr ""
 msgid "Related link view"
 msgstr ""
 
-#: ./browser/views.py:2758
+#: ./browser/views.py:2782
 msgid "Reserve Seat is OK."
 msgstr ""
 
@@ -636,6 +660,10 @@ msgstr ""
 #: ./content/course.py:105
 #: ./content/trainingcenter.py:39
 msgid "Simple Title"
+msgstr ""
+
+#: ./content/echelon.py:308
+msgid "Special Course"
 msgstr ""
 
 #: ./content/teacher.py:185
@@ -713,6 +741,10 @@ msgstr ""
 msgid "Training Center"
 msgstr ""
 
+#: ./content/echelon.py:303
+msgid "Training Center Agent"
+msgstr ""
+
 #: ./content/trainingcenter.py:34
 msgid "Training Center Code."
 msgstr ""
@@ -759,6 +791,14 @@ msgstr ""
 msgid "altFull"
 msgstr ""
 
+#: ./content/echelon.py:285
+msgid "cashierNote"
+msgstr ""
+
+#: ./content/echelon.py:260
+msgid "checkNote"
+msgstr ""
+
 #: ./vocabularies/class_time.py:33
 msgid "complex"
 msgstr ""
@@ -773,6 +813,18 @@ msgstr ""
 
 #: ./configure.zcml:41
 msgid "cshm.content (uninstall)"
+msgstr ""
+
+#: ./content/echelon.py:270
+msgid "feeDetail"
+msgstr ""
+
+#: ./content/echelon.py:245
+msgid "finishCourseSendDate"
+msgstr ""
+
+#: ./content/echelon.py:280
+msgid "finishCourseStatus"
 msgstr ""
 
 #: ./vocabularies/class_room.py:30
@@ -807,6 +859,10 @@ msgstr ""
 msgid "inWeekendEvening"
 msgstr ""
 
+#: ./content/echelon.py:275
+msgid "manageFee"
+msgstr ""
+
 #: ./content/echelon.py:181
 #: ./profiles/default/types/material.xml
 msgid "material"
@@ -824,12 +880,32 @@ msgstr ""
 msgid "planed"
 msgstr ""
 
+#: ./content/echelon.py:265
+msgid "preFee"
+msgstr ""
+
+#: ./content/echelon.py:250
+msgid "receivedDate"
+msgstr ""
+
 #: ./vocabularies/class_status.py:31
 msgid "registerFirst"
 msgstr ""
 
 #: ./vocabularies/class_room.py:31
 msgid "second_room"
+msgstr ""
+
+#: ./content/echelon.py:290
+msgid "statusNote"
+msgstr ""
+
+#: ./content/echelon.py:240
+msgid "studDataSendDate"
+msgstr ""
+
+#: ./content/echelon.py:235
+msgid "submitStatus"
 msgstr ""
 
 #: ./content/echelon.py:51
