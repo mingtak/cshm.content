@@ -2517,6 +2517,31 @@ class CourseListing(BrowserView):
         return self.template()
 
 
+class EchelonListing(BrowserView):
+
+    """ 課程期別列表 """
+
+    template = ViewPageTemplateFile("template/echelon_listing.pt")
+
+    def getPassCount(self, uid):
+        # 結訓人數
+        sqlStr = "SELECT COUNT(id) as count FROM `reg_course` WHERE uid = '%s' and license_code is not null" % (uid)
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]['count']
+
+    def getRegCount(self, uid):
+        # 上課人數
+        sqlStr = "SELECT COUNT(id) as count FROM `reg_course` WHERE uid = '%s' and isAlt = 0" % (uid)
+        sqlInstance = SqlObj()
+        result = sqlInstance.execSql(sqlStr)
+        return result[0]['count']
+
+    def __call__(self):
+        self.portal = api.portal.get()
+        return self.template()
+
+
 class EchelonListingOperation(BrowserView):
 
     """ 班別列表 / 辦班作業管理，辦班前/中/後"""
@@ -2558,6 +2583,10 @@ class RegisterDetail(BrowserView):
         """ 發證日期 """
         context = self.context
 
+        # 原來寫在mysql，但實際上，應該寫在 contenttype會比較合理
+        return context.licenseDate
+
+        # 保留原 code，若要改回，刪上行即可
         uid = context.UID()
         sqlInstance = SqlObj()
         sqlStr = """SELECT license_date FROM reg_course WHERE uid = '{}'  ORDER BY license_date DESC""".format(uid)

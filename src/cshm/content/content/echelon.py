@@ -291,6 +291,7 @@ class IEchelon(model.Schema):
         'manageOrg',
         'docSN',
         'docDate',
+        'licenseDate',
     ])
 
     trainingCenterAgent = schema.TextLine(
@@ -315,6 +316,12 @@ class IEchelon(model.Schema):
 
     docDate = schema.Date(
         title=_(u"Document Date"),
+        required=False,
+    )
+
+    # 發證日期
+    licenseDate = schema.Date(
+        title=_(u"License Date"),
         required=False,
     )
 

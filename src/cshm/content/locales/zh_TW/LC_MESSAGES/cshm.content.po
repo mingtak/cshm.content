@@ -731,7 +731,7 @@ msgstr "訓練中心"
 
 #: ./content/echelon.py:303
 msgid "Training Center Agent"
-msgstr "職訓中心承辦人員"
+msgstr "職訓中心(外辦)承辦人員"
 
 #: ./content/trainingcenter.py:34
 msgid "Training Center Code."

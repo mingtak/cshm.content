@@ -119,6 +119,15 @@
       permission="zope2.View"
       />
 
+  <!-- 課程期別列表 / 權限未定 -->
+  <browser:page
+      name="echelon_listing"
+      for="cshm.content.content.course.ICourse"
+      class=".views.EchelonListing"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- 班別列表: 辦班作業，辦班前/中/後 -->
   <browser:page
       name="echelon_listing_operation"
