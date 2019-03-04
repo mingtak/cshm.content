@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-02-20 08:41+0000\n"
+"POT-Creation-Date: 2019-03-03 03:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -253,11 +253,11 @@ msgstr ""
 msgid "Discount Start Date"
 msgstr ""
 
-#: ./content/echelon.py:323
+#: ./content/echelon.py:318
 msgid "Document Date"
 msgstr ""
 
-#: ./content/echelon.py:318
+#: ./content/echelon.py:313
 msgid "Document SN"
 msgstr ""
 
@@ -324,7 +324,7 @@ msgstr ""
 msgid "For example, 3|4|3 or 4|3|3 ext."
 msgstr ""
 
-#: ./content/echelon.py:255
+#: ./content/echelon.py:249
 msgid "Give License Status"
 msgstr ""
 
@@ -420,11 +420,15 @@ msgstr ""
 msgid "Kaohsiung"
 msgstr ""
 
+#: ./content/echelon.py:324
+msgid "License Date"
+msgstr ""
+
 #: ./content/course.py:117
 msgid "License Type"
 msgstr ""
 
-#: ./content/echelon.py:313
+#: ./content/echelon.py:308
 msgid "Manage Org"
 msgstr ""
 
@@ -529,7 +533,7 @@ msgstr ""
 msgid "One line one record"
 msgstr ""
 
-#: ./content/echelon.py:294
+#: ./content/echelon.py:288
 msgid "Other"
 msgstr ""
 
@@ -601,7 +605,7 @@ msgstr ""
 msgid "Related link view"
 msgstr ""
 
-#: ./browser/views.py:2782
+#: ./browser/views.py:2823
 msgid "Reserve Seat is OK."
 msgstr ""
 
@@ -662,7 +666,7 @@ msgstr ""
 msgid "Simple Title"
 msgstr ""
 
-#: ./content/echelon.py:308
+#: ./content/echelon.py:303
 msgid "Special Course"
 msgstr ""
 
@@ -741,7 +745,7 @@ msgstr ""
 msgid "Training Center"
 msgstr ""
 
-#: ./content/echelon.py:303
+#: ./content/echelon.py:298
 msgid "Training Center Agent"
 msgstr ""
 
@@ -791,11 +795,11 @@ msgstr ""
 msgid "altFull"
 msgstr ""
 
-#: ./content/echelon.py:285
+#: ./content/echelon.py:279
 msgid "cashierNote"
 msgstr ""
 
-#: ./content/echelon.py:260
+#: ./content/echelon.py:254
 msgid "checkNote"
 msgstr ""
 
@@ -815,15 +819,15 @@ msgstr ""
 msgid "cshm.content (uninstall)"
 msgstr ""
 
-#: ./content/echelon.py:270
+#: ./content/echelon.py:264
 msgid "feeDetail"
 msgstr ""
 
-#: ./content/echelon.py:245
+#: ./content/echelon.py:239
 msgid "finishCourseSendDate"
 msgstr ""
 
-#: ./content/echelon.py:280
+#: ./content/echelon.py:274
 msgid "finishCourseStatus"
 msgstr ""
 
@@ -859,7 +863,7 @@ msgstr ""
 msgid "inWeekendEvening"
 msgstr ""
 
-#: ./content/echelon.py:275
+#: ./content/echelon.py:269
 msgid "manageFee"
 msgstr ""
 
@@ -880,11 +884,11 @@ msgstr ""
 msgid "planed"
 msgstr ""
 
-#: ./content/echelon.py:265
+#: ./content/echelon.py:259
 msgid "preFee"
 msgstr ""
 
-#: ./content/echelon.py:250
+#: ./content/echelon.py:244
 msgid "receivedDate"
 msgstr ""
 
@@ -896,16 +900,12 @@ msgstr ""
 msgid "second_room"
 msgstr ""
 
-#: ./content/echelon.py:290
+#: ./content/echelon.py:284
 msgid "statusNote"
 msgstr ""
 
-#: ./content/echelon.py:240
+#: ./content/echelon.py:234
 msgid "studDataSendDate"
-msgstr ""
-
-#: ./content/echelon.py:235
-msgid "submitStatus"
 msgstr ""
 
 #: ./content/echelon.py:51

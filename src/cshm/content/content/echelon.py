@@ -19,6 +19,70 @@ class IEchelon(model.Schema):
     """ Marker interface and Dexterity Python Schema for Echelon
     """
 
+    fieldset(_(u'Course Basic'), fields=[
+        'duringTime',
+        'courseStart',
+        'courseEnd',
+        'trainingCenter',
+        'specialCourse',
+        'undertaker',
+        'counselor',
+        'quota',
+        'trainingCenterAgent',
+        'manageOrg',
+        'docSN',
+    ])
+
+    """
+    fieldset('Handbook', fields=[
+        'courseFee',
+        'classStatus',
+        'memo',
+        'contact',
+        'regDeadline',
+        'discountInfo_no_open',
+        'discountProgram',
+        'discountStart',
+        'discountEnd',
+        'prepareInfo',
+        'courseHours',
+        'detailClassTime',
+        'submitClassDate',
+        'craneType',
+    ])
+
+
+    fieldset('EchelonDetail', fields=[
+        'qualification',
+        'reTrainingDetail',
+        'courseIntro',
+        'courseScope',
+        'testMethod',
+    ])
+
+    fieldset(_(u'CourseStatus'), fields=[
+        'studDataSendDate',
+        'finishCourseSendDate',
+        'receivedDate',
+        'giveLicenseStatus',
+        'checkNote',
+        'preFee',
+        'feeDetail',
+        'manageFee',
+        'finishCourseStatus',
+        'cashierNote',
+        'statusNote',
+    ])
+
+    fieldset(_(u'Other'), fields=[
+        'trainingCenterAgent',
+        'specialCourse',
+        'manageOrg',
+        'docSN',
+        'docDate',
+        'licenseDate',
+    ]) """
+
     duringTime = schema.Choice(
         title=_(u'During Time'),
         vocabulary='cshm.content.ClassTime',
@@ -79,23 +143,6 @@ class IEchelon(model.Schema):
         required=True,
     )
 
-    fieldset('Handbook', fields=[
-        'courseFee',
-        'classStatus',
-        'memo',
-        'contact',
-        'regDeadline',
-        'discountInfo_no_open',
-        'discountProgram',
-        'discountStart',
-        'discountEnd',
-        'prepareInfo',
-        'courseHours',
-        'detailClassTime',
-        'submitClassDate',
-        'craneType',
-    ])
-
     courseFee = schema.Int(
         title=_(u'Course Fee'),
         required=False,
@@ -132,6 +179,7 @@ class IEchelon(model.Schema):
         title=_(u'Discount Information, No Open'),
         required=False,
     )
+
     @invariant
     def check_date(data):
         if data.discountEnd < data.discountStart:
@@ -183,14 +231,6 @@ class IEchelon(model.Schema):
         )
     )
 
-    fieldset('EchelonDetail', fields=[
-        'qualification',
-        'reTrainingDetail',
-        'courseIntro',
-        'courseScope',
-        'testMethod',
-    ])
-
     qualification = schema.TextLine(
         title=_(u'Qualification'),
         required=False,
@@ -215,20 +255,6 @@ class IEchelon(model.Schema):
         title=_(u'Test Method'),
         required=False,
     )
-
-    fieldset(_(u'CourseStatus'), fields=[
-        'studDataSendDate',
-        'finishCourseSendDate',
-        'receivedDate',
-        'giveLicenseStatus',
-        'checkNote',
-        'preFee',
-        'feeDetail',
-        'manageFee',
-        'finishCourseStatus',
-        'cashierNote',
-        'statusNote',
-    ])
 
     studDataSendDate = schema.Date(
         title=_(u"studDataSendDate"),
@@ -284,15 +310,6 @@ class IEchelon(model.Schema):
         title=_(u"statusNote"),
         required=False,
     )
-
-    fieldset(_(u'Other'), fields=[
-        'trainingCenterAgent',
-        'specialCourse',
-        'manageOrg',
-        'docSN',
-        'docDate',
-        'licenseDate',
-    ])
 
     trainingCenterAgent = schema.TextLine(
         title=_(u'Training Center Agent'),
