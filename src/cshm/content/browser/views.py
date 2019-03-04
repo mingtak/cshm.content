@@ -7,9 +7,13 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.PloneBatch import Batch
 from Acquisition import aq_inner
 from plone.app.contenttypes.browser.folder import FolderView
-
 from plone.app.contentlisting.interfaces import IContentListing
 from Products.CMFCore.utils import getToolByName
+
+from zope import component
+from zope.intid.interfaces import IIntIds
+#from zope.app.intid import IntIds
+from z3c.relationfield import RelationValue
 
 from mingtak.ECBase.browser.views import SqlObj
 from docxtpl import DocxTemplate, Listing
@@ -209,6 +213,74 @@ class BasicBrowserView(BrowserView):
                     """.format(uid)
         sqlInstance = SqlObj()
         return sqlInstance.execSql(sqlStr)
+
+
+class ImportCourse(BasicBrowserView):
+
+    def __call__(self):
+
+        request = self.request
+        portal = api.portal.get()
+        alsoProvides(request, IDisableCSRFProtection)
+
+        intids = component.getUtility(IIntIds)
+        cityList = {'台北': 'taipei', '基隆': 'keelung', '中壢': 'taichung', '桃園': 'taoyuan', '台中': 'taichung',
+                    '花蓮': 'hualien', '嘉義': 'chiayi', '高雄': 'kaohsiung', '南科': 'nanke'}
+        with open('/home/andy/期別表.csv', 'r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            count = 0
+            for row in reader:
+
+                courseId = row.get('課程編號')
+                if not courseId:
+                    continue
+                obj = portal['resource']['course_template'][courseId.lower()] # 課程模版
+                courseId = obj.id
+
+                # 一次處理10期，不重覆處理
+                if portal['mana_course'].has_key(courseId) and portal['mana_course'][courseId].has_key(row.get('期別')):
+                    continue
+
+                s_year = int(row.get('開始年1')) + 1911
+                s_month = int(row.get('開始月1'))
+                s_day = int(row.get('開始日1'))
+                e_year = int(row.get('結束年1')) + 1911
+                e_month = int(row.get('結束月1'))
+                e_day = int(row.get('結束日1'))
+
+                if portal['mana_course'].has_key(courseId):
+                    t_c_id = cityList.get(row.get('外辦單位'), 'taipei')
+                    t_c = intids.getId(portal['resource']['training_center'][t_c_id])
+                    container = api.content.create(type='Echelon', id=row.get('期別'), title='第%s期' % row.get('期別'),
+                                                   container=portal['mana_course'][courseId],
+                        courseStart=datetime.date(s_year, s_month, s_day),
+                        courseEnd=datetime.date(e_year, e_month, e_day),
+                        trainingCenter = RelationValue(t_c)
+                    )
+                    childNodes = obj.getChildNodes()
+                    for item in childNodes:
+                        api.content.copy(source=item, target=container)
+                else:
+                    t_c_id = cityList.get(row.get('外辦單位'), 'taipei')
+                    t_c = intids.getId(portal['resource']['training_center'][t_c_id])
+
+                    newCourse = api.content.copy(source=obj, target=portal['mana_course'])
+                    newCourse.trainingCenter = RelationValue(t_c)
+                    newCourse.reindexObject(idxs=['trainingCenterId'])
+
+                    childNodes = newCourse.getChildNodes()
+                    container = api.content.create(type='Echelon', id=row.get('期別'), title='第%s期' % row.get('期別'),
+                                                   container=newCourse,
+                        courseStart=datetime.date(s_year, s_month, s_day),
+                        courseEnd=datetime.date(e_year, e_month, e_day),
+                    )
+                    for item in childNodes:
+                        api.content.move(source=item, target=container)
+
+                logger.info('%s: Complete.' % row['識別碼'])
+                count += 1
+                if count >= 3:
+                     break
 
 
 

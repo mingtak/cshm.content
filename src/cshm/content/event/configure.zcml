@@ -3,13 +3,21 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="cshm.content">
 
-
-
 <!-- for="Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent -->
 <!-- for="Products.PluggableAuthService.interfaces.events.IPropertiesUpdatedEvent" -->
     <subscriber
         for="Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent"
         handler=".event.addRoleObj"
+    />
+
+    <subscriber
+        for="cshm.content.content.course.IEchelon zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
+    />
+
+    <subscriber
+        for="cshm.content.content.course.ICourse zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".event.moveObjectsToTop"
     />
 
     <subscriber

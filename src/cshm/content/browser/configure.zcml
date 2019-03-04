@@ -1023,6 +1023,15 @@
       />
   <!-- 權限未定 -->
 
+  <!-- 匯入課程期別 -->
+  <browser:page
+      name="import_course"
+      for="*"
+      class=".views.ImportCourse"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- 測試 -->
   <browser:page
       name="testview"
