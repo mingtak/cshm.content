@@ -32,6 +32,7 @@ import datetime
 import csv
 from StringIO import StringIO
 import random
+from transaction import commit
 
 logger = logging.getLogger("cshm.content")
 
@@ -215,6 +216,21 @@ class BasicBrowserView(BrowserView):
         return sqlInstance.execSql(sqlStr)
 
 
+class DeleteEmptyCourse(BasicBrowserView):
+
+    def __call__(self):
+
+        request = self.request
+        portal = api.portal.get()
+        alsoProvides(request, IDisableCSRFProtection)
+
+        brain = api.content.find(context=portal['mana_course'], portal_type='Echelon')
+        for item in brain:
+            if item.getObject().getChildNodes():
+                continue
+            api.content.delete(obj=item.getObject())
+
+
 class ImportCourse(BasicBrowserView):
 
     def __call__(self):
@@ -230,57 +246,61 @@ class ImportCourse(BasicBrowserView):
             reader = csv.DictReader(csvfile)
             count = 0
             for row in reader:
+                try:
+                    courseId = row.get('課程編號')
+                    if not courseId:
+                        continue
+                    obj = portal['resource']['course_template'][courseId.lower()] # 課程模版
+                    courseId = obj.id
 
-                courseId = row.get('課程編號')
-                if not courseId:
+                    # 不重複處理,檢查重複
+                    if portal['mana_course'].has_key(courseId) and portal['mana_course'][courseId].has_key(row.get('期別')):
+                        continue
+
+                    s_year = int(row.get('訓練開始日期')[0:4])
+                    s_month = int(row.get('訓練開始日期')[7:9])
+                    s_day = int(row.get('訓練開始日期')[12:14])
+                    e_year = int(row.get('訓練結束日期')[0:4])
+                    e_month = int(row.get('訓練結束日期')[7:9])
+                    e_day = int(row.get('訓練結束日期')[12:14])
+
+                    if portal['mana_course'].has_key(courseId):
+                        t_c_id = cityList.get(row.get('外辦單位'), 'taipei')
+                        t_c = intids.getId(portal['resource']['training_center'][t_c_id])
+                        container = api.content.create(type='Echelon', id=row.get('期別'), title='%s期' % row.get('期別'),
+                                                       container=portal['mana_course'][courseId],
+                            courseStart=datetime.date(s_year, s_month, s_day),
+                            courseEnd=datetime.date(e_year, e_month, e_day),
+                            trainingCenter = RelationValue(t_c)
+                        )
+                        childNodes = obj.getChildNodes()
+                        for item in childNodes:
+                            api.content.copy(source=item, target=container)
+                    else:
+                        t_c_id = cityList.get(row.get('外辦單位'), 'taipei')
+                        t_c = intids.getId(portal['resource']['training_center'][t_c_id])
+
+                        newCourse = api.content.copy(source=obj, target=portal['mana_course'])
+                        newCourse.trainingCenter = RelationValue(t_c)
+                        newCourse.reindexObject(idxs=['trainingCenterId'])
+
+                        childNodes = newCourse.getChildNodes()
+                        container = api.content.create(type='Echelon', id=row.get('期別'), title='%s期' % row.get('期別'),
+                                                       container=newCourse,
+                            courseStart=datetime.date(s_year, s_month, s_day),
+                            courseEnd=datetime.date(e_year, e_month, e_day),
+                        )
+                        for item in childNodes:
+                            api.content.move(source=item, target=container)
+                except:
+                    with open('/home/andy/import_course_error.log' , 'a') as file:
+                        file.write('IMPORT ERROR %s, %s: %s-%s\n' % (DateTime().strftime('%m/%d %H:%M'),
+                                                                     row.get('識別碼'), row.get('課程編號'), row.get('期別')))
                     continue
-                obj = portal['resource']['course_template'][courseId.lower()] # 課程模版
-                courseId = obj.id
-
-                # 一次處理10期，不重覆處理
-                if portal['mana_course'].has_key(courseId) and portal['mana_course'][courseId].has_key(row.get('期別')):
-                    continue
-
-                s_year = int(row.get('開始年1')) + 1911
-                s_month = int(row.get('開始月1'))
-                s_day = int(row.get('開始日1'))
-                e_year = int(row.get('結束年1')) + 1911
-                e_month = int(row.get('結束月1'))
-                e_day = int(row.get('結束日1'))
-
-                if portal['mana_course'].has_key(courseId):
-                    t_c_id = cityList.get(row.get('外辦單位'), 'taipei')
-                    t_c = intids.getId(portal['resource']['training_center'][t_c_id])
-                    container = api.content.create(type='Echelon', id=row.get('期別'), title='第%s期' % row.get('期別'),
-                                                   container=portal['mana_course'][courseId],
-                        courseStart=datetime.date(s_year, s_month, s_day),
-                        courseEnd=datetime.date(e_year, e_month, e_day),
-                        trainingCenter = RelationValue(t_c)
-                    )
-                    childNodes = obj.getChildNodes()
-                    for item in childNodes:
-                        api.content.copy(source=item, target=container)
-                else:
-                    t_c_id = cityList.get(row.get('外辦單位'), 'taipei')
-                    t_c = intids.getId(portal['resource']['training_center'][t_c_id])
-
-                    newCourse = api.content.copy(source=obj, target=portal['mana_course'])
-                    newCourse.trainingCenter = RelationValue(t_c)
-                    newCourse.reindexObject(idxs=['trainingCenterId'])
-
-                    childNodes = newCourse.getChildNodes()
-                    container = api.content.create(type='Echelon', id=row.get('期別'), title='第%s期' % row.get('期別'),
-                                                   container=newCourse,
-                        courseStart=datetime.date(s_year, s_month, s_day),
-                        courseEnd=datetime.date(e_year, e_month, e_day),
-                    )
-                    for item in childNodes:
-                        api.content.move(source=item, target=container)
-
-                logger.info('%s: Complete.' % row['識別碼'])
                 count += 1
-                if count >= 3:
-                     break
+                if count % 10 == 0:
+                     logger.info('%s: %s: Commit Complete.' % (count, DateTime().strftime('%m/%d %H:%M')))
+                     commit()
 
 
 
@@ -2533,10 +2553,10 @@ class AdminCourseListing(BrowserView):
     template = ViewPageTemplateFile("template/admin_course_listing.pt")
 
     def __call__(self):
-        portal = api.portal.get()
+        self.portal = api.portal.get()
         request = self.request
         context = self.context
-        self.children = portal['mana_course'].getChildNodes()
+        self.children = self.portal['mana_course'].getChildNodes()
         return self.template()
 
 
@@ -2611,6 +2631,13 @@ class EchelonListing(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
+        request = self.request
+        context = self.context
+        self.childNodes = list(context.getChildNodes())
+        if request.form.has_key('all'):
+            pass
+        elif self.childNodes:
+                self.childNodes = self.childNodes[0:30]
         return self.template()
 
 
@@ -2640,7 +2667,10 @@ class EchelonListingRegister(BrowserView):
         self.statusList = ['willStart', 'fullCanAlt', 'planed', 'registerFirst', 'altFull']
         self.echelonBrain = {}
         for status in self.statusList:
-            self.echelonBrain[status] = api.content.find(context=self.portal['mana_course'], Type='Echelon', classStatus=status)
+            self.echelonBrain[status] = api.content.find(context=self.portal['mana_course'],
+                                            Type='Echelon', classStatus=status,
+                                            review_state='published'
+                                        )
 
         return self.template()
 
@@ -2691,8 +2721,11 @@ class RegisterDetail(BrowserView):
 
     def __call__(self):
         self.portal = api.portal.get()
-
-        return self.template()
+        try:
+            return self.template()
+        except:
+            url = self.request.getURL().replace('register_detail', 'edit')
+            self.request.response.redirect(url)
 
 
 class StudentsList(BasicBrowserView):

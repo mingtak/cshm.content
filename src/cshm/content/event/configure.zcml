@@ -11,7 +11,7 @@
     />
 
     <subscriber
-        for="cshm.content.content.course.IEchelon zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        for="cshm.content.content.echelon.IEchelon zope.lifecycleevent.interfaces.IObjectAddedEvent"
         handler=".event.moveObjectsToTop"
     />
 

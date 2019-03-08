@@ -1032,6 +1032,15 @@
       permission="cmf.ManagePortal"
       />
 
+  <!-- 刪空課程期別 -->
+  <browser:page
+      name="delete_empty_course"
+      for="*"
+      class=".views.DeleteEmptyCourse"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
+
   <!-- 測試 -->
   <browser:page
       name="testview"
