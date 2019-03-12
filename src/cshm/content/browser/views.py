@@ -3390,9 +3390,12 @@ class HasExportCount(BrowserView):
                 echelonUID = echelon.UID()
                 echelonID = echelon.id
                 uidList.append(echelonUID)
+            if len(uidList) == 1:
+                uidList.append('zzz')
 
-            execStr = """SELECT COUNT(id), uid FROM reg_course WHERE uid in {} AND isAlt != 0 AND 
-                         on_training = 3 GROUP BY uid""".format(tuple(uidList))
+            execStr = """SELECT COUNT(id), uid
+                         FROM reg_course
+                         WHERE uid in {} AND isAlt != 0 AND on_training = 3 GROUP BY uid""".format(tuple(uidList))
             result = execSql.execSql(execStr)
             for item in result:
                 numbers = item[0]
