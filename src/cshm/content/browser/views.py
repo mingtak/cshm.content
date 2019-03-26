@@ -3416,24 +3416,44 @@ class HasExportCount(BrowserView):
         return self.template()
 
 
-class HasExportView(BrowserView):
+class HasExportView(BasicBrowserView):
     template = ViewPageTemplateFile('template/has_export_view.pt')
     def __call__(self):
         request = self.request
         context = self.context
         execSql = SqlObj()
         data = {}
+
         temp = []
+        periodList = []
         uidList = json.loads(request.get('uidList'))
+        updateUid = request.get('updateUid')
+        updateId = request.get('updateId')
+        if updateId and updateUid:
+            path = api.content.get(UID=updateUid).absolute_url_path()
+            execStr = """Update reg_course SET isAlt = 0, on_training = 1, path = '{}', uid = '{}' WHERE id = '{}'
+                      """.format(path, updateUid, updateId)
+            execSql.execSql(execStr)
+            request.response.redirect(context.absolute_url() + '/@@has_export_count')
+            return
 
         if len(uidList) == 1:
             uidList.append('zzz')
+
+        content = api.content.get(UID=uidList[0]).getParentNode().getChildNodes()
+        for item in content:
+            if api.content.get_state(item) == 'published':
+                periodList.append({
+                    'title': item.id,
+                    'uid': item.UID()
+                })
 
         for uid in uidList:
             temp.append(str(uid))
 
         sqlStr = """SELECT * FROM reg_course WHERE on_training = 3 and uid in {}""".format(tuple(temp))
         result = execSql.execSql(sqlStr)
+
         duringTime = api.content.get(UID=result[0][16]).duringTime
         if duringTime == 'inDay':
             self.time = '日間'
@@ -3448,6 +3468,7 @@ class HasExportView(BrowserView):
         elif duringTime == 'phone':
             self.time = '電話'
 
+        self.periodList = periodList
         self.course_name = api.content.get(UID=result[0][16]).getParentNode().title
         self.result = result
         return self.template()

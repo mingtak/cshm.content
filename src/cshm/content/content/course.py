@@ -18,12 +18,14 @@ class ICourse(model.Schema):
     """
 
     fieldset('Counselor', fields=['counselor', 'agentCounselor'])
+    directives.mode(counselor='hidden')
     counselor = schema.Choice(
         title=_(u"Counselor"),
         vocabulary='plone.app.vocabularies.Users',
         required=False,
     )
 
+    directives.mode(agentCounselor='hidden')
     agentCounselor = schema.Choice(
         title=_(u"Agent Counselor"),
         vocabulary='plone.app.vocabularies.Users',
