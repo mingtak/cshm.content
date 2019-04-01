@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-03-03 03:03+0000\n"
+"POT-Creation-Date: 2019-03-26 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -31,11 +31,11 @@ msgstr "name指學生姓名, course指課程名稱"
 msgid "Activation"
 msgstr "啟用"
 
-#: ./browser/views.py:1803
+#: ./browser/views.py:1895
 msgid "Add Teacher Fail."
 msgstr "新增教師資訊失敗"
 
-#: ./browser/views.py:1801
+#: ./browser/views.py:1893
 msgid "Add Teacher Success."
 msgstr "新增教師資訊成功"
 
@@ -43,11 +43,11 @@ msgstr "新增教師資訊成功"
 msgid "Address"
 msgstr "地址"
 
-#: ./content/course.py:28
+#: ./content/course.py:31
 msgid "Agent Counselor"
 msgstr "代理輔導員"
 
-#: ./content/echelon.py:76
+#: ./content/echelon.py:136
 msgid "Alternate Count"
 msgstr "候補名額"
 
@@ -63,23 +63,23 @@ msgstr "簡訊供應商URL"
 msgid "Cell Phone Number."
 msgstr "手機號碼"
 
-#: ./content/course.py:100
+#: ./content/course.py:103
 msgid "Certificate Code"
 msgstr "證書編碼"
 
-#: ./content/echelon.py:69
+#: ./content/echelon.py:129
 msgid "Class Quota"
 msgstr "班級名額"
 
-#: ./browser/views.py:1413
+#: ./browser/views.py:1505
 msgid "Class Scheduling Success."
 msgstr "排課成功"
 
-#: ./content/echelon.py:40
+#: ./content/echelon.py:100
 msgid "Class Time, ex. 0900-1800"
 msgstr "上課時間，例: 0900-1800"
 
-#: ./content/echelon.py:45
+#: ./content/echelon.py:105
 #: ./profiles/default/types/Classroom.xml
 msgid "Classroom"
 msgstr "教室"
@@ -100,7 +100,7 @@ msgstr "教師基本資料"
 msgid "Configure Training Center Information"
 msgstr "各區練訓中心基本資料"
 
-#: ./content/echelon.py:117
+#: ./content/echelon.py:160
 msgid "Contact"
 msgstr "聯絡資訊"
 
@@ -112,7 +112,7 @@ msgstr "聯絡地址"
 msgid "Copyright"
 msgstr ""
 
-#: ./content/course.py:22
+#: ./content/course.py:24
 msgid "Counselor"
 msgstr "輔導員"
 
@@ -120,49 +120,53 @@ msgstr "輔導員"
 msgid "Count Header"
 msgstr ""
 
-#: ./content/course.py:43
+#: ./content/course.py:46
 #: ./profiles/default/types/Course.xml
 msgid "Course"
 msgstr "課程"
+
+#: ./content/echelon.py:22
+msgid "Course Basic"
+msgstr "期別基本資訊"
 
 #: ./profiles/default/types/Course.xml
 msgid "Course Content type for CSHM"
 msgstr "課程資料基別"
 
-#: ./content/course.py:85
+#: ./content/course.py:88
 msgid "Course Effective"
 msgstr "課程效力"
 
-#: ./content/echelon.py:35
+#: ./content/echelon.py:95
 msgid "Course End Date"
 msgstr "課程結束日期"
 
-#: ./content/echelon.py:100
+#: ./content/echelon.py:143
 msgid "Course Fee"
 msgstr "課程費用"
 
-#: ./content/echelon.py:156
+#: ./content/echelon.py:200
 msgid "Course Hours"
 msgstr "課程時數"
 
-#: ./content/course.py:70
+#: ./content/course.py:73
 msgid "Course Required"
 msgstr "上課資格"
 
-#: ./content/course.py:80
-#: ./content/echelon.py:210
+#: ./content/course.py:83
+#: ./content/echelon.py:246
 msgid "Course Scope"
 msgstr "適用範圍"
 
-#: ./content/echelon.py:30
+#: ./content/echelon.py:90
 msgid "Course Start Date"
 msgstr "課程開始日期"
 
-#: ./content/echelon.py:105
+#: ./content/echelon.py:148
 msgid "Course Status"
 msgstr "課程狀態"
 
-#: ./browser/views.py:2387
+#: ./browser/views.py:2479
 msgid "Course name or upload url wrong, please check once."
 msgstr "課程名稱或上傳網址錯誤，請再檢查一遍"
 
@@ -170,23 +174,19 @@ msgstr "課程名稱或上傳網址錯誤，請再檢查一遍"
 msgid "Course subject details."
 msgstr "課程科目"
 
-#: ./content/echelon.py:205
+#: ./content/echelon.py:241
 msgid "CourseIntro"
 msgstr "課程介紹"
-
-#: ./content/echelon.py:219
-msgid "CourseStatus"
-msgstr "課程狀態"
 
 #: ./content/material.py:48
 msgid "Cover"
 msgstr ""
 
-#: ./browser/configure.zcml:38
+#: ./browser/configure.zcml:61
 msgid "Cover view"
 msgstr "首頁"
 
-#: ./content/echelon.py:173
+#: ./content/echelon.py:217
 msgid "Crane Type"
 msgstr "起重機具機型"
 
@@ -198,7 +198,7 @@ msgstr "建立者"
 msgid "Current Job"
 msgstr "現職"
 
-#: ./browser/views.py:1393
+#: ./browser/views.py:1485
 msgid "Data lost, please fill all field"
 msgstr "資訊缺漏，請填寫所有欄位"
 
@@ -226,15 +226,15 @@ msgstr "科系2"
 msgid "Department 3."
 msgstr "科系3"
 
-#: ./content/echelon.py:163
+#: ./content/echelon.py:207
 msgid "Detail Class Time"
 msgstr "上課詳細時間"
 
-#: ./content/echelon.py:146
+#: ./content/echelon.py:190
 msgid "Discount End Date"
 msgstr "折扣結束日期"
 
-#: ./content/echelon.py:132
+#: ./content/echelon.py:175
 msgid "Discount Information, No Open"
 msgstr "優惠辦法(不公開)"
 
@@ -242,31 +242,31 @@ msgstr "優惠辦法(不公開)"
 msgid "Discount Price"
 msgstr "折扣金額"
 
-#: ./content/echelon.py:127
+#: ./content/echelon.py:170
 msgid "Discount Program"
 msgstr "優惠方案"
 
-#: ./content/echelon.py:141
+#: ./content/echelon.py:185
 msgid "Discount Start Date"
 msgstr "折扣開始日期"
 
-#: ./content/echelon.py:318
+#: ./content/echelon.py:331
 msgid "Document Date"
 msgstr "公文日期"
 
-#: ./content/echelon.py:313
+#: ./content/echelon.py:326
 msgid "Document SN"
 msgstr "公文序號"
 
 #: ./browser/configlet.py:15
 msgid "Documents workflows"
-msgstr ""
+msgstr "公文流程"
 
-#: ./browser/views.py:1664
+#: ./browser/views.py:1756
 msgid "Download not Allowed"
 msgstr "不允許下載"
 
-#: ./content/echelon.py:23
+#: ./content/echelon.py:83
 msgid "During Time"
 msgstr "時段"
 
@@ -308,7 +308,7 @@ msgstr "Email範本"
 msgid "Email."
 msgstr "Email"
 
-#: ./browser/views.py:1415
+#: ./browser/views.py:1507
 msgid "Fail, Please check data format!!"
 msgstr "失敗，請檢查資料格式"
 
@@ -321,7 +321,7 @@ msgstr "傳真號碼"
 msgid "For example, 3|4|3 or 4|3|3 ext."
 msgstr "填寫範例: 3|4|3 或 4|3|3..."
 
-#: ./content/echelon.py:249
+#: ./content/echelon.py:271
 msgid "Give License Status"
 msgstr "發證狀態"
 
@@ -349,7 +349,11 @@ msgstr "畢業年2"
 msgid "Graduation Year 3."
 msgstr "畢業年3"
 
-#: ./content/course.py:49
+#: ./content/echelon.py:36
+msgid "Handbook"
+msgstr "簡章資訊"
+
+#: ./content/course.py:52
 msgid "Handbook Title"
 msgstr "簡章標題"
 
@@ -365,11 +369,11 @@ msgstr "戶籍地址"
 msgid "Id Card Number."
 msgstr "身份證字號"
 
-#: ./content/echelon.py:158
+#: ./content/echelon.py:202
 msgid "If 0, asking for phone"
 msgstr "若不輸入或設為 0 ，表示為電洽"
 
-#: ./content/course.py:112
+#: ./content/course.py:115
 msgid "If 0, no need retraining."
 msgstr "若不輸入或設為 0 ，表示不需回訓"
 
@@ -381,11 +385,11 @@ msgstr "忽略排課"
 msgid "Images Folder Path"
 msgstr "圖片檔資料夾路徑"
 
-#: ./browser/views.py:1976
+#: ./browser/views.py:2068
 msgid "Insert Not On Time Fail."
 msgstr "新增停課記錄失敗"
 
-#: ./browser/views.py:1974
+#: ./browser/views.py:2066
 msgid "Insert Not On Time Record Success."
 msgstr "新增停課記錄成功"
 
@@ -393,7 +397,7 @@ msgstr "新增停課記錄成功"
 msgid "Installs the cshm.content add-on."
 msgstr ""
 
-#: ./content/course.py:90
+#: ./content/course.py:93
 msgid "Introduction"
 msgstr "課程簡介"
 
@@ -417,19 +421,19 @@ msgstr "教師帳號"
 msgid "Kaohsiung"
 msgstr "高雄"
 
-#: ./content/echelon.py:324
+#: ./content/echelon.py:337
 msgid "License Date"
 msgstr "發證日期"
 
-#: ./content/course.py:117
+#: ./content/course.py:120
 msgid "License Type"
 msgstr "證書類型"
 
-#: ./content/echelon.py:308
+#: ./content/echelon.py:321
 msgid "Manage Org"
 msgstr "主管機關"
 
-#: ./content/echelon.py:112
+#: ./content/echelon.py:155
 msgid "Memo"
 msgstr "備註"
 
@@ -437,7 +441,7 @@ msgstr "備註"
 msgid "Msg Template"
 msgstr "簡訊範本"
 
-#: ./browser/views.py:2238
+#: ./browser/views.py:2330
 msgid "Not yat 18 years old."
 msgstr "未滿18歲"
 
@@ -530,15 +534,11 @@ msgstr "公文"
 msgid "One line one record"
 msgstr "一行一筆記錄"
 
-#: ./content/echelon.py:288
-msgid "Other"
-msgstr "其它"
-
-#: ./content/course.py:95
+#: ./content/course.py:98
 msgid "Other Note"
 msgstr "其他說明"
 
-#: ./browser/views.py:1747
+#: ./browser/views.py:1839
 msgid "Over Hours"
 msgstr "超過時數"
 
@@ -554,7 +554,7 @@ msgstr "證照"
 msgid "Phone Number."
 msgstr "電話號碼"
 
-#: ./content/echelon.py:151
+#: ./content/echelon.py:195
 msgid "Prepare Information"
 msgstr "繳交資料"
 
@@ -562,7 +562,7 @@ msgstr "繳交資料"
 msgid "Price"
 msgstr "價格"
 
-#: ./content/echelon.py:195
+#: ./content/echelon.py:231
 msgid "Qualification"
 msgstr "認證"
 
@@ -570,11 +570,11 @@ msgstr "認證"
 msgid "Quiz"
 msgstr "測驗"
 
-#: ./browser/views.py:2243
+#: ./browser/views.py:2335
 msgid "Quota Full include Alternate."
 msgstr "很抱歉，報名額滿(候補也已額滿)，無法再接受報名"
 
-#: ./content/echelon.py:200
+#: ./content/echelon.py:236
 msgid "ReTraining Detail"
 msgstr "回訓細節"
 
@@ -582,7 +582,7 @@ msgstr "回訓細節"
 msgid "Recipient"
 msgstr "收文者"
 
-#: ./content/echelon.py:122
+#: ./content/echelon.py:165
 msgid "Registration Deadline"
 msgstr "報名截止日期"
 
@@ -594,27 +594,27 @@ msgstr "報名完成通知訊息"
 msgid "Registry OK Auto Message"
 msgstr "報名成功自動訊息"
 
-#: ./browser/views.py:2282
+#: ./browser/views.py:2374
 msgid "Registry success."
 msgstr "報名成功"
 
-#: ./browser/configure.zcml:48
+#: ./browser/configure.zcml:71
 msgid "Related link view"
 msgstr ""
 
-#: ./browser/views.py:2823
+#: ./browser/views.py:2928
 msgid "Reserve Seat is OK."
 msgstr "預約座位完成"
 
-#: ./content/course.py:40
+#: ./content/course.py:43
 msgid "Retrainging Course"
 msgstr "回訓課程"
 
-#: ./content/course.py:35
+#: ./content/course.py:38
 msgid "Retraining Base On"
 msgstr "回訓說明"
 
-#: ./content/course.py:110
+#: ./content/course.py:113
 msgid "Retraining Years"
 msgstr "回訓年限"
 
@@ -626,19 +626,19 @@ msgstr "座位"
 msgid "Seat State"
 msgstr "座位狀態"
 
-#: ./content/echelon.py:178
+#: ./content/echelon.py:222
 msgid "Select Material"
 msgstr "選擇資材"
 
-#: ./browser/views.py:1302
+#: ./browser/views.py:1394
 msgid "Send Quote Request Finish!"
 msgstr "送出報價需求完成"
 
-#: ./browser/views.py:2074
+#: ./browser/views.py:2166
 msgid "Send cell message success."
 msgstr "送出簡訊訊息成功"
 
-#: ./browser/views.py:2087
+#: ./browser/views.py:2179
 msgid "Send mail success."
 msgstr "送出Email訊息成功"
 
@@ -658,12 +658,12 @@ msgstr "服務單位地址"
 msgid "Show in Registry Finish Page."
 msgstr "顯示於報名完成頁面"
 
-#: ./content/course.py:105
+#: ./content/course.py:108
 #: ./content/trainingcenter.py:39
 msgid "Simple Title"
 msgstr "簡稱"
 
-#: ./content/echelon.py:303
+#: ./content/echelon.py:316
 msgid "Special Course"
 msgstr "專班"
 
@@ -684,7 +684,7 @@ msgstr "科目"
 msgid "Subject Hours"
 msgstr "上課時數"
 
-#: ./content/echelon.py:168
+#: ./content/echelon.py:212
 msgid "Submit Class Date"
 msgstr "報班日期"
 
@@ -721,11 +721,11 @@ msgstr "教師姓名"
 msgid "Teacher Serial Number."
 msgstr "教師編號"
 
-#: ./content/echelon.py:215
+#: ./content/echelon.py:251
 msgid "Test Method"
 msgstr "考試方式"
 
-#: ./content/echelon.py:138
+#: ./content/echelon.py:182
 msgid "The End Date Need Bigger Then Start Date"
 msgstr "結束日期須大於開始日期"
 
@@ -733,16 +733,16 @@ msgstr "結束日期須大於開始日期"
 msgid "Title"
 msgstr ""
 
-#: ./content/course.py:75
+#: ./content/course.py:78
 msgid "Trainee"
 msgstr "訓練對象"
 
-#: ./content/echelon.py:63
+#: ./content/echelon.py:123
 #: ./content/teacher.py:230
 msgid "Training Center"
 msgstr "訓練中心"
 
-#: ./content/echelon.py:298
+#: ./content/echelon.py:311
 msgid "Training Center Agent"
 msgstr "職訓中心(外辦)承辦人員"
 
@@ -760,7 +760,7 @@ msgstr ""
 
 #: ./content/material.py:38
 msgid "Unit"
-msgstr ""
+msgstr "單位"
 
 #: ./content/teacher.py:190
 msgid "Unit Phone"
@@ -792,11 +792,11 @@ msgstr "中壢"
 msgid "altFull"
 msgstr "報名額滿"
 
-#: ./content/echelon.py:279
+#: ./content/echelon.py:301
 msgid "cashierNote"
 msgstr "出納註記"
 
-#: ./content/echelon.py:254
+#: ./content/echelon.py:276
 msgid "checkNote"
 msgstr "查核註記"
 
@@ -804,7 +804,7 @@ msgstr "查核註記"
 msgid "complex"
 msgstr "混合時段"
 
-#: ./content/echelon.py:57
+#: ./content/echelon.py:117
 msgid "counselor"
 msgstr "專職輔導員"
 
@@ -816,15 +816,15 @@ msgstr ""
 msgid "cshm.content (uninstall)"
 msgstr ""
 
-#: ./content/echelon.py:264
+#: ./content/echelon.py:286
 msgid "feeDetail"
 msgstr "收支明細 "
 
-#: ./content/echelon.py:239
+#: ./content/echelon.py:261
 msgid "finishCourseSendDate"
 msgstr "結報寄件"
 
-#: ./content/echelon.py:274
+#: ./content/echelon.py:296
 msgid "finishCourseStatus"
 msgstr "結報狀態"
 
@@ -840,7 +840,7 @@ msgstr ""
 msgid "fullCanAlt"
 msgstr "額滿候補"
 
-#: ./content/echelon.py:70
+#: ./content/echelon.py:130
 msgid "if 0, is not confirm"
 msgstr "若為 0 ，表示尚未確認"
 
@@ -860,11 +860,11 @@ msgstr "假日"
 msgid "inWeekendEvening"
 msgstr "周末夜間"
 
-#: ./content/echelon.py:269
+#: ./content/echelon.py:291
 msgid "manageFee"
 msgstr "管理費"
 
-#: ./content/echelon.py:181
+#: ./content/echelon.py:225
 #: ./profiles/default/types/material.xml
 msgid "material"
 msgstr "教材"
@@ -881,11 +881,11 @@ msgstr "電話"
 msgid "planed"
 msgstr "預定開課"
 
-#: ./content/echelon.py:259
+#: ./content/echelon.py:281
 msgid "preFee"
 msgstr "預支款請領"
 
-#: ./content/echelon.py:244
+#: ./content/echelon.py:266
 msgid "receivedDate"
 msgstr "收件日期"
 
@@ -897,15 +897,15 @@ msgstr "請先報名"
 msgid "second_room"
 msgstr "第二教室"
 
-#: ./content/echelon.py:284
+#: ./content/echelon.py:306
 msgid "statusNote"
 msgstr "備註"
 
-#: ./content/echelon.py:234
+#: ./content/echelon.py:256
 msgid "studDataSendDate"
 msgstr "學員資料寄件日期"
 
-#: ./content/echelon.py:51
+#: ./content/echelon.py:111
 msgid "undertaker"
 msgstr "承辦人"
 

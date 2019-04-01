@@ -33,9 +33,7 @@ class IEchelon(model.Schema):
         'docSN',
     ])
 
-    """
-    fieldset('Handbook', fields=[
-        'courseFee',
+    fieldset(_(u'Handbook'), fields=[
         'classStatus',
         'memo',
         'contact',
@@ -47,11 +45,9 @@ class IEchelon(model.Schema):
         'prepareInfo',
         'courseHours',
         'detailClassTime',
-        'submitClassDate',
-        'craneType',
     ])
 
-
+    """
     fieldset('EchelonDetail', fields=[
         'qualification',
         'reTrainingDetail',

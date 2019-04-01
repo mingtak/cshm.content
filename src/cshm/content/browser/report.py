@@ -360,3 +360,89 @@ class DownloadPicture(Basic):
 
         return self.downloadFile(title)
 
+
+class CourseReport(Basic):
+    template = ViewPageTemplateFile("template/course_report.pt")
+
+    def __call__(self):
+        request = self.request
+        portal = api.portal.get()
+
+        center = request.get('center')
+
+        if center:
+            periodContent = api.content.find(context=portal['mana_course'], trainingCenterId=center)
+            trainingCenter = api.content.find(id=center)[0].getObject()
+            parameter = {}
+            data = []
+
+            for item in periodContent:
+                obj = item.getObject()
+
+                regDeadline = obj.regDeadline.strftime('%Y-%m-%d') if obj.regDeadline else ''
+                courseStart = obj.courseStart.strftime('%Y-%m-%d') if obj.courseStart else ''
+
+                data.append({
+                    'courseFee': obj.courseFee,
+                    'duringTime': self.checkDuringTime(obj.duringTime),
+                    'title': obj.getParentNode().Title(),
+                    'regDeadline': regDeadline,
+                    'courseStart': courseStart,
+                    'classStatus': self.checkClassStatus(obj.classStatus)
+                })
+
+            document = Document()
+            parameter['data'] = data
+            parameter['trainingCenter'] = trainingCenter.title
+            parameter['phone'] = trainingCenter.phone
+            parameter['fax'] = trainingCenter.fax
+            parameter['address'] = trainingCenter.address
+            parameter['now'] = datetime.datetime.now().strftime('%Y-%m-%d')
+
+            filePath = '/home/andy/cshm/zeocluster/src/cshm.content/src/cshm/content/browser/static/course_report.docx'
+            doc = DocxTemplate(filePath)
+            doc.render(parameter)
+            doc.save("/tmp/temp.docx")
+
+            return self.downloadFile('中國勞工安全衛生管理學會%s近期開課一覽表' %trainingCenter.title)
+
+        else:
+            centerList = []
+
+            content = api.content.find(context=portal['resource']['training_center'], depth=1)
+            for item in content:
+                obj = item.getObject()
+                centerList.append({
+                    'title': obj.title,
+                    'code':obj.id,
+                })
+            self.centerList = centerList
+            return self.template()
+
+    def checkDuringTime(self, duringTime):
+        if duringTime == 'notYat':
+            return '時段未定'
+        elif duringTime == 'inDay':
+            return '日間'
+        elif duringTime == 'inEvening':
+            return '夜間'
+        elif duringTime == 'inWeekend':
+            return '假日'
+        elif duringTime == 'inWeekendEvening':
+            return '周末夜間'
+        elif duringTime == 'complex':
+            return '混合時段'
+        elif duringTime == 'phone':
+            return '電話'
+
+    def checkClassStatus(self, status):
+        if status == 'willStart':
+            return '確定開課'
+        elif status == 'fullCanAlt':
+            return '額滿候補'
+        elif status == 'planed':
+            return '預定開課'
+        elif status == 'registerFirst':
+            return '請先報名'
+        elif status == 'altFull':
+            return '報名額滿'

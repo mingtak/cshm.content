@@ -21,6 +21,29 @@
   <!-- Browser -->
 
 <!-- bindding coverListing and cover_view -->
+<!-- 暫時, 課程分類 -->
+<!--  <browser:page
+      name="import_subject"
+      class=".import_subject.ImportSubject"
+      permission="cmf.ManagePortal"
+      for="*"
+      />
+-->
+
+  <browser:page
+      name="course_list_by_subject"
+      class=".frontend.CourseListBySubject"
+      permission="zope2.View"
+      for="*"
+      />
+<!--開課一覽表 -->
+  <browser:page
+      name="course_report"
+      for="*"
+      class=".report.CourseReport"
+      layer="cshm.content.interfaces.ICshmContentLayer"
+      permission="cmf.ManagePortal"
+      />
   <browser:page
       name="coverListing"
       class=".views.CoverListing"

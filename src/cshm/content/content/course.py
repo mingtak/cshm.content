@@ -17,7 +17,8 @@ class ICourse(model.Schema):
     """ Marker interface and Dexterity Python Schema for Course
     """
 
-    fieldset('Counselor', fields=['counselor', 'agentCounselor'])
+#    fieldset('Counselor', fields=['counselor', 'agentCounselor'])
+
     directives.mode(counselor='hidden')
     counselor = schema.Choice(
         title=_(u"Counselor"),
