@@ -3144,6 +3144,13 @@ class UpdateStudentReg(BasicBrowserView):
         self.add_make_up(id, training_status)
 
         form = request.form
+        license_date = form.get('license_date', DateTime().strftime('%Y-%m-%d'))
+        if not license_date:
+            license_date = DateTime().strftime('%Y-%m-%d')
+        training_hour = form.get('training_hour', 0)
+        if not training_hour:
+            training_hour = 0
+
         sqlInstance = SqlObj()
         sqlStr = "UPDATE `reg_course` \
                   SET `cellphone`='%s', `fax`='%s',\
@@ -3163,8 +3170,7 @@ class UpdateStudentReg(BasicBrowserView):
                    form.get('phone'), form.get('birthday'), form.get('address'), form.get('job_title'), form.get('training_status'),
                    form.get('invoice_tax_no'), form.get('education_id'), form.get('edu_school'), form.get('city'), form.get('zip'),
                    form.get('company_city'), form.get('company_zip'), form.get('reTrainingCat'), form.get('reTrainingCode'),
-                   form.get('reTrainingHour'), form.get('training_hour'), form.get('license_unit'), form.get('license_date'),
-                   form.get('license_code'), form.get('id'))
+                   form.get('reTrainingHour'), training_hour, form.get('license_unit'), license_date, form.get('license_code'), form.get('id'))
         sqlInstance.execSql(sqlStr)
 
         if form.get('contactLog'):
