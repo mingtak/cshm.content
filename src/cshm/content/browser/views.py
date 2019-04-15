@@ -2415,8 +2415,8 @@ class GroupRegCourse(RegCourse):
 # 正確性待確認
         isAlt = self.isAlt()
 
-        form['invoice_title'] = 'TODO'
-        form['job_title'] = 'TODO'
+        form['invoice_title'] = ' ' #TODO
+        form['job_title'] = ' ' #TODO
 
 #        import pdb; pdb.set_trace()
         sqlStr = """INSERT INTO `reg_course`(`cellphone`, `fax`, `tax_no`, `name`, `com_email`, `company_name`,

@@ -87,7 +87,7 @@ class ManipulateMaterial(BrowserView):
         execSql = SqlObj()
         execStr = """INSERT INTO `material`( `course`, `period`, `uid`, `status`, `send_date`, `logistics_code`, `detail`, `remark`,
                  `organizer`, `address`, `action`) VALUES('{}','{}','{}','{}','{}','{}','{}','{}', '{}', '{}', '{}')
-                  """.format(course, period, uid, '處理中(寫死)', send_date, 'TODO', material_detail, remark, organizer, address, action)
+                  """.format(course, period, uid, '處理中(寫死)', send_date, ' ', material_detail, remark, organizer, address, action)
         execSql.execSql(execStr)
 
         request.response.redirect(context_url + '/@@material_view')
@@ -205,7 +205,7 @@ class PeriodListing(BrowserView):
         for item in echelonBrain:
             obj = item.getObject()
             courseStart = obj.courseStart
-            if courseStart >= nowDate:
+            if courseStart and courseStart >= nowDate:
                 trainingCenter = str(obj.trainingCenter.to_object.title)
                 period = obj.id
                 name = str(obj.getParentNode().title)

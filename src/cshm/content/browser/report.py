@@ -98,16 +98,16 @@ class DownloadOfficialDoc(Basic):
         parameter['docDate'] = safe_unicode(self.getChineseBirthday(obj.docDate))
         parameter['recipient'] = safe_unicode(obj.recipient)
         parameter['docSN'] = safe_unicode(obj.docHeader + obj.docSN)
-        parameter['detail_1'] = safe_unicode(obj.detail_1)
-        parameter['detail_2'] = safe_unicode(obj.detail_2)
-        parameter['detail_3'] = safe_unicode(obj.detail_3)
-        parameter['detail_4'] = safe_unicode(obj.detail_4)
-        parameter['detail_5'] = safe_unicode(obj.detail_5)
-        parameter['detail_6'] = safe_unicode(obj.detail_6)
-        parameter['detail_7'] = safe_unicode(obj.detail_7)
-        parameter['detail_8'] = safe_unicode(obj.detail_8)
-        parameter['detail_9'] = safe_unicode(obj.detail_9)
-        parameter['detail_10'] = safe_unicode(obj.detail_10)
+        parameter['detail_1'] = '1. %s' % safe_unicode(obj.detail_1) if obj.detail_1 else ''
+        parameter['detail_2'] = '2. %s' % safe_unicode(obj.detail_2) if obj.detail_2 else ''
+        parameter['detail_3'] = '3. %s' % safe_unicode(obj.detail_3) if obj.detail_3 else ''
+        parameter['detail_4'] = '4. %s' % safe_unicode(obj.detail_4) if obj.detail_4 else ''
+        parameter['detail_5'] = '5. %s' % safe_unicode(obj.detail_5) if obj.detail_5 else ''
+        parameter['detail_6'] = '6. %s' % safe_unicode(obj.detail_6) if obj.detail_6 else ''
+        parameter['detail_7'] = '7. %s' % safe_unicode(obj.detail_7) if obj.detail_7 else ''
+        parameter['detail_8'] = '8. %s' % safe_unicode(obj.detail_8) if obj.detail_8 else ''
+        parameter['detail_9'] = '9. %s' % safe_unicode(obj.detail_9) if obj.detail_9 else ''
+        parameter['detail_10'] = '10. %s' % safe_unicode(obj.detail_10) if obj.detail_10 else ''
         parameter['year'] = safe_unicode(obj.docDate.year - 1911)
         parameter['month'] = safe_unicode(obj.docDate.month)
         parameter['day'] = safe_unicode(obj.docDate.day)
@@ -125,7 +125,7 @@ class GernalReport(Basic):
         result = self.getAllStudent()
         context = self.context
         request = self.request
-        mode = request.get('mode')
+        mode = request.get('mode', 'horizon')
         course = context.getParentNode().Title()
         period = context.id
 

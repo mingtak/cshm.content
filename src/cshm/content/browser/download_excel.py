@@ -276,7 +276,7 @@ class RegisterExcelTeacher(Basic):
                 phone = teacher.cellPhone if teacher.cellPhone else teacher.homePhone
                 worksheet.write('A%s' %count, number, normal_format)
                 worksheet.write('B%s' %count, title, normal_format)
-                worksheet.write('C%s' %count, 'TODO', normal_format)
+                worksheet.write('C%s' %count, ' ', normal_format)
                 worksheet.write('D%s' %count, teacher.personExp, normal_format)
                 worksheet.write('E%s' %count, teacher.contactAddr, normal_format)
                 worksheet.write('F%s' %count, phone, normal_format)
@@ -341,10 +341,10 @@ class RegisterExcelGraduaction(Basic):
         worksheet.write('E3', '期', normal_format)
 
         worksheet.write('A4', '(訓練單位)開班文號：', header_format)
-        worksheet.merge_range('B4:E4', 'TODO', normal_format)
+        worksheet.merge_range('B4:E4', ' ', normal_format)
 
         worksheet.write('A5', '文號日期：', header_format)
-        worksheet.merge_range('B5:E5', 'TODO', normal_format)
+        worksheet.merge_range('B5:E5', ' ', normal_format)
 
         worksheet.write('A6', '證書編號', header_format)
         worksheet.write('B6', '姓名', header_format)
