@@ -20,23 +20,27 @@ class IEchelon(model.Schema):
     """
 
     fieldset(_(u'Course Basic'), fields=[
+        'classStatus',
         'duringTime',
+        'classTime',
+        'classroom',
         'courseStart',
         'courseEnd',
+        'regDeadline',
         'trainingCenter',
         'specialCourse',
         'undertaker',
         'counselor',
         'quota',
+        'altCount',
+        'courseFee',
         'trainingCenterAgent',
         'manageOrg',
         'docSN',
     ])
 
     fieldset(_(u'Handbook'), fields=[
-        'classStatus',
         'contact',
-        'regDeadline',
         'discountInfo_no_open',
         'discountProgram',
         'discountStart',
@@ -47,37 +51,11 @@ class IEchelon(model.Schema):
         'memo',
     ])
 
-    """
-    fieldset('EchelonDetail', fields=[
-        'qualification',
-        'reTrainingDetail',
-        'courseIntro',
-        'courseScope',
-        'testMethod',
-    ])
-
-    fieldset(_(u'CourseStatus'), fields=[
-        'studDataSendDate',
-        'finishCourseSendDate',
-        'receivedDate',
-        'giveLicenseStatus',
-        'checkNote',
-        'preFee',
-        'feeDetail',
-        'manageFee',
-        'finishCourseStatus',
-        'cashierNote',
-        'statusNote',
-    ])
-
-    fieldset(_(u'Other'), fields=[
-        'trainingCenterAgent',
-        'specialCourse',
-        'manageOrg',
-        'docSN',
-        'docDate',
-        'licenseDate',
-    ]) """
+    title = schema.TextLine(
+        title=_(u'Echelon Title'),
+        default=_(u'New Course'),
+        required=True,
+    )
 
     duringTime = schema.Choice(
         title=_(u'During Time'),

@@ -2606,6 +2606,7 @@ class CourseListing(BrowserView):
                     portal_ype='Echelon',
                     regDeadline=date_range,
                     classStatus=status,
+                    review_state='published',
                 )
                 self.trainingCenter = False
         return self.template()
