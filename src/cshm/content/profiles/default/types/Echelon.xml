@@ -38,7 +38,7 @@
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="true">
     <element value="plone.app.content.interfaces.INameFromTitle"/>
-    <element value="plone.app.dexterity.behaviors.id.IShortName"/>
+<!--    <element value="plone.app.dexterity.behaviors.id.IShortName"/> -->
     <element value="plone.app.dexterity.behaviors.metadata.IBasic"/>
     <!--<element value="plone.app.referenceablebehavior.referenceable.IReferenceable" />-->
     <!--<element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>-->
