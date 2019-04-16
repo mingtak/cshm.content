@@ -1422,6 +1422,7 @@ class CreateClass(BasicBrowserView):
                 api.content.copy(source=item, target=container)
         else:
             newCourse = api.content.copy(source=obj, target=portal['mana_course'])
+            api.content.transition(obj=newCourse, transition='publish')
             childNodes = newCourse.getChildNodes()
             container = api.content.create(type='Echelon', title=_(u'New Course'), container=newCourse)
             for item in childNodes:
@@ -2630,10 +2631,26 @@ class EchelonListing(BrowserView):
         result = sqlInstance.execSql(sqlStr)
         return result[0]['count']
 
+    def objTransition(self):
+        request = self.request
+        uid = request.form.get('uid')
+        obj = api.content.get(UID=uid)
+        state = request.form.get('state')
+#        import pdb; pdb.set_trace()
+        if state == 'published':
+            api.content.transition(obj=obj, transition='reject')
+        else:
+            api.content.transition(obj=obj, transition='publish')
+        return
+
     def __call__(self):
         self.portal = api.portal.get()
         request = self.request
         context = self.context
+        if request.form.has_key('state') and request.form.has_key('uid'):
+            self.objTransition()
+            return
+
         self.childNodes = list(context.getChildNodes())
         if request.form.has_key('all'):
             pass

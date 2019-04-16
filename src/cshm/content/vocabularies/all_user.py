@@ -9,6 +9,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from plone import api
+from Products.CMFPlone.utils import safe_unicode
 
 
 class VocabItem(object):
@@ -29,7 +30,8 @@ class AllUser(object):
         items = []
         for user in users:
             userName = user.getUserName()
-            items.append(VocabItem(u'%s' %userName, (u'%s' %userName)))
+            fullName = user.getProperty('fullname')
+            items.append(VocabItem(u'%s' %userName, safe_unicode(fullName)))
 
         # Fix context if you are using the vocabulary in DataGridField.
         # See https://github.com/collective/collective.z3cform.datagridfield/issues/31:  # NOQA: 501

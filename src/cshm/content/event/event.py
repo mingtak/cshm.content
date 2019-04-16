@@ -3,6 +3,23 @@ from plone import api
 from cshm.content import _
 
 
+def changeId(obj, event):
+    portal = api.portal.get()
+    if not obj.title.endswith('期'):
+        api.portal.show_message(message=_(u'Please ends with "echelon"'), request=obj.REQUEST, type='warn')
+        request = obj.REQUEST
+        request.response.redirect(request.getURL())
+        return
+    newId = obj.title.split('期')[0]
+    parent = obj.getParentNode()
+    if parent.has_key(newId) and parent[newId] != obj:
+        api.portal.show_message(message=_(u'Warning!, Has a same name course in this folder, Plsear back page and rename'),
+            request=obj.REQUEST, type='error')
+        raise
+    api.content.rename(obj=obj, new_id=str(newId))
+    api.portal.show_message(message=_(u'Rename Already Done.'), request=obj.REQUEST, type='info')
+    return
+
 def addRoleObj(event):
     portal = api.portal.get()
     para = portal.REQUEST.form

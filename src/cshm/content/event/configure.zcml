@@ -16,6 +16,11 @@
     />
 
     <subscriber
+        for="cshm.content.content.echelon.IEchelon zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler=".event.changeId"
+    />
+
+    <subscriber
         for="cshm.content.content.course.ICourse zope.lifecycleevent.interfaces.IObjectAddedEvent"
         handler=".event.moveObjectsToTop"
     />
