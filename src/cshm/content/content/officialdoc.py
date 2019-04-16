@@ -17,6 +17,16 @@ class IOfficialDoc(model.Schema):
     """ Marker interface and Dexterity Python Schema for Official Document
     """
 
+    fieldset(_(u'Related Echelon'), fields=[
+        'relatedEchelon',
+    ])
+
+    relatedEchelon = RelationChoice(
+        title=_(u"Related Echelon"),
+        required=False,
+        source=CatalogSource(Type='Echelon')
+    )
+
     title = schema.TextLine(
         title=_(u"Official Document Title"),
         required=True,

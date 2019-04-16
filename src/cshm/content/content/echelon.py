@@ -35,7 +35,6 @@ class IEchelon(model.Schema):
 
     fieldset(_(u'Handbook'), fields=[
         'classStatus',
-        'memo',
         'contact',
         'regDeadline',
         'discountInfo_no_open',
@@ -45,6 +44,7 @@ class IEchelon(model.Schema):
         'prepareInfo',
         'courseHours',
         'detailClassTime',
+        'memo',
     ])
 
     """
@@ -207,6 +207,31 @@ class IEchelon(model.Schema):
         title=_(u'Detail Class Time'),
         required=False,
     )
+
+
+    fieldset(_(u'Other'), fields=[
+        'submitClassDate',
+        'craneType',
+        'availableMaterial',
+        'qualification',
+        'reTrainingDetail',
+        'courseIntro',
+        'courseScope',
+        'testMethod',
+        'studDataSendDate',
+        'finishCourseSendDate',
+        'receivedDate',
+        'giveLicenseStatus',
+        'checkNote',
+        'preFee',
+        'feeDetail',
+        'manageFee',
+        'finishCourseStatus',
+        'cashierNote',
+        'statusNote',
+        'docDate',
+        'licenseDate',
+    ])
 
     submitClassDate = schema.Date(
         title=_(u'Submit Class Date'),

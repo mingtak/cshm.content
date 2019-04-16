@@ -203,10 +203,10 @@ class SearchOfficial(BrowserView):
     template2 = ViewPageTemplateFile('template/search_official_result.pt')
     def __call__(self):
         request = self.request
+        portal = api.portal.get()
         docHeader = request.get('docHeader')
         docSN = request.get('docSN')
         if docHeader or docSN:
-            portal = api.portal.get()
             query = {
                 'context': portal['official_doc'],
                 'portal_type': 'OfficialDoc',
@@ -224,10 +224,12 @@ class SearchOfficial(BrowserView):
                 code = obj.docHeader + obj.docSN
                 date = obj.docDate.strftime('%Y-%m-%d')
                 recipient = obj.recipient
-                data.append([title, code, date, recipient])
+                uid = obj.UID()
+                data.append([title, code, date, recipient, uid])
             self.data = data
             return self.template2()
 
+        self.result = api.content.find(context=portal['official_doc'], portal_type='OfficialDoc', sort_on='created', sort_order='reverse')
         return self.template()
 
 

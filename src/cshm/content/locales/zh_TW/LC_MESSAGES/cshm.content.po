@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-04-02 08:58+0000\n"
+"POT-Creation-Date: 2019-04-16 01:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Andy Fang <andy@mingtak.com.tw>\n"
 "Language-Team: zh-TW <andy@mingtak.com.tw>\n"
@@ -31,11 +31,11 @@ msgstr "name指學生姓名, course指課程名稱"
 msgid "Activation"
 msgstr "啟用"
 
-#: ./browser/views.py:1895
+#: ./browser/views.py:1896
 msgid "Add Teacher Fail."
 msgstr "新增教師資訊失敗"
 
-#: ./browser/views.py:1893
+#: ./browser/views.py:1894
 msgid "Add Teacher Success."
 msgstr "新增教師資訊成功"
 
@@ -71,7 +71,7 @@ msgstr "證書編碼"
 msgid "Class Quota"
 msgstr "班級名額"
 
-#: ./browser/views.py:1505
+#: ./browser/views.py:1506
 msgid "Class Scheduling Success."
 msgstr "排課成功"
 
@@ -166,7 +166,7 @@ msgstr "課程開始日期"
 msgid "Course Status"
 msgstr "課程狀態"
 
-#: ./browser/views.py:2479
+#: ./browser/views.py:2480
 msgid "Course name or upload url wrong, please check once."
 msgstr "課程名稱或上傳網址錯誤，請再檢查一遍"
 
@@ -198,7 +198,7 @@ msgstr "建立者"
 msgid "Current Job"
 msgstr "現職"
 
-#: ./browser/views.py:1485
+#: ./browser/views.py:1486
 msgid "Data lost, please fill all field"
 msgstr "資訊缺漏，請填寫所有欄位"
 
@@ -262,7 +262,7 @@ msgstr "公文序號"
 msgid "Documents workflows"
 msgstr "公文流程"
 
-#: ./browser/views.py:1756
+#: ./browser/views.py:1757
 msgid "Download not Allowed"
 msgstr "不允許下載"
 
@@ -308,7 +308,7 @@ msgstr "Email範本"
 msgid "Email."
 msgstr "Email"
 
-#: ./browser/views.py:1507
+#: ./browser/views.py:1508
 msgid "Fail, Please check data format!!"
 msgstr "失敗，請檢查資料格式"
 
@@ -385,11 +385,11 @@ msgstr "忽略排課"
 msgid "Images Folder Path"
 msgstr "圖片檔資料夾路徑"
 
-#: ./browser/views.py:2068
+#: ./browser/views.py:2069
 msgid "Insert Not On Time Fail."
 msgstr "新增停課記錄失敗"
 
-#: ./browser/views.py:2066
+#: ./browser/views.py:2067
 msgid "Insert Not On Time Record Success."
 msgstr "新增停課記錄成功"
 
@@ -441,7 +441,11 @@ msgstr "備註"
 msgid "Msg Template"
 msgstr "簡訊範本"
 
-#: ./browser/views.py:2330
+#: ./browser/views.py:1419
+msgid "New Course"
+msgstr "新增課程"
+
+#: ./browser/views.py:2331
 msgid "Not yat 18 years old."
 msgstr "未滿18歲"
 
@@ -466,63 +470,63 @@ msgstr "系統相關設定"
 msgid "Official Document"
 msgstr "公文"
 
-#: ./content/officialdoc.py:46
+#: ./content/officialdoc.py:56
 msgid "Official Document Date."
 msgstr "公文日期"
 
-#: ./content/officialdoc.py:56
+#: ./content/officialdoc.py:66
 msgid "Official Document Detail 1"
 msgstr "公文內容 1"
 
-#: ./content/officialdoc.py:101
+#: ./content/officialdoc.py:111
 msgid "Official Document Detail 10"
 msgstr "公文內容 10"
 
-#: ./content/officialdoc.py:61
+#: ./content/officialdoc.py:71
 msgid "Official Document Detail 2"
 msgstr "公文內容 2"
 
-#: ./content/officialdoc.py:66
+#: ./content/officialdoc.py:76
 msgid "Official Document Detail 3"
 msgstr "公文內容 3"
 
-#: ./content/officialdoc.py:71
+#: ./content/officialdoc.py:81
 msgid "Official Document Detail 4"
 msgstr "公文內容 4"
 
-#: ./content/officialdoc.py:76
+#: ./content/officialdoc.py:86
 msgid "Official Document Detail 5"
 msgstr "公文內容 5"
 
-#: ./content/officialdoc.py:81
+#: ./content/officialdoc.py:91
 msgid "Official Document Detail 6"
 msgstr "公文內容 6"
 
-#: ./content/officialdoc.py:86
+#: ./content/officialdoc.py:96
 msgid "Official Document Detail 7"
 msgstr "公文內容 7"
 
-#: ./content/officialdoc.py:91
+#: ./content/officialdoc.py:101
 msgid "Official Document Detail 8"
 msgstr "公文內容 8"
 
-#: ./content/officialdoc.py:96
+#: ./content/officialdoc.py:106
 msgid "Official Document Detail 9"
 msgstr "公文內容 9"
 
-#: ./content/officialdoc.py:36
+#: ./content/officialdoc.py:46
 msgid "Official Document Header."
 msgstr "公文抬頭"
 
-#: ./content/officialdoc.py:41
+#: ./content/officialdoc.py:51
 msgid "Official Document Serial No."
 msgstr "公文編號"
 
-#: ./content/officialdoc.py:21
+#: ./content/officialdoc.py:31
 msgid "Official Document Title"
 msgstr "公文標題"
 
-#: ./content/officialdoc.py:26
+#: ./content/officialdoc.py:36
 msgid "Official Document Workflow."
 msgstr "公文流程"
 
@@ -538,7 +542,7 @@ msgstr "一行一筆記錄"
 msgid "Other Note"
 msgstr "其他說明"
 
-#: ./browser/views.py:1839
+#: ./browser/views.py:1840
 msgid "Over Hours"
 msgstr "超過時數"
 
@@ -570,7 +574,7 @@ msgstr "認證"
 msgid "Quiz"
 msgstr "測驗"
 
-#: ./browser/views.py:2335
+#: ./browser/views.py:2336
 msgid "Quota Full include Alternate."
 msgstr "很抱歉，報名額滿(候補也已額滿)，無法再接受報名"
 
@@ -578,7 +582,7 @@ msgstr "很抱歉，報名額滿(候補也已額滿)，無法再接受報名"
 msgid "ReTraining Detail"
 msgstr "回訓細節"
 
-#: ./content/officialdoc.py:51
+#: ./content/officialdoc.py:61
 msgid "Recipient"
 msgstr "收文者"
 
@@ -594,15 +598,19 @@ msgstr "報名完成通知訊息"
 msgid "Registry OK Auto Message"
 msgstr "報名成功自動訊息"
 
-#: ./browser/views.py:2374
+#: ./browser/views.py:2375
 msgid "Registry success."
 msgstr "報名成功"
+
+#: ./content/officialdoc.py:20
+msgid "Related Echelon"
+msgstr ""
 
 #: ./browser/configure.zcml:71
 msgid "Related link view"
 msgstr ""
 
-#: ./browser/views.py:2928
+#: ./browser/views.py:2929
 msgid "Reserve Seat is OK."
 msgstr "預約座位完成"
 
@@ -634,11 +642,11 @@ msgstr "選擇資材"
 msgid "Send Quote Request Finish!"
 msgstr "送出報價需求完成"
 
-#: ./browser/views.py:2166
+#: ./browser/views.py:2167
 msgid "Send cell message success."
 msgstr "送出簡訊訊息成功"
 
-#: ./browser/views.py:2179
+#: ./browser/views.py:2180
 msgid "Send mail success."
 msgstr "送出Email訊息成功"
 
@@ -780,7 +788,7 @@ msgstr "版本"
 msgid "View"
 msgstr "檢視"
 
-#: ./content/officialdoc.py:31
+#: ./content/officialdoc.py:41
 msgid "Workflow Status."
 msgstr "流程狀態"
 

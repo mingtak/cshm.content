@@ -1416,16 +1416,17 @@ class CreateClass(BasicBrowserView):
         obj = api.content.find(UID=courseUID)[0].getObject() # 課程模版
         courseId = obj.id
         if portal['mana_course'].has_key(courseId):
-            container = api.content.create(type='Echelon', title='New Course', container=portal['mana_course'][courseId])
+            container = api.content.create(type='Echelon', title=_(u'New Course'), container=portal['mana_course'][courseId])
             childNodes = obj.getChildNodes()
             for item in childNodes:
                 api.content.copy(source=item, target=container)
         else:
             newCourse = api.content.copy(source=obj, target=portal['mana_course'])
             childNodes = newCourse.getChildNodes()
-            container = api.content.create(type='Echelon', title='New Course', container=newCourse)
+            container = api.content.create(type='Echelon', title=_(u'New Course'), container=newCourse)
             for item in childNodes:
                 api.content.move(source=item, target=container)
+        request.response.redirect('%s/@@echelon_listing_register' % portal.absolute_url())
 
 
 class ClassroomOverview(BasicBrowserView):
